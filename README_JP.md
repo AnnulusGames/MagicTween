@@ -81,7 +81,7 @@ ECSのコンポーネント内のfloatの値を`Tween.Entity.To()`でトゥイ�
 3. 以下のURLを入力する
 
 ```
-https://github.com/AnnulusGames/MagicTween.git?path=/Assets/MagicTween
+https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween
 ```
 
 あるいはPackages/manifest.jsonを開き、dependenciesブロックに以下を追記
@@ -89,7 +89,7 @@ https://github.com/AnnulusGames/MagicTween.git?path=/Assets/MagicTween
 ```json
 {
     "dependencies": {
-        "com.annulusgames.magic-tween": "https://github.com/AnnulusGames/MagicTween.git?path=/Assets/MagicTween"
+        "com.annulusgames.magic-tween": "https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween"
     }
 }
 ```

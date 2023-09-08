@@ -54,15 +54,17 @@ The `MagicTween.Samples` project includes several samples implemented using Magi
 1. Open the Package Manager from Window > Package Manager
 2. "+" button > Add package from git URL
 3. Enter the following to install
-   * https://github.com/AnnulusGames/MagicTween.git?path=/Assets/MagicTween
 
+```
+https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween
+```
 
 or open Packages/manifest.json and add the following to the dependencies block.
 
 ```json
 {
     "dependencies": {
-        "com.annulusgames.magic-tween": "https://github.com/AnnulusGames/MagicTween.git?path=/Assets/MagicTween"
+        "com.annulusgames.magic-tween": "https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween"
     }
 }
 ```
