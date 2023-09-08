@@ -14,6 +14,28 @@ Magic Tween is a high-performance tweening library implemented in Unity Entity C
 In addition to powerful tweening functionality compatible with traditional components, it also offers even higher-performance APIs for ECS.
 
 ## Table of Contents
+- [Overview](#overview)
+- [Table of Contents](#table-of-contents)
+- [Features](#features)
+- [Performance](#performance)
+- [Samples](#samples)
+- [Setup](#setup)
+- [Basic Usage](#basic-usage)
+- [Tweening Custom Value](#tweening-custom-value)
+- [Tween Control](#tween-control)
+- [Getting Tween Information](#getting-tween-information)
+- [Adding Settings](#adding-settings)
+- [Callbacks](#callbacks)
+- [DelayedCall / Empty](#delayedcall--empty)
+- [Sequence](#sequence)
+- [Logging](#logging)
+- [Project Settings](#project-settings)
+- [TextMesh Pro](#textmesh-pro)
+- [UniRx](#unirx)
+- [Implementation for ECS](#implementation-for-ecs)
+- [Other Features](#other-features)
+- [Experimental Features](#experimental-features)
+- [License](#license)
 
 ## Features
 * High-performance tweening library implemented in ECS.
