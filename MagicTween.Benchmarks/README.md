@@ -105,7 +105,7 @@ The StartUp item is the result of measuring the time it takes to create the twee
 
 ### Startup (64,000 float tweens)
 
-<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/startup.png" width="800">
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_startup.png" width="800">
 
 |  | Time |
 | - | - |
