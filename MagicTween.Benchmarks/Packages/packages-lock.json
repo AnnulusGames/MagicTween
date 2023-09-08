@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.annulusgames.magic-tween": {
+      "version": "https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2036299aba84bac0ebbaa6086df5d75dbfa6dd12"
+    },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
       "depth": 0,

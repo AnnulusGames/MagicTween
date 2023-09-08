@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.annulusgames.magic-tween": "https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween",
     "com.unity.burst": "1.8.8",
     "com.unity.collab-proxy": "2.0.5",
     "com.unity.entities": "1.0.14",
