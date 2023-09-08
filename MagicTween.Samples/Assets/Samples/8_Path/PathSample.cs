@@ -12,6 +12,8 @@ public class PathSample : MonoBehaviour
         var positions = points.Select(x => x.position).ToArray();
 
         // You can create a tween that passes through multiple points using TweenPath().
-        target.TweenPath(positions, 5f).SetEase(Ease.InOutSine);
+        target.TweenPath(positions, 5f)
+            .SetPathType(PathType.CatmullRom)
+            .SetEase(Ease.InOutSine);
     }
 }
