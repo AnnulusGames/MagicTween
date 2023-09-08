@@ -1,0 +1,66 @@
+{
+    "name": "MagicTween",
+    "rootNamespace": "",
+    "references": [
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:8819f35a0fc84499b990e90a4ca1911f",
+        "GUID:7a450cf7ca9694b5a8bfa3fd83ec635a",
+        "GUID:a5baed0c9693541a5bd947d336ec7659",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:21d1eb854b91ade49bc69a263d12bee2",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:15fc0a57446b3144c949da3e2b9737a9",
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
+        "GUID:d60799ab2a985554ea1a39cd38695018",
+        "GUID:d04eb9c554ad44ceab303cecf0c0cf82"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.cysharp.unitask",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_UNITASK"
+        },
+        {
+            "name": "com.neuecc.unirx",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_UNIRX"
+        },
+        {
+            "name": "com.unity.splines",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_SPLINES"
+        },
+        {
+            "name": "com.unity.postprocessing",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_POSTPROCESSING"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_URP"
+        },
+        {
+            "name": "com.unity.visualeffectgraph",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_VFX"
+        },
+        {
+            "name": "com.unity.entities.graphics",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_ENTITIES_GRAPHICS"
+        }
+    ],
+    "noEngineReferences": false
+}

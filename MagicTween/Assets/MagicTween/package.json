@@ -1,0 +1,11 @@
+{
+  "name": "com.annulusgames.magic-tween",
+  "version": "0.1.0",
+  "displayName": "Magic Tween",
+  "description": "High-performance tweening engine implemented with Unity ECS",
+  "unity": "2022.1",
+  "author": {
+    "name": "Annulus Games",
+    "url": "https://github.com/AnnulusGames"
+  }
+}

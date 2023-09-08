@@ -1,0 +1,18 @@
+{
+    "name": "MagicTween.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:972ee90f5ba014d89ba7678f3cb2e1af"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

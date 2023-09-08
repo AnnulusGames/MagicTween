@@ -1,0 +1,37 @@
+{
+    "name": "Tests",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.PerformanceTesting",
+        "UniRx",
+        "UniTask",
+        "MagicTween",
+        "PrimeTween.Runtime",
+        "GoKit",
+        "ZestKit",
+        "LeanTween",
+        "AnimeRx",
+        "AnimeTask",
+        "nl.jeffreylanters.tweens"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "DOTween.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
