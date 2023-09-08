@@ -337,8 +337,8 @@ Available option for Path-based tweens to set how the points are connected.
 
 | PathType | Behavior |
 | - | - |
-| PathType.CatmullRom | Connects each point using a Catmull-Rom spline curve. |
 | PathType.Linear | Connects each point using a straight line. |
+| PathType.CatmullRom | Connects each point using a Catmull-Rom spline curve. |
 
 ### SetClosed (Path)
 

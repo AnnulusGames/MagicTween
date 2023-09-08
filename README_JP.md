@@ -358,8 +358,8 @@ TweenPath系のTweenに対して利用可能なオプションで、各ポイン
 
 | PathType | 動作 |
 | - | - |
-| PathType.CatmullRom | 各ポイントをCatmull-Romスプライン曲線で結びます。 |
 | PathType.Linear | 各ポイントを直線で結びます。 |
+| PathType.CatmullRom | 各ポイントをCatmull-Romスプライン曲線で結びます。 |
 
 ### SetClosed (Path)
 
@@ -391,6 +391,7 @@ TweenPath系のTweenに対して利用可能なオプションで、閉じたパ
 | (ScrambleMode.Custom) | 指定された文字列の中のランダムな数字で空白を埋めます。このオプションは明示的に指定できず、SetScrambleModeの引数にstringを渡した際に設定されます。|
 
 ### SetRichTextEnabled (string)
+
 RichTextのサポートを有効化し、RichTextタグが含まれるテキストの文字送りが可能になります。このオプションは文字列のTweenにのみ適用可能です。
 
 ## コールバック
