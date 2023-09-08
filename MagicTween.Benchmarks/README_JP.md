@@ -73,7 +73,7 @@ StartUpについては、トゥイーンを作成するのにかかる時間の�
 
 ### Tween 25,000 Transform.position
 
-<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_25000_transform" width="800">
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_25000_transform.png" width="800">
 
 |  | Time |
 | - | - |
@@ -89,7 +89,7 @@ StartUpについては、トゥイーンを作成するのにかかる時間の�
 
 ### Tween 50,000 Transform.position
 
-<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/startup.png" width="800">
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_25000_transform.png" width="800">
 
 |  | Time |
 | - | - |
@@ -105,7 +105,7 @@ StartUpについては、トゥイーンを作成するのにかかる時間の�
 
 ### Startup (64,000 float tweens)
 
-<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/banchmark_50000_transform.png" width="800">
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/startup.png" width="800">
 
 |  | Time |
 | - | - |
