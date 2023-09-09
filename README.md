@@ -280,7 +280,7 @@ Sets the easing function to use for the tween. You can also use your own easing 
 
 Sets the number of times the tween should loop. By default, it's set to 1. You can create a tween that loops infinitely by setting it to -1. You can also specify the loop behavior using the second argument, `LoopType`.
 
-### SetSpeed
+### SetPlaybackSpeed
 
 Sets the playback speed of the tween. The default is 1, and negative values are not supported.
 

@@ -294,7 +294,7 @@ Tweenを繰り返す回数を設定します。デフォルトでは1に設定�
 | LoopType.Yoyo | 開始値と終了地を往復するように値をアニメーションさせます。| 
 | LoopType.Increment | ループごとに値が増加します。このオプションはstringのTween、またはSequenceには適用されません。 | 
 
-### SetSpeed
+### SetPlaybackSpeed
 
 Tweenの再生速度を設定します。デフォルトでは1に設定されており、0未満の値はサポートされていません。
 
