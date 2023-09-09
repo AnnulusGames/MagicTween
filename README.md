@@ -35,6 +35,7 @@ In addition to powerful tweening functionality compatible with traditional compo
 - [Implementation for ECS](#implementation-for-ecs)
 - [Other Features](#other-features)
 - [Experimental Features](#experimental-features)
+- [Known Issues](#known-issues)
 - [License](#license)
 
 ## Features
@@ -836,6 +837,20 @@ float value2 = EaseUtility.InOutQuad(0.5f);
 ## Experimental Features
 
 The `MagicTween.Experimental` namespace contains features that are currently under development. These features are available for use but come with no guarantees, and there may be breaking changes without notice.
+
+## Known Issues
+
+### Performance Drop in the Editor
+
+ECS performs numerous checks to enhance safety, which leads to decreased performance within the editor. This performance degradation is particularly noticeable when creating Tweens and, in some cases, can result in processing times several times longer than usual.
+
+It's important to note that these safety checks are disabled in the build, so performance measurements should always be conducted in the build environment.
+
+### Performance Drop in WebGL
+
+While it's possible to use ECS in WebGL, limitations in WebGL's specifications, such as the absence of multi-threading and SIMD, disable optimizations like the Job System and Burst. ECS achieves its high performance through the Job System and Burst, making performance degradation unavoidable in WebGL (hence, there are few advantages to using ECS on WebGL currently).
+
+Magic Tween optimizes the calculation part of Tweens using the Job System and Burst. Therefore, on WebGL, performance suffers for the reasons mentioned above. While these effects are typically not noticeable, please be mindful of this when creating a large number of Tweens.
 
 ## License
 
