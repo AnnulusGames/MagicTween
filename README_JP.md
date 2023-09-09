@@ -270,7 +270,7 @@ Set系のメソッドを用いることでTweenの挙動をカスタマイズす
 以下のコードは、Tweenに独自の設定を適用する例です。
 
 ```cs
-transform.TweenScale(Vector3.one * 2f, 5f)
+transform.TweenLocalScale(Vector3.one * 2f, 5f)
     .SetEase(Ease.OutSine) // イージング関数をOutSineに設定
     .SetLoops(3, LoopType.Restart) // 3回繰り返す
     .SetDelay(1f); // 開始時に1秒間遅延させる
@@ -576,7 +576,7 @@ transform.TweenEulerAngles(new Vector3(0f, 0f, 90f), 5f)
     .LogCallbacks();
 
 // 判別用の名前をつけることも可能 
-transform.TweenScale(Vector3.one * 2f, 5f)
+transform.TweenLocalScale(Vector3.one * 2f, 5f)
     LogCallbacks("Scale");
 
 float foo;

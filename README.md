@@ -265,7 +265,7 @@ float duration = tween.GetDuration();
 You can customize the behavior of a tween using the Set methods. These methods can be chained together for concise code. The following code is an example of applying custom settings to a tween:
 
 ```cs
-transform.TweenScale(Vector3.one * 2f, 5f)
+transform.TweenLocalScale(Vector3.one * 2f, 5f)
     .SetEase(Ease.OutSine) // Set the easing function to OutSine
     .SetLoops(3, LoopType.Restart) // Repeat 3 times with restart behavior
     .SetDelay(1f); // Delay the start by 1 second
@@ -557,7 +557,7 @@ transform.TweenEulerAngles(new Vector3(0f, 0f, 90f), 5f)
     .LogCallbacks();
 
 // You can also assign a name for identification
-transform.TweenScale(Vector3.one * 2f, 5f)
+transform.TweenLocalScale(Vector3.one * 2f, 5f)
     .LogCallbacks("Scale");
 
 float foo;
