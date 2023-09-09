@@ -37,6 +37,7 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 - [その他の機能](#その他の機能)
 - [実験的機能](#実験的機能)
 - [既知の問題点](#既知の問題点)
+- [サポート](#サポート)
 - [ライセンス](#ライセンス)
 
 ## 特徴
@@ -876,6 +877,10 @@ ECSをWebGL上で動作させること自体は可能ですが、WebGLの仕様�
 
 Magic TweenではTweenの計算部分をJob SystemとBurstで最適化しているため、上記の理由によりWebGL上ではパフォーマンスが低下します。
 通常これらの影響が表面化することはありませんが、大量にTweenを作成する際にはこの点に留意してください。
+
+## サポート
+
+Forum: https://forum.unity.com/threads/magic-tween-extremely-fast-tween-library-implemented-in-ecs.1490080/
 
 ## ライセンス
 

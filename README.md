@@ -36,6 +36,7 @@ In addition to powerful tweening functionality compatible with traditional compo
 - [Other Features](#other-features)
 - [Experimental Features](#experimental-features)
 - [Known Issues](#known-issues)
+- [Support](#support)
 - [License](#license)
 
 ## Features
@@ -851,6 +852,10 @@ It's important to note that these safety checks are disabled in the build, so pe
 While it's possible to use ECS in WebGL, limitations in WebGL's specifications, such as the absence of multi-threading and SIMD, disable optimizations like the Job System and Burst. ECS achieves its high performance through the Job System and Burst, making performance degradation unavoidable in WebGL (hence, there are few advantages to using ECS on WebGL currently).
 
 Magic Tween optimizes the calculation part of Tweens using the Job System and Burst. Therefore, on WebGL, performance suffers for the reasons mentioned above. While these effects are typically not noticeable, please be mindful of this when creating a large number of Tweens.
+
+## Support
+
+Forum: https://forum.unity.com/threads/magic-tween-extremely-fast-tween-library-implemented-in-ecs.1490080/
 
 ## License
 
