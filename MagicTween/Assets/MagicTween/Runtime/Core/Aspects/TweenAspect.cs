@@ -15,13 +15,15 @@ namespace MagicTween.Core
         readonly RefRW<TweenProgress> progressRefRW;
         readonly RefRW<TweenClip> clipRefRW;
         readonly RefRW<TweenPlaybackSpeed> playbackSpeedRefRW;
-        readonly RefRW<TweenPlaySettings> playSettingsRefRW;
         readonly RefRW<TweenEasing> easingRefRW;
         readonly RefRW<TweenParameters> parametersRefRW;
         readonly RefRW<TweenId> idRefRW;
         readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
         readonly RefRW<TweenCallbackFlags> callbackFlagsRefRW;
+
+        readonly RefRO<TweenAutoPlayFlag> autoPlayFlagRefRO;
+        readonly RefRO<TweenAutoKillFlag> autoKillFlagRefRO;
 
         public float position
         {
@@ -88,17 +90,8 @@ namespace MagicTween.Core
             set => playbackSpeedRefRW.ValueRW.speed = value;
         }
 
-        public bool autoPlay
-        {
-            get => playSettingsRefRW.ValueRO.autoPlay;
-            set => playSettingsRefRW.ValueRW.autoPlay = value;
-        }
-
-        public bool autoKill
-        {
-            get => playSettingsRefRW.ValueRO.autoKill;
-            set => playSettingsRefRW.ValueRW.autoKill = value;
-        }
+        public bool autoPlay => autoPlayFlagRefRO.ValueRO.value;
+        public bool autoKill => autoKillFlagRefRO.ValueRO.value;
 
         public InvertMode fromMode
         {

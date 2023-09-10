@@ -378,11 +378,6 @@ namespace MagicTween.Core
             {
                 speed = 1f
             };
-            var playSettings = new TweenPlaySettings()
-            {
-                autoPlay = MagicTweenSettings.defaultAutoPlay,
-                autoKill = MagicTweenSettings.defaultAutoKill
-            };
             var easing = new TweenEasing()
             {
                 ease = MagicTweenSettings.defaultEase
@@ -392,10 +387,11 @@ namespace MagicTween.Core
                 ignoreTimeScale = MagicTweenSettings.defaultIgnoreTimeScale
             };
 
+            entityManager.SetComponentData(entity, new TweenAutoPlayFlag(MagicTweenSettings.defaultAutoPlay));
+            entityManager.SetComponentData(entity, new TweenAutoKillFlag(MagicTweenSettings.defaultAutoKill));
             entityManager.SetComponentData(entity, state);
             entityManager.SetComponentData(entity, clip);
             entityManager.SetComponentData(entity, playbackSpeed);
-            entityManager.SetComponentData(entity, playSettings);
             entityManager.SetComponentData(entity, easing);
             entityManager.SetComponentData(entity, parameters);
         }

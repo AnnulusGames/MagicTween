@@ -119,22 +119,14 @@ namespace MagicTween
         public static T SetAutoKill<T>(this T self, bool autoKill = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var playSettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(self.GetEntity());
-            playSettings.autoKill = autoKill;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), playSettings);
-
+            TweenWorld.EntityManager.SetComponentData<TweenAutoKillFlag>(self.GetEntity(), new(autoKill));
             return self;
         }
 
         public static T SetAutoPlay<T>(this T self, bool autoPlay = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var playSettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(self.GetEntity());
-            playSettings.autoPlay = autoPlay;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), playSettings);
-
+            TweenWorld.EntityManager.SetComponentData<TweenAutoPlayFlag>(self.GetEntity(), new(autoPlay));
             return self;
         }
 

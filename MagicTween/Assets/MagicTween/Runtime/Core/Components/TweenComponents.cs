@@ -5,7 +5,18 @@ using Unity.Entities;
 namespace MagicTween.Core.Components
 {
     public readonly struct TweenRootFlag : IComponentData, IEnableableComponent { }
-    
+    public readonly struct TweenAutoPlayFlag : IComponentData
+    {
+        public TweenAutoPlayFlag(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+    public readonly struct TweenAutoKillFlag : IComponentData
+    {
+        public TweenAutoKillFlag(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
     public struct TweenInvertFlag : IComponentData
     {
         public bool value;
@@ -44,12 +55,6 @@ namespace MagicTween.Core.Components
     public struct TweenPlaybackSpeed : IComponentData
     {
         public float speed;
-    }
-
-    public struct TweenPlaySettings : IComponentData
-    {
-        public bool autoPlay;
-        public bool autoKill;
     }
 
     public struct TweenParameters : IComponentData
