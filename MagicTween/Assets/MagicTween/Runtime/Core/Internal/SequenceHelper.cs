@@ -27,6 +27,9 @@ namespace MagicTween.Core
             var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
 
             AdjustChildParameters(tween.GetEntity(), out var resolvedChildDuration);
+            var childLoops = EntityManager.GetComponentData<TweenParameterLoops>(tween.GetEntity()).value;
+            var childDelay = EntityManager.GetComponentData<TweenParameterDelay>(tween.GetEntity()).value;
+            resolvedChildDuration = childLoops * resolvedChildDuration + childDelay;
 
             float offset;
             if (join)
@@ -64,6 +67,9 @@ namespace MagicTween.Core
             var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
 
             AdjustChildParameters(tween.GetEntity(), out var resolvedChildDuration);
+            var childLoops = EntityManager.GetComponentData<TweenParameterLoops>(tween.GetEntity()).value;
+            var childDelay = EntityManager.GetComponentData<TweenParameterDelay>(tween.GetEntity()).value;
+            resolvedChildDuration = childLoops * resolvedChildDuration + childDelay;
             sequenceDuration = math.max(sequenceDuration, position + resolvedChildDuration);
 
             sequenceBuffer.Add(new SequenceEntitiesGroup(tween.GetEntity(), position));
@@ -88,6 +94,9 @@ namespace MagicTween.Core
             var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
 
             AdjustChildParameters(tween.GetEntity(), out var resolvedChildDuration);
+            var childLoops = EntityManager.GetComponentData<TweenParameterLoops>(tween.GetEntity()).value;
+            var childDelay = EntityManager.GetComponentData<TweenParameterDelay>(tween.GetEntity()).value;
+            resolvedChildDuration = childLoops * resolvedChildDuration + childDelay;
 
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
