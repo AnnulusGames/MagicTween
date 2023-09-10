@@ -10,16 +10,18 @@ namespace MagicTween.Core
     {
         public static float GetDuration(in Entity entity)
         {
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            var playbackSpeed = EntityManager.GetComponentData<TweenPlaybackSpeed>(entity);
-            return GetDuration(clip, playbackSpeed);
+            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
+            var playbackSpeed = EntityManager.GetComponentData<TweenParameterPlaybackSpeed>(entity).value;
+            return GetDuration(duration, loops, delay, playbackSpeed);
         }
 
-        public static float GetDuration(in TweenClip clip, TweenPlaybackSpeed playbackSpeed)
+        public static float GetDuration(float duration, int loops, float delay, float playbackSpeed)
         {
-            if (clip.loops < 0) return -1f;
-            if (playbackSpeed.value == 0) return -1f;
-            return (clip.delay + clip.duration * clip.loops) / playbackSpeed.value;
+            if (loops < 0) return -1f;
+            if (playbackSpeed == 0f) return -1f;
+            return (delay + duration * loops) / playbackSpeed;
         }
 
         public static bool TryPlay(in Entity entity, out bool started)
@@ -31,9 +33,9 @@ namespace MagicTween.Core
                 return false;
             }
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            var position = EntityManager.GetComponentData<TweenPosition>(entity);
-            var time = position.value - clip.delay;
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            var position = EntityManager.GetComponentData<TweenPosition>(entity).value;
+            var time = position - delay;
 
             if (time < 0f)
             {
@@ -77,16 +79,17 @@ namespace MagicTween.Core
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            if (clip.loops < 0) return false;
+            var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
+            if (loops < 0) return false;
+
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
             status.status = TweenStatusType.Completed;
-            var position = clip.duration * clip.loops + clip.delay;
-            var completedLoops = clip.loops;
 
             EntityManager.SetComponentData(entity, status);
-            EntityManager.SetComponentData(entity, new TweenPosition(position));
-            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(loops));
             EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
             return true;
         }
@@ -102,31 +105,34 @@ namespace MagicTween.Core
                 return false;
             }
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            if (clip.loops < 0)
+            var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
+            if (loops < 0)
             {
                 currentValue = default;
                 return false;
             }
 
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+
             var plugin = default(TPlugin);
-            var invertMode = EntityManager.GetComponentData<TweenInvertMode>(entity).value;
-            var isRelative = EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
-            var easing = EntityManager.GetComponentData<TweenEasing>(entity);
+            var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
+            var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
+            var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
+            var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
+            var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
 
             status.status = TweenStatusType.Completed;
-            var position = clip.duration * clip.loops + clip.delay;
-            var completedLoops = clip.loops;
-
+            
             currentValue = plugin.Evaluate(
                 entity,
-                GetProgressOnCompleted(easing, clip.loops, clip.loopType),
+                ease == Ease.Custom ? GetProgressOnCompleted(ref customCurve, loops, loopType) : GetProgressOnCompleted(ease, loops, loopType),
                 isRelative,
                 invertMode != InvertMode.None
             );
 
-            EntityManager.SetComponentData(entity, new TweenPosition(position));
-            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(loops));
             EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
 
             return true;
@@ -137,16 +143,17 @@ namespace MagicTween.Core
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            if (clip.loops < 0) return false;
+            var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
+            if (loops < 0) return false;
+
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
             status.status = TweenStatusType.Killed;
-            var position = clip.duration + clip.duration;
-            var completedLoops = clip.loops;
 
             EntityManager.SetComponentData(entity, status);
-            EntityManager.SetComponentData(entity, new TweenPosition(position));
-            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(loops));
             EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
 
             CleanupSystem.Enqueue(entity);
@@ -165,32 +172,36 @@ namespace MagicTween.Core
                 return false;
             }
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            if (clip.loops < 0)
+
+            var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
+            if (loops < 0)
             {
                 currentValue = default;
                 return false;
             }
 
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+
             status.status = TweenStatusType.Killed;
-            var position = clip.duration + clip.duration;
-            var completedLoops = clip.loops;
 
             var plugin = default(TPlugin);
-            var invertMode = EntityManager.GetComponentData<TweenInvertMode>(entity).value;
-            var isRelative = EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
-            var easing = EntityManager.GetComponentData<TweenEasing>(entity);
+            var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
+            var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
+            var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
+            var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
+            var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
 
             currentValue = plugin.Evaluate(
                 entity,
-                GetProgressOnCompleted(easing, clip.loops, clip.loopType),
+                ease == Ease.Custom ? GetProgressOnCompleted(ref customCurve, loops, loopType) : GetProgressOnCompleted(ease, loops, loopType),
                 isRelative,
                 invertMode != InvertMode.None
             );
 
             EntityManager.SetComponentData(entity, status);
-            EntityManager.SetComponentData(entity, new TweenPosition(position));
-            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(loops));
             EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
 
             CleanupSystem.Enqueue(entity);
@@ -203,9 +214,8 @@ namespace MagicTween.Core
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-
-            status.status = clip.delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+            status.status = delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
             EntityManager.SetComponentData(entity, status);
             EntityManager.SetComponentData(entity, new TweenPosition(0f));
@@ -224,17 +234,21 @@ namespace MagicTween.Core
                 return false;
             }
 
-            var clip = EntityManager.GetComponentData<TweenClip>(entity);
-            status.status = clip.duration > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
+            var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
+
+            status.status = delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
             var plugin = default(TPlugin);
+            var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
             var inverted = EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
-            var isRelative = EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
-            var easing = EntityManager.GetComponentData<TweenEasing>(entity);
+            var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
+            var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
+            var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
 
             currentValue = plugin.Evaluate(
                 entity,
-                GetProgressOnCompleted(easing, clip.loops, clip.loopType),
+                ease == Ease.Custom ? GetProgressOnCompleted(ref customCurve, loops, loopType) : GetProgressOnCompleted(ease, loops, loopType),
                 isRelative,
                 inverted
             );
@@ -247,20 +261,40 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static float GetProgressOnCompleted(in TweenEasing easing, int loops, LoopType loopType)
+        static float GetProgressOnCompleted(Ease ease, int loops, LoopType loopType)
         {
-            var easedValue = easing.GetEasedValue(1f);
+            float easedValue = default;
             switch (loopType)
             {
                 case LoopType.Restart:
-                    easedValue = easing.GetEasedValue(1f);
+                    easedValue = EaseUtility.Evaluate(1f, ease);
                     break;
                 case LoopType.Yoyo:
-                    easedValue = easing.GetEasedValue(1f);
+                    easedValue = EaseUtility.Evaluate(1f, ease);
                     if (loops % 2 == 1) easedValue = 1f - easedValue;
                     break;
                 case LoopType.Incremental:
-                    easedValue = loops * easing.GetEasedValue(1f);
+                    easedValue = loops * EaseUtility.Evaluate(1f, ease);
+                    break;
+            }
+            return easedValue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static float GetProgressOnCompleted(ref ValueAnimationCurve customCurve, int loops, LoopType loopType)
+        {
+            float easedValue = default;
+            switch (loopType)
+            {
+                case LoopType.Restart:
+                    easedValue = customCurve.Evaluate(1f);
+                    break;
+                case LoopType.Yoyo:
+                    easedValue = customCurve.Evaluate(1f);
+                    if (loops % 2 == 1) easedValue = 1f - easedValue;
+                    break;
+                case LoopType.Incremental:
+                    easedValue = loops * customCurve.Evaluate(1f);
                     break;
             }
             return easedValue;

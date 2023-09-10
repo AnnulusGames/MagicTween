@@ -16,22 +16,24 @@ namespace MagicTween.Core
         readonly RefRW<TweenCompletedLoops> completedLoopsRefRW;
         readonly RefRW<TweenProgress> progressRefRW;
 
-        readonly RefRW<TweenClip> clipRefRW;
-        readonly RefRW<TweenPlaybackSpeed> playbackSpeedRefRW;
+        readonly RefRO<TweenParameterDuration> durationRefRO;
+        readonly RefRO<TweenParameterDelay> delayRefRW;
+        readonly RefRO<TweenParameterLoops> loopsRefRW;
+        readonly RefRO<TweenParameterLoopType> loopTypeRefRW;
+        readonly RefRO<TweenParameterPlaybackSpeed> playbackSpeedRefRW;
 
-        readonly RefRW<TweenEasing> easingRefRW;
-        readonly RefRW<TweenInvertMode> invertModeRefRW;
-        readonly RefRW<TweenId> idRefRW;
-    
+        readonly RefRO<TweenParameterEase> easeRefRO;
+        readonly RefRW<TweenParameterCustomEasingCurve> customEasingCurveRefRW;
+
+        readonly RefRO<TweenParameterAutoPlay> autoPlayFlagRefRO;
+        readonly RefRO<TweenParameterAutoKill> autoKillFlagRefRO;
+        readonly RefRO<TweenParameterIgnoreTimeScale> ignoreTimeScaleFlagRefRO;
+        readonly RefRO<TweenParameterIsRelative> isRelativeFlagRefRO;
+        readonly RefRW<TweenParameterInvertMode> invertModeRefRW;
+
         readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
         readonly RefRW<TweenCallbackFlags> callbackFlagsRefRW;
-
-        readonly RefRO<TweenAutoPlayFlag> autoPlayFlagRefRO;
-        readonly RefRO<TweenAutoKillFlag> autoKillFlagRefRO;
-
-        readonly RefRO<TweenIgnoreTimeScaleFlag> ignoreTimeScaleFlagRefRO;
-        readonly RefRO<TweenIsRelativeFlag> isRelativeFlagRefRO;
 
         public float position
         {
@@ -69,63 +71,31 @@ namespace MagicTween.Core
             set => progressRefRW.ValueRW.value = value;
         }
 
-        public readonly float duration
-        {
-            get => clipRefRW.ValueRO.duration;
-        }
+        public readonly float duration => durationRefRO.ValueRO.value;
+        public readonly float delay => delayRefRW.ValueRO.value;
+        public readonly int loops => loopsRefRW.ValueRO.value;
+        public readonly LoopType loopType => loopTypeRefRW.ValueRO.value;
+        public readonly float playbackSpeed => playbackSpeedRefRW.ValueRO.value;
 
-        public float delay
-        {
-            get => clipRefRW.ValueRO.delay;
-            set => clipRefRW.ValueRW.delay = value;
-        }
+        public readonly bool autoPlay => autoPlayFlagRefRO.ValueRO.value;
+        public readonly bool autoKill => autoKillFlagRefRO.ValueRO.value;
 
-        public int loops
-        {
-            get => clipRefRW.ValueRO.loops;
-            set => clipRefRW.ValueRW.loops = value;
-        }
+        public readonly InvertMode invertMode => invertModeRefRW.ValueRO.value;
 
-        public LoopType loopType
-        {
-            get => clipRefRW.ValueRO.loopType;
-            set => clipRefRW.ValueRW.loopType = value;
-        }
-
-        public float playbackSpeed
-        {
-            get => playbackSpeedRefRW.ValueRO.value;
-            set => playbackSpeedRefRW.ValueRW.value = value;
-        }
-
-        public bool autoPlay => autoPlayFlagRefRO.ValueRO.value;
-        public bool autoKill => autoKillFlagRefRO.ValueRO.value;
-
-        public InvertMode invertMode
-        {
-            get => invertModeRefRW.ValueRO.value;
-            set => invertModeRefRW.ValueRW.value = value;
-        }
-
-        public bool isRelative => isRelativeFlagRefRO.ValueRO.value;
-        public bool ignoreTimeScale => ignoreTimeScaleFlagRefRO.ValueRO.value;
-
-        public int id
-        {
-            get => idRefRW.ValueRO.id;
-            set => idRefRW.ValueRW.id = value;
-        }
-
-        public FixedString32Bytes idString
-        {
-            get => idRefRW.ValueRO.idString;
-            set => idRefRW.ValueRW.idString = value;
-        }
+        public readonly bool isRelative => isRelativeFlagRefRO.ValueRO.value;
+        public readonly bool ignoreTimeScale => ignoreTimeScaleFlagRefRO.ValueRO.value;
 
         public CallbackFlags callbackFlags
         {
             get => callbackFlagsRefRW.ValueRO.flags;
             set => callbackFlagsRefRW.ValueRW.flags = value;
+        }
+
+        [BurstCompile]
+        public float GetEasedValue(float t)
+        {
+            if (easeRefRO.ValueRO.value == Ease.Custom) return customEasingCurveRefRW.ValueRW.value.Evaluate(t);
+            return EaseUtility.Evaluate(t, easeRefRO.ValueRO.value);
         }
 
         [BurstCompile]
@@ -137,9 +107,9 @@ namespace MagicTween.Core
         public void Kill(ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             status = TweenStatusType.Killed;
-            if (easingRefRW.ValueRW.customCurve.IsCreated)
+            if (customEasingCurveRefRW.ValueRW.value.IsCreated)
             {
-                easingRefRW.ValueRW.customCurve.Dispose();
+                customEasingCurveRefRW.ValueRW.value.Dispose();
             }
             callbackFlags |= CallbackFlags.OnKill;
             parallelWriter.Enqueue(entity);
@@ -232,15 +202,15 @@ namespace MagicTween.Core
             switch (aspect.loopType)
             {
                 case LoopType.Restart:
-                    aspect.progress = aspect.easingRefRW.ValueRO.GetEasedValue(currentProgress);
+                    aspect.progress = aspect.GetEasedValue(currentProgress);
                     break;
                 case LoopType.Yoyo:
-                    aspect.progress = aspect.easingRefRW.ValueRO.GetEasedValue(currentProgress);
+                    aspect.progress = aspect.GetEasedValue(currentProgress);
                     if ((clampedCompletedLoops + (int)currentProgress) % 2 == 1) aspect.progress = 1f - aspect.progress;
                     break;
                 case LoopType.Incremental:
-                    aspect.progress = aspect.easingRefRW.ValueRO.GetEasedValue(1f) * clampedCompletedLoops +
-                        aspect.easingRefRW.ValueRO.GetEasedValue(math.fmod(currentProgress, 1f));
+                    aspect.progress = aspect.GetEasedValue(1f) * clampedCompletedLoops +
+                        aspect.GetEasedValue(math.fmod(currentProgress, 1f));
                     break;
             }
 

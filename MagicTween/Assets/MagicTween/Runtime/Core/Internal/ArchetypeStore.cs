@@ -30,11 +30,19 @@ namespace MagicTween.Core
                 typeof(TweenCompletedLoops),
                 typeof(TweenProgress),
 
-                typeof(TweenClip),
-                typeof(TweenPlaybackSpeed),
+                typeof(TweenParameterDuration),
+                typeof(TweenParameterDelay),
+                typeof(TweenParameterLoops),
+                typeof(TweenParameterLoopType),
+                typeof(TweenParameterPlaybackSpeed),
+                typeof(TweenParameterEase),
+                typeof(TweenParameterCustomEasingCurve),
+                typeof(TweenParameterAutoPlay),
+                typeof(TweenParameterAutoKill),
+                typeof(TweenParameterIgnoreTimeScale),
+                typeof(TweenParameterIsRelative),
+                typeof(TweenParameterInvertMode),
 
-                typeof(TweenEasing),
-                typeof(TweenInvertMode),
                 typeof(TweenId),
 
                 typeof(TweenInvertFlag),
@@ -42,13 +50,7 @@ namespace MagicTween.Core
                 typeof(TweenCallbackFlags),
                 typeof(TweenAccessorFlag),
 
-                typeof(TweenAutoPlayFlag),
-                typeof(TweenAutoKillFlag),
-                typeof(TweenIgnoreTimeScaleFlag),
-                typeof(TweenIsRelativeFlag),
-
                 typeof(TweenControllerReference),
-
                 typeof(TweenRootFlag),
             }, Allocator.Persistent);
             cache.Clear();

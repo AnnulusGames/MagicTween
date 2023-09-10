@@ -37,7 +37,7 @@ namespace MagicTween.Experimental
         internal bool autoKill;
         internal bool ignoreTimeScale;
         internal bool isRelative;
-        internal InvertMode fromMode;
+        internal InvertMode invertMode;
         internal int customId;
         internal FixedString32Bytes customIdString;
 

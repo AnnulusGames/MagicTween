@@ -368,28 +368,16 @@ namespace MagicTween.Core
             {
                 status = TweenStatusType.WaitingForStart
             };
-            var clip = new TweenClip()
-            {
-                duration = duration,
-                loops = 1,
-                loopType = MagicTweenSettings.defaultLoopType
-            };
-            var playbackSpeed = new TweenPlaybackSpeed()
-            {
-                value = 1f
-            };
-            var easing = new TweenEasing()
-            {
-                ease = MagicTweenSettings.defaultEase
-            };
-
-            entityManager.SetComponentData(entity, new TweenAutoPlayFlag(MagicTweenSettings.defaultAutoPlay));
-            entityManager.SetComponentData(entity, new TweenAutoKillFlag(MagicTweenSettings.defaultAutoKill));
-            entityManager.SetComponentData(entity, new TweenIgnoreTimeScaleFlag(MagicTweenSettings.defaultIgnoreTimeScale));
             entityManager.SetComponentData(entity, state);
-            entityManager.SetComponentData(entity, clip);
-            entityManager.SetComponentData(entity, playbackSpeed);
-            entityManager.SetComponentData(entity, easing);
+
+            entityManager.SetComponentData(entity, new TweenParameterAutoPlay(MagicTweenSettings.defaultAutoPlay));
+            entityManager.SetComponentData(entity, new TweenParameterAutoKill(MagicTweenSettings.defaultAutoKill));
+            entityManager.SetComponentData(entity, new TweenParameterIgnoreTimeScale(MagicTweenSettings.defaultIgnoreTimeScale));
+            entityManager.SetComponentData(entity, new TweenParameterEase(MagicTweenSettings.defaultEase));
+            entityManager.SetComponentData(entity, new TweenParameterDuration(duration));
+            entityManager.SetComponentData(entity, new TweenParameterLoops(1));
+            entityManager.SetComponentData(entity, new TweenParameterLoopType(MagicTweenSettings.defaultLoopType));
+            entityManager.SetComponentData(entity, new TweenParameterPlaybackSpeed(1f));
         }
 
         static void InitializeLambdaTweenComponents<TValue, TPlugin>(

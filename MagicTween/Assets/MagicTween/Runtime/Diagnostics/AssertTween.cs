@@ -48,9 +48,9 @@ namespace MagicTween.Diagnostics
         }
 
         [Conditional("UNITY_ASSERTIONS")]
-        public static void SequenceItemIsCompletable(float duration)
+        public static void SequenceItemIsCompletable<T>(in T item) where T : struct, ITweenHandle
         {
-            Assert.IsTrue(duration >= 0f, Error_CannotAddNonCompletableTween);
+            Assert.IsTrue(TweenStatusExtensions.GetDuration(item) >= 0f, Error_CannotAddNonCompletableTween);
         }
 
         [Conditional("UNITY_ASSERTIONS")]

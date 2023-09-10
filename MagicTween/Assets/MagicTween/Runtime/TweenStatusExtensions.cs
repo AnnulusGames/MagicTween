@@ -41,7 +41,7 @@ namespace MagicTween
         public static float GetPlaybackSpeed<T>(this T self) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            return TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(self.GetEntity()).value;
+            return TweenWorld.EntityManager.GetComponentData<TweenParameterPlaybackSpeed>(self.GetEntity()).value;
         }
 
         public static float GetDuration<T>(this T self) where T : struct, ITweenHandle
