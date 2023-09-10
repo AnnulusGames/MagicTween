@@ -115,6 +115,7 @@ namespace MagicTween.Core
         public void Kill(ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             status = TweenStatusType.Killed;
+            accessorFlags = AccessorFlags.None;
             if (customEasingCurveRefRW.ValueRW.value.IsCreated)
             {
                 customEasingCurveRefRW.ValueRW.value.Dispose();
