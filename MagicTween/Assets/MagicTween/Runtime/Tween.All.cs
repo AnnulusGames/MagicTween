@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 namespace MagicTween
 {
@@ -10,7 +11,6 @@ namespace MagicTween
         {
             return TweenWorld.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<TweenControllerReference>(),
-                ComponentType.ReadOnly<TweenId>(),
                 ComponentType.ReadOnly<TweenRootFlag>()
             );
         }
@@ -31,11 +31,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdInt>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].id != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Play(entities[i]);
             }
@@ -45,11 +45,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Kill(entities[i]);
             }
@@ -60,11 +60,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Kill(entities[i]);
             }
@@ -86,11 +86,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdInt>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].id != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Restart(entities[i]);
             }
@@ -100,11 +100,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Restart(entities[i]);
             }
@@ -115,11 +115,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Restart(entities[i]);
             }
@@ -141,11 +141,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdInt>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].id != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Pause(entities[i]);
             }
@@ -155,11 +155,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Pause(entities[i]);
             }
@@ -169,11 +169,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Pause(entities[i]);
             }
@@ -195,11 +195,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdInt>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].id != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Complete(entities[i]);
             }
@@ -209,11 +209,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Complete(entities[i]);
             }
@@ -223,11 +223,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Complete(entities[i]);
             }
@@ -249,11 +249,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdInt>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].id != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Kill(entities[i]);
             }
@@ -263,11 +263,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Kill(entities[i]);
             }
@@ -277,11 +277,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.Kill(entities[i]);
             }
@@ -303,11 +303,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdInt>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].id != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.CompleteAndKill(entities[i]);
             }
@@ -316,11 +316,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.CompleteAndKill(entities[i]);
             }
@@ -330,11 +330,11 @@ namespace MagicTween
         {
             var query = CreateAllTweenEntityQuery();
             using var entities = query.ToEntityArray(Allocator.Temp);
-            using var idArray = query.ToComponentDataArray<TweenId>(Allocator.Temp);
+            using var idArray = query.ToComponentDataArray<TweenIdString>(Allocator.Temp);
             using var refArray = query.ToComponentDataArray<TweenControllerReference>(Allocator.Temp);
             for (int i = 0; i < refArray.Length; i++)
             {
-                if (idArray[i].idString != id) continue;
+                if (idArray[i].value != id) continue;
                 var handle = TweenControllerContainer.FindControllerById(refArray[i].controllerId);
                 handle?.CompleteAndKill(entities[i]);
             }
@@ -343,7 +343,7 @@ namespace MagicTween
         public static void Clear()
         {
             var query = TweenWorld.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<TweenId>()
+                ComponentType.ReadOnly<TweenIdInt>()
             );
             TweenWorld.EntityManager.DestroyEntity(query);
             TweenWorld.World.GetExistingSystemManaged<TweenCleanupSystem>().ClearQueue();

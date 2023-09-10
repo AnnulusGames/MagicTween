@@ -90,7 +90,7 @@ namespace MagicTween.Experimental.Core
         public TweenParamsBuilder SetFrom(InvertMode fromMode = InvertMode.Immediate)
         {
             CheckBuilderPtr();
-            paramsPtr->fromMode = fromMode;
+            paramsPtr->invertMode = fromMode;
             return this;
         }
 

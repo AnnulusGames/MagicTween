@@ -1,6 +1,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -37,9 +38,9 @@ namespace MagicTween.Core
         [BurstCompile]
         protected override void OnDestroy()
         {
-            foreach (var easing in SystemAPI.Query<RefRW<TweenEasing>>())
+            foreach (var easing in SystemAPI.Query<RefRW<TweenParameterCustomEasingCurve>>())
             {
-                if (easing.ValueRW.customCurve.IsCreated) easing.ValueRW.customCurve.Dispose();
+                if (easing.ValueRW.value.IsCreated) easing.ValueRW.value.Dispose();
             }
         }
 

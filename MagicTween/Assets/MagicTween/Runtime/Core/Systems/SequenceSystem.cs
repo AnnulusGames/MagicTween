@@ -1,6 +1,8 @@
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -47,15 +49,13 @@ namespace MagicTween.Core
         [BurstCompile]
         partial struct SystemJob : IJobEntity
         {
-            [NativeDisableParallelForRestriction] public TweenAspect.Lookup tweenAspectLookUp;
-            [NativeDisableParallelForRestriction] public BufferLookup<SequenceEntitiesGroup> bufferLookup;
+            [NativeDisableContainerSafetyRestriction] public TweenAspect.Lookup tweenAspectLookUp;
+            [NativeDisableContainerSafetyRestriction] public BufferLookup<SequenceEntitiesGroup> bufferLookup;
             [WriteOnly] public NativeQueue<Entity>.ParallelWriter parallelWriter;
             [ReadOnly] public EntityStorageInfoLookup storageInfoLookup;
 
-            public void Execute(in Entity entity)
+            public void Execute(TweenAspect aspect, ref DynamicBuffer<SequenceEntitiesGroup> buffer)
             {
-                var aspect = tweenAspectLookUp[entity];
-                var buffer = bufferLookup[entity];
                 Update(aspect.status, ref aspect, ref buffer);
             }
 

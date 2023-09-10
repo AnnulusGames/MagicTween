@@ -1,4 +1,5 @@
 using Unity.Entities;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -52,7 +53,7 @@ namespace MagicTween.Core
 
         public void Restart(in Entity entity)
         {
-            if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).started)
+            if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 Play(entity);
                 return;

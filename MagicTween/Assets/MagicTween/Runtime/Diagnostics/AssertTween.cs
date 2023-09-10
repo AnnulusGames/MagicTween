@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Unity.Entities;
 using Unity.Assertions;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Diagnostics
 {
@@ -42,14 +43,14 @@ namespace MagicTween.Diagnostics
         [Conditional("UNITY_ASSERTIONS")]
         public static void SequenceItemIsNotStarted<T>(in T item) where T : struct, ITweenHandle
         {
-            var started = TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(item.GetEntity()).started;
+            var started = TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(item.GetEntity()).value;
             Assert.IsFalse(started, Error_CannotAddPlayingTween);
         }
 
         [Conditional("UNITY_ASSERTIONS")]
-        public static void SequenceItemIsCompletable(float duration)
+        public static void SequenceItemIsCompletable<T>(in T item) where T : struct, ITweenHandle
         {
-            Assert.IsTrue(duration >= 0f, Error_CannotAddNonCompletableTween);
+            Assert.IsTrue(TweenStatusExtensions.GetDuration(item) >= 0f, Error_CannotAddNonCompletableTween);
         }
 
         [Conditional("UNITY_ASSERTIONS")]

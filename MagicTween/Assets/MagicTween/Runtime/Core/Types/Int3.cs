@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 [assembly: RegisterGenericComponentType(typeof(TweenValue<int3>))]
 [assembly: RegisterGenericComponentType(typeof(TweenStartValue<int3>))]

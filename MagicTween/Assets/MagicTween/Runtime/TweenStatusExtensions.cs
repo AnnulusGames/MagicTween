@@ -1,5 +1,6 @@
 using Unity.Entities;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween
@@ -17,7 +18,7 @@ namespace MagicTween
             if (entity == Entity.Null) return false;
             if (!TweenWorld.EntityManager.Exists(entity)) return false;
             var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
-            return status.status != TweenStatusType.Killed;
+            return status.value != TweenStatusType.Killed;
         }
 
         public static bool IsPlaying<T>(this T self) where T : struct, ITweenHandle
@@ -26,7 +27,7 @@ namespace MagicTween
             if (entity == Entity.Null) return false;
             if (!TweenWorld.EntityManager.Exists(entity)) return false;
             var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
-            return status.status is TweenStatusType.Delayed or TweenStatusType.Playing;
+            return status.value is TweenStatusType.Delayed or TweenStatusType.Playing;
         }
 
         public static bool IsRoot<T>(this T self) where T : struct, ITweenHandle
@@ -40,7 +41,7 @@ namespace MagicTween
         public static float GetPlaybackSpeed<T>(this T self) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            return TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(self.GetEntity()).speed;
+            return TweenWorld.EntityManager.GetComponentData<TweenParameterPlaybackSpeed>(self.GetEntity()).value;
         }
 
         public static float GetDuration<T>(this T self) where T : struct, ITweenHandle

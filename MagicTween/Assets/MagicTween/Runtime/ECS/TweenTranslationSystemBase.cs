@@ -3,6 +3,7 @@ using Unity.Burst.Intrinsics;
 using Unity.Entities;
 using Unity.Collections;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 namespace MagicTween
 {
@@ -16,7 +17,7 @@ namespace MagicTween
         ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
         ComponentTypeHandle<TTranslator> translatorTypeHandle;
         ComponentTypeHandle<TweenTranslationOptionsData> optionsTypeHandle;
-        ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+        ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentLookup<TComponent> targetComponentLookup;
         EntityTypeHandle entityTypeHandle;
         EntityStorageInfoLookup entityLookup;
@@ -30,7 +31,7 @@ namespace MagicTween
             valueTypeHandle = GetComponentTypeHandle<TweenValue<TValue>>(true);
             translatorTypeHandle = GetComponentTypeHandle<TTranslator>();
             optionsTypeHandle = GetComponentTypeHandle<TweenTranslationOptionsData>(true);
-            callbackFlagsTypeHandle = GetComponentTypeHandle<TweenCallbackFlags>(true);
+            accessorFlagsTypeHandle = GetComponentTypeHandle<TweenAccessorFlags>(true);
             targetComponentLookup = GetComponentLookup<TComponent>();
             entityTypeHandle = GetEntityTypeHandle();
             entityLookup = GetEntityStorageInfoLookup();
@@ -39,7 +40,7 @@ namespace MagicTween
                 typeof(TTranslator),
                 typeof(TweenStartValue<TValue>),
                 typeof(TweenValue<TValue>),
-                typeof(TweenCallbackFlags),
+                typeof(TweenAccessorFlags),
                 typeof(TweenTranslationOptionsData)
             );
             commandBufferSystem = World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>();
@@ -53,7 +54,7 @@ namespace MagicTween
             valueTypeHandle.Update(this);
             translatorTypeHandle.Update(this);
             optionsTypeHandle.Update(this);
-            callbackFlagsTypeHandle.Update(this);
+            accessorFlagsTypeHandle.Update(this);
             targetComponentLookup.Update(this);
             entityTypeHandle.Update(this);
             entityLookup.Update(this);
@@ -64,7 +65,7 @@ namespace MagicTween
                 valueTypeHandle = valueTypeHandle,
                 translatorTypeHandle = translatorTypeHandle,
                 optionsTypeHandle = optionsTypeHandle,
-                callbackFlagsTypeHandle = callbackFlagsTypeHandle,
+                accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 targetComponentLookup = targetComponentLookup,
                 entityTypeHandle = entityTypeHandle,
                 entityLookup = entityLookup,
@@ -81,7 +82,7 @@ namespace MagicTween
             [ReadOnly] public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
             public ComponentTypeHandle<TTranslator> translatorTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenTranslationOptionsData> optionsTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             [NativeDisableParallelForRestriction] public ComponentLookup<TComponent> targetComponentLookup;
             [ReadOnly] public EntityTypeHandle entityTypeHandle;
             [ReadOnly] public EntityStorageInfoLookup entityLookup;
@@ -93,7 +94,7 @@ namespace MagicTween
                 var valueArrayPtr = chunk.GetComponentDataPtrRO(ref valueTypeHandle);
                 var commandComponentPtr = chunk.GetComponentDataPtrRW(ref translatorTypeHandle);
                 var optionsArrayPtr = chunk.GetComponentDataPtrRO(ref optionsTypeHandle);
-                var callbackFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref callbackFlagsTypeHandle);
+                var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var entitiesPtr = chunk.GetEntityDataPtrRO(entityTypeHandle);
 
                 for (int i = 0; i < chunk.Count; i++)
@@ -104,12 +105,12 @@ namespace MagicTween
 
                     ref var target = ref targetComponentLookup.GetRefRW(targetEntity).ValueRW;
 
-                    if ((optionsArrayPtr + i)->options == TweenTranslationOptions.To &&
-                        ((callbackFlagsArrayPtr + i)->flags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+                    if ((optionsArrayPtr + i)->value == TweenTranslationOptions.To &&
+                        ((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                     {
                         (startValueArrayPtr + i)->value = translator.GetValue(ref target);
                     }
-                    else if (((callbackFlagsArrayPtr + i)->flags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+                    else if (((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                     {
                         var value = (valueArrayPtr + i)->value;
                         translator.Apply(ref target, value);

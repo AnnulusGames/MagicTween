@@ -1,88 +1,134 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Components
 {
     public readonly struct TweenRootFlag : IComponentData, IEnableableComponent { }
 
-    public struct TweenInverted : IComponentData
+    public struct TweenInvertFlag : IComponentData
     {
-        public bool inverted;
-    }
-
-    public struct TweenStatus : IComponentData
-    {
-        public TweenStatusType status;
-    }
-
-    public struct TweenPosition : IComponentData
-    {
-        public float position;
-        public int completedLoops;
-    }
-
-    public struct TweenProgress : IComponentData
-    {
-        public float progress;
-    }
-
-    public struct TweenClip : IComponentData
-    {
-        public float duration;
-        public float delay;
-
-        public int loops;
-        public LoopType loopType;
-    }
-
-    public struct TweenPlaybackSpeed : IComponentData
-    {
-        public float speed;
-    }
-
-    public struct TweenPlaySettings : IComponentData
-    {
-        public bool autoPlay;
-        public bool autoKill;
-    }
-
-    public struct TweenParameters : IComponentData
-    {
-        public InvertMode invertMode;
-        public bool isRelative;
-        public bool ignoreTimeScale;
-    }
-
-    [BurstCompile]
-    public struct TweenEasing : IComponentData
-    {
-        public Ease ease;
-        public ValueAnimationCurve customCurve;
-
-        [BurstCompile]
-        public readonly float GetEasedValue(in float t)
-        {
-            return ease == Ease.Custom ?
-                customCurve.Evaluate(t) :
-                EaseUtility.Evaluate(t, ease);
-        }
-    }
-
-    public struct TweenId : IComponentData
-    {
-        public int id;
-        public FixedString32Bytes idString;
+        public TweenInvertFlag(bool value) => this.value = value;
+        public bool value;
     }
 
     public struct TweenStartedFlag : IComponentData
     {
-        public bool started;
+        public TweenStartedFlag(bool value) => this.value = value;
+        public bool value;
     }
 
-    public struct TweenAccessorFlag : IComponentData
+    public struct TweenStatus : IComponentData
     {
-        public TweenAccessorFlagType value;
+        public TweenStatusType value;
+    }
+
+    public struct TweenPosition : IComponentData
+    {
+        public TweenPosition(float value) => this.value = value;
+        public float value;
+    }
+
+    public struct TweenCompletedLoops : IComponentData
+    {
+        public TweenCompletedLoops(int value) => this.value = value;
+        public int value;
+    }
+
+    public struct TweenProgress : IComponentData
+    {
+        public float value;
+    }
+
+    public readonly struct TweenParameterDuration : IComponentData
+    {
+        public TweenParameterDuration(float value) => this.value = value;
+        public readonly float value;
+    }
+
+    public readonly struct TweenParameterDelay : IComponentData
+    {
+        public TweenParameterDelay(float value) => this.value = value;
+        public readonly float value;
+    }
+
+    public readonly struct TweenParameterLoops : IComponentData
+    {
+        public TweenParameterLoops(int value) => this.value = value;
+        public readonly int value;
+    }
+
+    public readonly struct TweenParameterLoopType : IComponentData
+    {
+        public TweenParameterLoopType(LoopType value) => this.value = value;
+        public readonly LoopType value;
+    }
+
+    public readonly struct TweenParameterPlaybackSpeed : IComponentData
+    {
+        public TweenParameterPlaybackSpeed(float value) => this.value = value;
+        public readonly float value;
+    }
+
+    public readonly struct TweenParameterAutoPlay : IComponentData
+    {
+        public TweenParameterAutoPlay(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+    public readonly struct TweenParameterAutoKill : IComponentData
+    {
+        public TweenParameterAutoKill(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+    public readonly struct TweenParameterIgnoreTimeScale : IComponentData
+    {
+        public TweenParameterIgnoreTimeScale(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+    public readonly struct TweenParameterIsRelative : IComponentData
+    {
+        public TweenParameterIsRelative(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+    public readonly struct TweenParameterInvertMode : IComponentData
+    {
+        public TweenParameterInvertMode(InvertMode value) => this.value = value;
+        public readonly InvertMode value;
+    }
+
+    public readonly struct TweenParameterEase : IComponentData
+    {
+        public TweenParameterEase(Ease value) => this.value = value;
+        public readonly Ease value;
+    }
+
+    public struct TweenParameterCustomEasingCurve : IComponentData
+    {
+        public TweenParameterCustomEasingCurve(ValueAnimationCurve value) => this.value = value;
+        public ValueAnimationCurve value;
+    }
+
+    public readonly struct TweenIdInt : IComponentData
+    {
+        public TweenIdInt(int value) => this.value = value;
+        public readonly int value;
+    }
+
+    public readonly struct TweenIdString : IComponentData
+    {
+        public TweenIdString(string value) => this.value = value;
+        public TweenIdString(in FixedString32Bytes value) => this.value = value;
+        public readonly FixedString32Bytes value;
+    }
+
+    public struct TweenAccessorFlags : IComponentData
+    {
+        public AccessorFlags flags;
     }
 
     public struct TweenCallbackFlags : IComponentData
@@ -90,15 +136,17 @@ namespace MagicTween.Core
         public CallbackFlags flags;
     }
 
-    public struct TweenControllerReference : IComponentData
+    public readonly struct TweenControllerReference : IComponentData
     {
-        public short controllerId;
+        public TweenControllerReference(short controllerId) => this.controllerId = controllerId;
+        public readonly short controllerId;
     }
 
-    public enum TweenAccessorFlagType : byte
+    [Flags]
+    public enum AccessorFlags : byte
     {
-        None,
-        Getter,
-        Setter
+        None = 0,
+        Getter = 1,
+        Setter = 2
     }
 }

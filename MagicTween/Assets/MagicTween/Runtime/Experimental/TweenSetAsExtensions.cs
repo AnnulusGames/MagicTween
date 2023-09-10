@@ -1,6 +1,7 @@
 using Unity.Collections;
 using MagicTween.Core;
 using MagicTween.Diagnostics;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Experimental
 {
@@ -10,44 +11,31 @@ namespace MagicTween.Experimental
         {
             AssertTween.IsActive(self);
 
-            var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(self.GetEntity());
-            easing.ease = tweenParams.ease;
-            if (easing.customCurve.IsCreated) easing.customCurve.Dispose();
+            var entity = self.GetEntity();
+
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterEase(tweenParams.ease));
             if (tweenParams.ease == Ease.Custom)
             {
-                easing.customCurve = new ValueAnimationCurve(tweenParams.customEasingCurve, Allocator.Persistent);
+                var customEasingCurve = TweenWorld.EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                if (customEasingCurve.IsCreated) customEasingCurve.Dispose();
+                customEasingCurve = new ValueAnimationCurve(tweenParams.customEasingCurve, Allocator.Persistent);
+                TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterCustomEasingCurve(customEasingCurve));
             }
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), easing);
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(self.GetEntity());
-            clip.delay = tweenParams.delay;
-            clip.loops = tweenParams.loops;
-            clip.loopType = tweenParams.loopType;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), clip);
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterDelay(tweenParams.delay));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterLoops(tweenParams.loops));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterLoopType(tweenParams.loopType));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterPlaybackSpeed(tweenParams.playbackSpeed));
 
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenPlaybackSpeed()
-            {
-                speed = tweenParams.playbackSpeed
-            });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterInvertMode(tweenParams.invertMode));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterIgnoreTimeScale(tweenParams.ignoreTimeScale));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterIsRelative(tweenParams.isRelative));
 
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenParameters()
-            {
-                invertMode = tweenParams.fromMode,
-                isRelative = tweenParams.isRelative,
-                ignoreTimeScale = tweenParams.ignoreTimeScale
-            });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterAutoPlay(tweenParams.autoPlay));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterAutoKill(tweenParams.autoKill));
 
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenPlaySettings()
-            {
-                autoKill = tweenParams.autoKill,
-                autoPlay = tweenParams.autoPlay
-            });
-
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenId()
-            {
-                id = tweenParams.customId,
-                idString = tweenParams.customIdString
-            });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenIdInt(tweenParams.customId));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenIdString(tweenParams.customIdString));
 
             return self;
         }

@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Collections;
-using UnityEngine;
-using System.Collections.Generic;
-using System;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -25,21 +25,34 @@ namespace MagicTween.Core
         {
             coreComponentTypes = new NativeArray<ComponentType>(new ComponentType[]
             {
-                typeof(TweenInverted),
                 typeof(TweenStatus),
                 typeof(TweenPosition),
+                typeof(TweenCompletedLoops),
                 typeof(TweenProgress),
-                typeof(TweenClip),
-                typeof(TweenPlaybackSpeed),
-                typeof(TweenPlaySettings),
-                typeof(TweenEasing),
-                typeof(TweenParameters),
-                typeof(TweenId),
+
+                typeof(TweenParameterDuration),
+                typeof(TweenParameterDelay),
+                typeof(TweenParameterLoops),
+                typeof(TweenParameterLoopType),
+                typeof(TweenParameterPlaybackSpeed),
+                typeof(TweenParameterEase),
+                typeof(TweenParameterCustomEasingCurve),
+                typeof(TweenParameterAutoPlay),
+                typeof(TweenParameterAutoKill),
+                typeof(TweenParameterIgnoreTimeScale),
+                typeof(TweenParameterIsRelative),
+                typeof(TweenParameterInvertMode),
+
+                typeof(TweenIdInt),
+                typeof(TweenIdString),
+
+                typeof(TweenInvertFlag),
                 typeof(TweenStartedFlag),
                 typeof(TweenCallbackFlags),
+                typeof(TweenAccessorFlags),
+
                 typeof(TweenControllerReference),
                 typeof(TweenRootFlag),
-                typeof(TweenAccessorFlag)
             }, Allocator.Persistent);
             cache.Clear();
         }

@@ -1,6 +1,5 @@
 using UnityEntity = Unity.Entities.Entity;
 using MagicTween.Core;
-using System;
 
 namespace MagicTween
 {

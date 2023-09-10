@@ -2,10 +2,13 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Collections;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween.Core
 {
+    using static TweenWorld;
+
     [BurstCompile]
     internal unsafe static class SequenceHelper
     {
@@ -16,42 +19,37 @@ namespace MagicTween.Core
             AssertTween.IsRoot(tween);
             AssertTween.SequenceItemIsNotEqualsItSelf(sequence, tween);
             AssertTween.SequenceItemIsNotStarted(tween);
-
-            var childEntity = tween.GetEntity();
-            var childClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(childEntity);
-            var childPlaySettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(childEntity);
-            var childSpeed = TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(childEntity);
-            var childDuration = TweenHelper.GetDuration(childClip, childSpeed);
-
-            AssertTween.SequenceItemIsCompletable(childDuration);
+            AssertTween.SequenceItemIsCompletable(tween);
 
             var entity = sequence.GetEntity();
-            var sequenceState = TweenWorld.EntityManager.GetComponentData<SequenceState>(entity);
-            var sequenceClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceState = EntityManager.GetComponentData<SequenceState>(entity);
+            var sequenceDuration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+            var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
 
-            AdjustChildParameters(childEntity, ref childPlaySettings, ref childSpeed, ref childClip);
-            childDuration = TweenHelper.GetDuration(childClip, childSpeed);
+            AdjustChildParameters(tween.GetEntity(), out var resolvedChildDuration);
+            var childLoops = EntityManager.GetComponentData<TweenParameterLoops>(tween.GetEntity()).value;
+            var childDelay = EntityManager.GetComponentData<TweenParameterDelay>(tween.GetEntity()).value;
+            resolvedChildDuration = childLoops * resolvedChildDuration + childDelay;
 
             float offset;
             if (join)
             {
-                var p = sequenceClip.duration - sequenceState.lastTweenDuration;
+                var p = sequenceDuration - sequenceState.lastTweenDuration;
                 offset = p;
-                sequenceClip.duration = math.max(sequenceClip.duration, p + childDuration);
+                sequenceDuration = math.max(sequenceDuration, p + resolvedChildDuration);
             }
             else
             {
-                offset = sequenceClip.duration;
-                sequenceClip.duration += childDuration;
+                offset = sequenceDuration;
+                sequenceDuration += resolvedChildDuration;
             }
-            sequenceState.lastTweenDuration = math.max(sequenceState.lastTweenDuration, childDuration);
+            sequenceState.lastTweenDuration = math.max(sequenceState.lastTweenDuration, resolvedChildDuration);
 
-            sequenceBuffer.Add(new SequenceEntitiesGroup(childEntity, offset));
+            sequenceBuffer.Add(new SequenceEntitiesGroup(tween.GetEntity(), offset));
             sequenceBuffer.AsNativeArray().Sort();
 
-            SetChildComponentsAndLock(childEntity, ref childPlaySettings, ref childSpeed, ref childClip);
-            SetSequenceComponents(entity, ref sequenceState, ref sequenceClip);
+            LockChild(tween.GetEntity());
+            SetSequenceComponents(entity, sequenceState, sequenceDuration);
         }
 
         public static void Insert<T>(Sequence sequence, T tween, float position) where T : struct, ITweenHandle
@@ -61,28 +59,24 @@ namespace MagicTween.Core
             AssertTween.IsRoot(tween);
             AssertTween.SequenceItemIsNotEqualsItSelf(sequence, tween);
             AssertTween.SequenceItemIsNotStarted(tween);
-
-            var childEntity = tween.GetEntity();
-            var childClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(childEntity);
-            var childPlaySettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(childEntity);
-            var childSpeed = TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(childEntity);
-            var childDuration = TweenHelper.GetDuration(childClip, childSpeed);
-
-            AssertTween.SequenceItemIsCompletable(childDuration);
+            AssertTween.SequenceItemIsCompletable(tween);
 
             var entity = sequence.GetEntity();
-            var sequenceState = TweenWorld.EntityManager.GetComponentData<SequenceState>(entity);
-            var sequenceClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceState = EntityManager.GetComponentData<SequenceState>(entity);
+            var sequenceDuration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+            var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
 
-            AdjustChildParameters(childEntity, ref childPlaySettings, ref childSpeed, ref childClip);
-            sequenceClip.duration = math.max(sequenceClip.duration, position + childDuration);
+            AdjustChildParameters(tween.GetEntity(), out var resolvedChildDuration);
+            var childLoops = EntityManager.GetComponentData<TweenParameterLoops>(tween.GetEntity()).value;
+            var childDelay = EntityManager.GetComponentData<TweenParameterDelay>(tween.GetEntity()).value;
+            resolvedChildDuration = childLoops * resolvedChildDuration + childDelay;
+            sequenceDuration = math.max(sequenceDuration, position + resolvedChildDuration);
 
-            sequenceBuffer.Add(new SequenceEntitiesGroup(childEntity, position));
+            sequenceBuffer.Add(new SequenceEntitiesGroup(tween.GetEntity(), position));
             sequenceBuffer.AsNativeArray().Sort();
 
-            SetChildComponentsAndLock(childEntity, ref childPlaySettings, ref childSpeed, ref childClip);
-            SetSequenceComponents(entity, ref sequenceState, ref sequenceClip);
+            LockChild(tween.GetEntity());
+            SetSequenceComponents(entity, sequenceState, sequenceDuration);
         }
 
         public static void Prepend<T>(Sequence sequence, T tween) where T : struct, ITweenHandle
@@ -92,35 +86,30 @@ namespace MagicTween.Core
             AssertTween.IsRoot(tween);
             AssertTween.SequenceItemIsNotEqualsItSelf(sequence, tween);
             AssertTween.SequenceItemIsNotStarted(tween);
-
-            var childEntity = tween.GetEntity();
-            var childClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(childEntity);
-            var childPlaySettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(childEntity);
-            var childSpeed = TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(childEntity);
-            var childDuration = TweenHelper.GetDuration(childClip, childSpeed);
-
-            AssertTween.SequenceItemIsCompletable(childDuration);
+            AssertTween.SequenceItemIsCompletable(tween);
 
             var entity = sequence.GetEntity();
-            var sequenceState = TweenWorld.EntityManager.GetComponentData<SequenceState>(entity);
-            var sequenceClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceState = EntityManager.GetComponentData<SequenceState>(entity);
+            var sequenceDuration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+            var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
 
-            AdjustChildParameters(childEntity, ref childPlaySettings, ref childSpeed, ref childClip);
-            childDuration = TweenHelper.GetDuration(childClip, childSpeed);
+            AdjustChildParameters(tween.GetEntity(), out var resolvedChildDuration);
+            var childLoops = EntityManager.GetComponentData<TweenParameterLoops>(tween.GetEntity()).value;
+            var childDelay = EntityManager.GetComponentData<TweenParameterDelay>(tween.GetEntity()).value;
+            resolvedChildDuration = childLoops * resolvedChildDuration + childDelay;
 
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
-                ((SequenceEntitiesGroup*)sequenceBuffer.GetUnsafePtr() + i)->position += childDuration;
+                ((SequenceEntitiesGroup*)sequenceBuffer.GetUnsafePtr() + i)->position += resolvedChildDuration;
             }
 
-            sequenceClip.duration += childDuration;
+            sequenceDuration += resolvedChildDuration;
 
-            sequenceBuffer.Add(new SequenceEntitiesGroup(childEntity, 0f));
+            sequenceBuffer.Add(new SequenceEntitiesGroup(tween.GetEntity(), 0f));
             sequenceBuffer.AsNativeArray().Sort();
 
-            SetChildComponentsAndLock(childEntity, ref childPlaySettings, ref childSpeed, ref childClip);
-            SetSequenceComponents(entity, ref sequenceState, ref sequenceClip);
+            LockChild(tween.GetEntity());
+            SetSequenceComponents(entity, sequenceState, sequenceDuration);
         }
 
         public static void AppendInterval(Sequence sequence, float interval)
@@ -129,14 +118,13 @@ namespace MagicTween.Core
             AssertTween.SequenceIntervalIsHigherThanZero(interval);
 
             var entity = sequence.GetEntity();
-            var sequenceState = TweenWorld.EntityManager.GetComponentData<SequenceState>(entity);
-            var sequenceClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
+            var sequenceState = EntityManager.GetComponentData<SequenceState>(entity);
+            var sequenceDuration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
-            sequenceClip.duration += interval;
+            sequenceDuration += interval;
             sequenceState.lastTweenDuration = interval;
-            sequenceClip.duration = math.max(sequenceClip.duration, sequenceClip.duration);
 
-            SetSequenceComponents(entity, ref sequenceState, ref sequenceClip);
+            SetSequenceComponents(entity, sequenceState, sequenceDuration);
         }
 
         public static void PrependInterval(Sequence sequence, float interval)
@@ -145,63 +133,62 @@ namespace MagicTween.Core
             AssertTween.SequenceIntervalIsHigherThanZero(interval);
 
             var entity = sequence.GetEntity();
-            var sequenceState = TweenWorld.EntityManager.GetComponentData<SequenceState>(entity);
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
-            var sequenceClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
+            var sequenceState = EntityManager.GetComponentData<SequenceState>(entity);
+            var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceDuration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 ((SequenceEntitiesGroup*)sequenceBuffer.GetUnsafePtr() + i)->position += interval;
             }
+            sequenceDuration += interval;
 
-            sequenceClip.duration += interval;
-
-            SetSequenceComponents(entity, ref sequenceState, ref sequenceClip);
+            SetSequenceComponents(entity, sequenceState, sequenceDuration);
         }
 
-        static void AdjustChildParameters(in Entity entity, ref TweenPlaySettings playSettings, ref TweenPlaybackSpeed speed, ref TweenClip clip)
+        static void AdjustChildParameters(in Entity entity, out float resolvedDuration)
         {
-            playSettings.autoPlay = true;
-            playSettings.autoKill = false;
-            AdjustChildParametersCore(entity, speed.speed, ref clip);
-            speed.speed = 1;
+            var speed = EntityManager.GetComponentData<TweenParameterPlaybackSpeed>(entity).value;
+            AdjustChildParametersCore(entity, speed, out resolvedDuration);
+            EntityManager.SetComponentData(entity, new TweenParameterPlaybackSpeed(1f));
         }
 
-        static void AdjustChildParametersCore(in Entity entity, float speed, ref TweenClip clip)
+        static void AdjustChildParametersCore(in Entity entity, in float speed, out float resolvedDuration)
         {
-            clip.duration /= speed;
-            clip.delay /= speed;
+            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
+            var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
 
-            if (TweenWorld.EntityManager.HasBuffer<SequenceEntitiesGroup>(entity))
+            duration /= speed;
+            delay /= speed;
+
+            if (EntityManager.HasBuffer<SequenceEntitiesGroup>(entity))
             {
-                var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+                var sequenceBuffer = EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
                 for (int i = 0; i < sequenceBuffer.Length; i++)
                 {
                     var ptr = (SequenceEntitiesGroup*)sequenceBuffer.GetUnsafePtr() + i;
-
-                    var childClip = TweenWorld.EntityManager.GetComponentData<TweenClip>(ptr->entity);
-                    var childSpeed = TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(ptr->entity);
-                    AdjustChildParametersCore(ptr->entity, speed, ref childClip);
-                    TweenWorld.EntityManager.SetComponentData(ptr->entity, childClip);
-                    TweenWorld.EntityManager.SetComponentData(ptr->entity, childSpeed);
-
+                    AdjustChildParametersCore(ptr->entity, speed, out var d);
                     ptr->position /= speed;
                 }
             }
+
+            EntityManager.SetComponentData(entity, new TweenParameterDuration(duration));
+            EntityManager.SetComponentData(entity, new TweenParameterDelay(delay));
+
+            resolvedDuration = duration;
         }
 
-        static void SetChildComponentsAndLock(in Entity entity, ref TweenPlaySettings playSettings, ref TweenPlaybackSpeed speed, ref TweenClip clip)
+        static void LockChild(in Entity entity)
         {
-            TweenWorld.EntityManager.SetComponentData(entity, playSettings);
-            TweenWorld.EntityManager.SetComponentData(entity, speed);
-            TweenWorld.EntityManager.SetComponentData(entity, clip);
-            TweenWorld.EntityManager.SetComponentEnabled<TweenRootFlag>(entity, false);
+            EntityManager.SetComponentData(entity, new TweenParameterAutoPlay(true));
+            EntityManager.SetComponentData(entity, new TweenParameterAutoKill(false));
+            EntityManager.SetComponentEnabled<TweenRootFlag>(entity, false);
         }
 
-        static void SetSequenceComponents(in Entity entity, ref SequenceState sequenceState, ref TweenClip clip)
+        static void SetSequenceComponents(in Entity entity, in SequenceState sequenceState, in float duration)
         {
-            TweenWorld.EntityManager.SetComponentData(entity, clip);
-            TweenWorld.EntityManager.SetComponentData(entity, sequenceState);
+            EntityManager.SetComponentData(entity, new TweenParameterDuration(duration));
+            EntityManager.SetComponentData(entity, sequenceState);
         }
     }
 }

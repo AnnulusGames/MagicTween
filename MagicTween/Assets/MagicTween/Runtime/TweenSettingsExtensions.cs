@@ -4,24 +4,24 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using Unity.Assertions;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween
 {
+    using static TweenWorld;
+
     public static class TweenSettingsExtensions
     {
         const string Error_AnimationCurveKeyframes = "The number of keyframe in Animation Curve must be 2 or more.";
         const string Error_DelayMustBeZeroOrHigher = "Delay must be 0 or higher";
+        const string Error_EaseCustom = "Ease.Custom cannot be specified explicitly. If you want to specify a custom easing curve, use SetEase(AnimationCurve) instead.";
 
         public static T SetEase<T>(this T self, Ease ease) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(self.GetEntity());
-            easing.ease = ease;
-            if (easing.customCurve.IsCreated) easing.customCurve.Dispose();
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), easing);
-
+            Assert.IsFalse(ease == Ease.Custom, Error_EaseCustom);
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterEase(ease));
             return self;
         }
 
@@ -30,11 +30,11 @@ namespace MagicTween
             AssertTween.IsActive(self);
             Assert.IsTrue(animationCurve.keys.Length > 2, Error_AnimationCurveKeyframes);
 
-            var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(self.GetEntity());
-            easing.ease = Ease.Custom;
-            if (easing.customCurve.IsCreated) easing.customCurve.Dispose();
-            easing.customCurve = new ValueAnimationCurve(animationCurve, Allocator.Persistent);
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), easing);
+            var curve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(self.GetEntity());
+            if (curve.value.IsCreated) curve.value.Dispose();
+            curve.value = new ValueAnimationCurve(animationCurve, Allocator.Persistent);
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterEase(Ease.Custom));
+            EntityManager.SetComponentData(self.GetEntity(), curve);
 
             return self;
         }
@@ -43,130 +43,85 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             Assert.IsTrue(delay >= 0f, Error_DelayMustBeZeroOrHigher);
-
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(self.GetEntity());
-            clip.delay = delay;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), clip);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterDelay(delay));
             return self;
         }
 
         public static T SetLoops<T>(this T self, int loops) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(self.GetEntity());
-            clip.loops = loops;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), clip);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterLoops(loops));
             return self;
         }
 
         public static T SetLoops<T>(this T self, int loops, LoopType loopType) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(self.GetEntity());
-            clip.loops = loops;
-            clip.loopType = loopType;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), clip);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterLoops(loops));
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterLoopType(loopType));
             return self;
         }
 
         public static T SetPlaybackSpeed<T>(this T self, float playbackSpeed) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenPlaybackSpeed() { speed = playbackSpeed });
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterPlaybackSpeed(playbackSpeed));
             return self;
         }
 
         public static T SetIgnoreTimeScale<T>(this T self, bool ignoreTimeScale = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(self.GetEntity());
-            parameters.ignoreTimeScale = ignoreTimeScale;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterIgnoreTimeScale(ignoreTimeScale));
             return self;
         }
 
         public static T SetRelative<T>(this T self, bool relative = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(self.GetEntity());
-            parameters.isRelative = relative;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterIsRelative(relative));
             return self;
         }
 
         public static T SetInvert<T>(this T self, InvertMode invertMode = InvertMode.Immediate) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(self.GetEntity());
-            parameters.invertMode = invertMode;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenParameterInvertMode(invertMode));
             return self;
         }
 
         public static T SetAutoKill<T>(this T self, bool autoKill = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var playSettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(self.GetEntity());
-            playSettings.autoKill = autoKill;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), playSettings);
-
+            EntityManager.SetComponentData<TweenParameterAutoKill>(self.GetEntity(), new(autoKill));
             return self;
         }
 
         public static T SetAutoPlay<T>(this T self, bool autoPlay = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var playSettings = TweenWorld.EntityManager.GetComponentData<TweenPlaySettings>(self.GetEntity());
-            playSettings.autoPlay = autoPlay;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), playSettings);
-
+            EntityManager.SetComponentData<TweenParameterAutoPlay>(self.GetEntity(), new(autoPlay));
             return self;
         }
 
         public static T SetId<T>(this T self, int id) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var tweenId = TweenWorld.EntityManager.GetComponentData<TweenId>(self.GetEntity());
-            tweenId.id = id;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), tweenId);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenIdInt(id));
             return self;
         }
 
         public static T SetId<T>(this T self, string id) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var tweenId = TweenWorld.EntityManager.GetComponentData<TweenId>(self.GetEntity());
-            tweenId.idString = new FixedString32Bytes(id);
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), tweenId);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenIdString(id));
             return self;
         }
 
         public static T SetId<T>(this T self, in FixedString32Bytes id) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var tweenId = TweenWorld.EntityManager.GetComponentData<TweenId>(self.GetEntity());
-            tweenId.idString = id;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), tweenId);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenIdString(id));
             return self;
         }
 
@@ -195,7 +150,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<IntegerTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<IntegerTweenOptions>()
             {
                 options = new IntegerTweenOptions() { roundingMode = roundingMode }
             });
@@ -207,9 +162,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
+            var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
             options.options.richTextEnabled = richTextEnabled;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), options);
+            EntityManager.SetComponentData(self.GetEntity(), options);
 
             return self;
         }
@@ -225,9 +180,9 @@ namespace MagicTween
                 return self;
             }
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
+            var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
             options.options.scrambleMode = scrambleMode;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), options);
+            EntityManager.SetComponentData(self.GetEntity(), options);
 
             return self;
         }
@@ -241,11 +196,11 @@ namespace MagicTween
                 return self;
             }
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
+            var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
             options.options.scrambleMode = ScrambleMode.Custom;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), options);
+            EntityManager.SetComponentData(self.GetEntity(), options);
 
-            var component = TweenWorld.EntityManager.GetComponentData<StringTweenCustomScrambleChars>(self.GetEntity());
+            var component = EntityManager.GetComponentData<StringTweenCustomScrambleChars>(self.GetEntity());
             if (component.customChars.IsCreated)
             {
                 component.customChars.CopyFrom(customScrambleChars);
@@ -255,7 +210,7 @@ namespace MagicTween
                 component.customChars = new UnsafeText(System.Text.Encoding.UTF8.GetByteCount(customScrambleChars), Allocator.Persistent);
                 component.customChars.CopyFrom(customScrambleChars);
             }
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), component);
+            EntityManager.SetComponentData(self.GetEntity(), component);
 
             return self;
         }
@@ -264,9 +219,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).options;
             options.pathType = pathType;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PathTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PathTweenOptions>()
             {
                 options = options
             });
@@ -278,9 +233,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).options;
             options.isClosed = closed ? (byte)1 : (byte)0;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PathTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PathTweenOptions>()
             {
                 options = options
             });
@@ -293,9 +248,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).options;
             options.frequency = frequency;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PunchTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PunchTweenOptions>()
             {
                 options = options
             });
@@ -308,9 +263,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).options;
             options.dampingRatio = dampingRatio;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PunchTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PunchTweenOptions>()
             {
                 options = options
             });
@@ -323,9 +278,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
             options.frequency = frequency;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
             {
                 options = options
             });
@@ -338,9 +293,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
             options.dampingRatio = dampingRatio;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
             {
                 options = options
             });
@@ -353,9 +308,9 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
             options.randomSeed = seed;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
             {
                 options = options
             });

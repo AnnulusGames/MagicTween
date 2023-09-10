@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -10,129 +11,98 @@ namespace MagicTween.Core
     {
         public readonly Entity entity;
         readonly RefRW<TweenStatus> statusRefRW;
+
         readonly RefRW<TweenPosition> positionRefRW;
+        readonly RefRW<TweenCompletedLoops> completedLoopsRefRW;
         readonly RefRW<TweenProgress> progressRefRW;
-        readonly RefRW<TweenClip> clipRefRW;
-        readonly RefRW<TweenPlaybackSpeed> playbackSpeedRefRW;
-        readonly RefRW<TweenPlaySettings> playSettingsRefRW;
-        readonly RefRW<TweenEasing> easingRefRW;
-        readonly RefRW<TweenParameters> parametersRefRW;
-        readonly RefRW<TweenId> idRefRW;
-        readonly RefRW<TweenInverted> fromEnabledRefRW;
+
+        readonly RefRO<TweenParameterDuration> durationRefRO;
+        readonly RefRO<TweenParameterDelay> delayRefRW;
+        readonly RefRO<TweenParameterLoops> loopsRefRW;
+        readonly RefRO<TweenParameterLoopType> loopTypeRefRW;
+        readonly RefRO<TweenParameterPlaybackSpeed> playbackSpeedRefRW;
+
+        readonly RefRO<TweenParameterEase> easeRefRO;
+        readonly RefRW<TweenParameterCustomEasingCurve> customEasingCurveRefRW;
+
+        readonly RefRO<TweenParameterAutoPlay> autoPlayFlagRefRO;
+        readonly RefRO<TweenParameterAutoKill> autoKillFlagRefRO;
+        readonly RefRO<TweenParameterIgnoreTimeScale> ignoreTimeScaleFlagRefRO;
+        readonly RefRO<TweenParameterIsRelative> isRelativeFlagRefRO;
+        readonly RefRW<TweenParameterInvertMode> invertModeRefRW;
+
+        readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
         readonly RefRW<TweenCallbackFlags> callbackFlagsRefRW;
+        readonly RefRW<TweenAccessorFlags> accessorFlagsRefRW;
 
         public float position
         {
-            get => positionRefRW.ValueRO.position;
-            set => positionRefRW.ValueRW.position = value;
+            get => positionRefRW.ValueRO.value;
+            set => positionRefRW.ValueRW.value = value;
         }
 
         public int completedLoops
         {
-            get => positionRefRW.ValueRO.completedLoops;
-            set => positionRefRW.ValueRW.completedLoops = value;
+            get => completedLoopsRefRW.ValueRO.value;
+            set => completedLoopsRefRW.ValueRW.value = value;
         }
 
         public bool started
         {
-            get => flagsRefRW.ValueRO.started;
-            set => flagsRefRW.ValueRW.started = value;
+            get => flagsRefRW.ValueRO.value;
+            set => flagsRefRW.ValueRW.value = value;
         }
 
         public bool inverted
         {
-            get => fromEnabledRefRW.ValueRO.inverted;
-            set => fromEnabledRefRW.ValueRW.inverted = value;
+            get => invertedFlagRefRW.ValueRO.value;
+            set => invertedFlagRefRW.ValueRW.value = value;
         }
 
         public TweenStatusType status
         {
-            get => statusRefRW.ValueRO.status;
-            set => statusRefRW.ValueRW.status = value;
+            get => statusRefRW.ValueRO.value;
+            set => statusRefRW.ValueRW.value = value;
         }
 
         public float progress
         {
-            get => progressRefRW.ValueRO.progress;
-            set => progressRefRW.ValueRW.progress = value;
+            get => progressRefRW.ValueRO.value;
+            set => progressRefRW.ValueRW.value = value;
         }
 
-        public readonly float duration
-        {
-            get => clipRefRW.ValueRO.duration;
-        }
+        public readonly float duration => durationRefRO.ValueRO.value;
+        public readonly float delay => delayRefRW.ValueRO.value;
+        public readonly int loops => loopsRefRW.ValueRO.value;
+        public readonly LoopType loopType => loopTypeRefRW.ValueRO.value;
+        public readonly float playbackSpeed => playbackSpeedRefRW.ValueRO.value;
 
-        public float delay
-        {
-            get => clipRefRW.ValueRO.delay;
-            set => clipRefRW.ValueRW.delay = value;
-        }
+        public readonly bool autoPlay => autoPlayFlagRefRO.ValueRO.value;
+        public readonly bool autoKill => autoKillFlagRefRO.ValueRO.value;
 
-        public int loops
-        {
-            get => clipRefRW.ValueRO.loops;
-            set => clipRefRW.ValueRW.loops = value;
-        }
+        public readonly InvertMode invertMode => invertModeRefRW.ValueRO.value;
 
-        public LoopType loopType
-        {
-            get => clipRefRW.ValueRO.loopType;
-            set => clipRefRW.ValueRW.loopType = value;
-        }
-
-        public float playbackSpeed
-        {
-            get => playbackSpeedRefRW.ValueRO.speed;
-            set => playbackSpeedRefRW.ValueRW.speed = value;
-        }
-
-        public bool autoPlay
-        {
-            get => playSettingsRefRW.ValueRO.autoPlay;
-            set => playSettingsRefRW.ValueRW.autoPlay = value;
-        }
-
-        public bool autoKill
-        {
-            get => playSettingsRefRW.ValueRO.autoKill;
-            set => playSettingsRefRW.ValueRW.autoKill = value;
-        }
-
-        public InvertMode fromMode
-        {
-            get => parametersRefRW.ValueRO.invertMode;
-            set => parametersRefRW.ValueRW.invertMode = value;
-        }
-
-        public bool isRelative
-        {
-            get => parametersRefRW.ValueRO.isRelative;
-            set => parametersRefRW.ValueRW.isRelative = value;
-        }
-
-        public bool ignoreTimeScale
-        {
-            get => parametersRefRW.ValueRO.ignoreTimeScale;
-            set => parametersRefRW.ValueRW.ignoreTimeScale = value;
-        }
-
-        public int id
-        {
-            get => idRefRW.ValueRO.id;
-            set => idRefRW.ValueRW.id = value;
-        }
-
-        public FixedString32Bytes idString
-        {
-            get => idRefRW.ValueRO.idString;
-            set => idRefRW.ValueRW.idString = value;
-        }
+        public readonly bool isRelative => isRelativeFlagRefRO.ValueRO.value;
+        public readonly bool ignoreTimeScale => ignoreTimeScaleFlagRefRO.ValueRO.value;
 
         public CallbackFlags callbackFlags
         {
             get => callbackFlagsRefRW.ValueRO.flags;
             set => callbackFlagsRefRW.ValueRW.flags = value;
+        }
+
+        public AccessorFlags accessorFlags
+        {
+            get => accessorFlagsRefRW.ValueRO.flags;
+            set => accessorFlagsRefRW.ValueRW.flags = value;
+        }
+
+        [BurstCompile]
+        public float GetEasedValue(float t)
+        {
+            if (easeRefRO.ValueRO.value == Ease.Custom) return customEasingCurveRefRW.ValueRW.value.Evaluate(t);
+            return EaseUtility.Evaluate(t, easeRefRO.ValueRO.value);
         }
 
         [BurstCompile]
@@ -141,12 +111,14 @@ namespace MagicTween.Core
             UpdateCore(this, currentPosition, ref parallelWriter);
         }
 
+        [BurstCompile]
         public void Kill(ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             status = TweenStatusType.Killed;
-            if (easingRefRW.ValueRW.customCurve.IsCreated)
+            accessorFlags = AccessorFlags.None;
+            if (customEasingCurveRefRW.ValueRW.value.IsCreated)
             {
-                easingRefRW.ValueRW.customCurve.Dispose();
+                customEasingCurveRefRW.ValueRW.value.Dispose();
             }
             callbackFlags |= CallbackFlags.OnKill;
             parallelWriter.Enqueue(entity);
@@ -156,6 +128,7 @@ namespace MagicTween.Core
         static void UpdateCore(in TweenAspect aspect, float currentPosition, ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             aspect.callbackFlags = CallbackFlags.None;
+            aspect.accessorFlags = AccessorFlags.None;
 
             switch (aspect.status)
             {
@@ -187,6 +160,11 @@ namespace MagicTween.Core
 
             if (aspect.status is not (TweenStatusType.Playing or TweenStatusType.Delayed or TweenStatusType.RewindCompleted or TweenStatusType.Completed)) return;
 
+            // cache parameters  -----------------------------------------------------------------------
+
+            int loops = aspect.loops;
+            float duration = aspect.duration;
+
             // get current progress  -------------------------------------------------------------------
 
             float currentTime = currentPosition - aspect.delay;
@@ -198,27 +176,27 @@ namespace MagicTween.Core
 
             bool isCompleted;
 
-            if (aspect.duration == 0f)
+            if (duration == 0f)
             {
                 isCompleted = currentTime > 0f;
 
                 if (isCompleted)
                 {
                     currentProgress = 1f;
-                    currentCompletedLoops = aspect.loops;
+                    currentCompletedLoops = loops;
                 }
                 else
                 {
                     currentProgress = 0f;
                     currentCompletedLoops = currentTime < 0f ? -1 : 0;
                 }
-                clampedCompletedLoops = aspect.loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, aspect.loops);
+                clampedCompletedLoops = loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, loops);
             }
             else
             {
                 currentCompletedLoops = (int)math.floor(currentTime / aspect.duration);
-                clampedCompletedLoops = aspect.loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, aspect.loops);
-                isCompleted = aspect.loops >= 0 && clampedCompletedLoops > aspect.loops - 1;
+                clampedCompletedLoops = loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, loops);
+                isCompleted = loops >= 0 && clampedCompletedLoops > loops - 1;
 
                 if (isCompleted)
                 {
@@ -226,8 +204,8 @@ namespace MagicTween.Core
                 }
                 else
                 {
-                    float currentLoopTime = currentTime - aspect.duration * clampedCompletedLoops;
-                    currentProgress = math.clamp(currentLoopTime / aspect.duration, 0f, 1f);
+                    float currentLoopTime = currentTime - duration * clampedCompletedLoops;
+                    currentProgress = math.clamp(currentLoopTime / duration, 0f, 1f);
                 }
             }
 
@@ -239,15 +217,14 @@ namespace MagicTween.Core
             switch (aspect.loopType)
             {
                 case LoopType.Restart:
-                    aspect.progress = aspect.easingRefRW.ValueRO.GetEasedValue(currentProgress);
+                    aspect.progress = aspect.GetEasedValue(currentProgress);
                     break;
                 case LoopType.Yoyo:
-                    aspect.progress = aspect.easingRefRW.ValueRO.GetEasedValue(currentProgress);
+                    aspect.progress = aspect.GetEasedValue(currentProgress);
                     if ((clampedCompletedLoops + (int)currentProgress) % 2 == 1) aspect.progress = 1f - aspect.progress;
                     break;
                 case LoopType.Incremental:
-                    aspect.progress = aspect.easingRefRW.ValueRO.GetEasedValue(1f) * clampedCompletedLoops +
-                        aspect.easingRefRW.ValueRO.GetEasedValue(math.fmod(currentProgress, 1f));
+                    aspect.progress = aspect.GetEasedValue(1f) * clampedCompletedLoops + aspect.GetEasedValue(math.fmod(currentProgress, 1f));
                     break;
             }
 
@@ -300,9 +277,20 @@ namespace MagicTween.Core
                 }
             }
 
+            // set accessor flags ----------------------------------------------------------------------
+
+            if ((aspect.callbackFlags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+            {
+                aspect.accessorFlags |= AccessorFlags.Getter;
+            }
+            if ((aspect.callbackFlags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+            {
+                aspect.accessorFlags |= AccessorFlags.Setter;
+            }
+
             // set from  -------------------------------------------------------------------------------
 
-            switch (aspect.fromMode)
+            switch (aspect.invertMode)
             {
                 case InvertMode.None:
                     aspect.inverted = false;
