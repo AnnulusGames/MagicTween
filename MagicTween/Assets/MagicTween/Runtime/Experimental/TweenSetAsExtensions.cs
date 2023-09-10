@@ -30,12 +30,12 @@ namespace MagicTween.Experimental
 
             TweenWorld.EntityManager.SetComponentData(entity, new TweenPlaybackSpeed()
             {
-                speed = tweenParams.playbackSpeed
+                value = tweenParams.playbackSpeed
             });
 
             TweenWorld.EntityManager.SetComponentData(entity, new TweenInvertMode()
             {
-                invertMode = tweenParams.fromMode,
+                value = tweenParams.fromMode,
             });
             TweenWorld.EntityManager.SetComponentData(entity, new TweenIgnoreTimeScaleFlag(tweenParams.ignoreTimeScale));
             TweenWorld.EntityManager.SetComponentData(entity, new TweenIsRelativeFlag(tweenParams.isRelative));

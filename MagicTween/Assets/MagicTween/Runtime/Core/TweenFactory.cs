@@ -376,7 +376,7 @@ namespace MagicTween.Core
             };
             var playbackSpeed = new TweenPlaybackSpeed()
             {
-                speed = 1f
+                value = 1f
             };
             var easing = new TweenEasing()
             {

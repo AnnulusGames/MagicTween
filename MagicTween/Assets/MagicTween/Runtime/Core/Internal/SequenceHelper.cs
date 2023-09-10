@@ -159,8 +159,8 @@ namespace MagicTween.Core
 
         static void AdjustChildParameters(in Entity entity, ref TweenPlaybackSpeed speed, ref TweenClip clip)
         {
-            AdjustChildParametersCore(entity, speed.speed, ref clip);
-            speed.speed = 1;
+            AdjustChildParametersCore(entity, speed.value, ref clip);
+            speed.value = 1;
         }
 
         static void AdjustChildParametersCore(in Entity entity, float speed, ref TweenClip clip)

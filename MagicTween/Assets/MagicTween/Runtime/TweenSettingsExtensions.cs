@@ -78,7 +78,7 @@ namespace MagicTween
         public static T SetPlaybackSpeed<T>(this T self, float playbackSpeed) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenPlaybackSpeed() { speed = playbackSpeed });
+            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenPlaybackSpeed() { value = playbackSpeed });
             return self;
         }
 
@@ -101,7 +101,7 @@ namespace MagicTween
             AssertTween.IsActive(self);
 
             var parameters = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(self.GetEntity());
-            parameters.invertMode = invertMode;
+            parameters.value = invertMode;
             TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
 
             return self;

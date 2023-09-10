@@ -16,8 +16,8 @@ namespace MagicTween.Core
         public static float GetDuration(in TweenClip clip, TweenPlaybackSpeed playbackSpeed)
         {
             if (clip.loops < 0) return -1f;
-            if (playbackSpeed.speed == 0) return -1f;
-            return (clip.delay + clip.duration * clip.loops) / playbackSpeed.speed;
+            if (playbackSpeed.value == 0) return -1f;
+            return (clip.delay + clip.duration * clip.loops) / playbackSpeed.value;
         }
 
         public static bool TryPlay(in Entity entity, out bool started)
@@ -109,7 +109,7 @@ namespace MagicTween.Core
             var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
 
             var plugin = default(TPlugin);
-            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).invertMode;
+            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).value;
             var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
             var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
 
@@ -178,7 +178,7 @@ namespace MagicTween.Core
             position.completedLoops = clip.loops;
 
             var plugin = default(TPlugin);
-            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).invertMode;
+            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).value;
             var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
             var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
 

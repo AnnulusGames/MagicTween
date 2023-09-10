@@ -67,12 +67,12 @@ namespace MagicTween.Core.Components
 
     public struct TweenPlaybackSpeed : IComponentData
     {
-        public float speed;
+        public float value;
     }
 
     public struct TweenInvertMode : IComponentData
     {
-        public InvertMode invertMode;
+        public InvertMode value;
     }
 
     [BurstCompile]

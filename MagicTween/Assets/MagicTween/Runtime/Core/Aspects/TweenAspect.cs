@@ -89,8 +89,8 @@ namespace MagicTween.Core
 
         public float playbackSpeed
         {
-            get => playbackSpeedRefRW.ValueRO.speed;
-            set => playbackSpeedRefRW.ValueRW.speed = value;
+            get => playbackSpeedRefRW.ValueRO.value;
+            set => playbackSpeedRefRW.ValueRW.value = value;
         }
 
         public bool autoPlay => autoPlayFlagRefRO.ValueRO.value;
@@ -98,8 +98,8 @@ namespace MagicTween.Core
 
         public InvertMode fromMode
         {
-            get => invertModeRefRW.ValueRO.invertMode;
-            set => invertModeRefRW.ValueRW.invertMode = value;
+            get => invertModeRefRW.ValueRO.value;
+            set => invertModeRefRW.ValueRW.value = value;
         }
 
         public bool isRelative => isRelativeFlagRefRO.ValueRO.value;
