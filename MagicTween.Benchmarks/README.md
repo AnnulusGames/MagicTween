@@ -89,7 +89,7 @@ The StartUp item is the result of measuring the time it takes to create the twee
 
 ### Tween 50,000 Transform.position
 
-<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/banchmark_50000_transform.png" width="800">
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_50000_transform.png" width="800">
 
 |  | Time |
 | - | - |
