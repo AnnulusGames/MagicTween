@@ -99,7 +99,7 @@ namespace MagicTween.Core
         public bool autoPlay => autoPlayFlagRefRO.ValueRO.value;
         public bool autoKill => autoKillFlagRefRO.ValueRO.value;
 
-        public InvertMode fromMode
+        public InvertMode invertMode
         {
             get => invertModeRefRW.ValueRO.value;
             set => invertModeRefRW.ValueRW.value = value;
@@ -293,7 +293,7 @@ namespace MagicTween.Core
 
             // set from  -------------------------------------------------------------------------------
 
-            switch (aspect.fromMode)
+            switch (aspect.invertMode)
             {
                 case InvertMode.None:
                     aspect.inverted = false;
