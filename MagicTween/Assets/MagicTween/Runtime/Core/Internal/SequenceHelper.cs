@@ -188,7 +188,7 @@ namespace MagicTween.Core
 
         static void SetChildComponentsAndLock(in Entity entity, ref TweenPlaybackSpeed speed, ref TweenClip clip)
         {
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenAutoPlayFlag(false));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenAutoPlayFlag(true));
             TweenWorld.EntityManager.SetComponentData(entity, new TweenAutoKillFlag(false));
             TweenWorld.EntityManager.SetComponentData(entity, speed);
             TweenWorld.EntityManager.SetComponentData(entity, clip);
