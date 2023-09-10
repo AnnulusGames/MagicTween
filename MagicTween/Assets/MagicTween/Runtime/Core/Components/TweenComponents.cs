@@ -21,7 +21,7 @@ namespace MagicTween.Core.Components
 
     public struct TweenStatus : IComponentData
     {
-        public TweenStatusType status;
+        public TweenStatusType value;
     }
 
     public struct TweenPosition : IComponentData

@@ -18,7 +18,7 @@ namespace MagicTween
             if (entity == Entity.Null) return false;
             if (!TweenWorld.EntityManager.Exists(entity)) return false;
             var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
-            return status.status != TweenStatusType.Killed;
+            return status.value != TweenStatusType.Killed;
         }
 
         public static bool IsPlaying<T>(this T self) where T : struct, ITweenHandle
@@ -27,7 +27,7 @@ namespace MagicTween
             if (entity == Entity.Null) return false;
             if (!TweenWorld.EntityManager.Exists(entity)) return false;
             var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
-            return status.status is TweenStatusType.Delayed or TweenStatusType.Playing;
+            return status.value is TweenStatusType.Delayed or TweenStatusType.Playing;
         }
 
         public static bool IsRoot<T>(this T self) where T : struct, ITweenHandle

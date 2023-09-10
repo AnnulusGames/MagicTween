@@ -62,8 +62,8 @@ namespace MagicTween.Core
 
         public TweenStatusType status
         {
-            get => statusRefRW.ValueRO.status;
-            set => statusRefRW.ValueRW.status = value;
+            get => statusRefRW.ValueRO.value;
+            set => statusRefRW.ValueRW.value = value;
         }
 
         public float progress

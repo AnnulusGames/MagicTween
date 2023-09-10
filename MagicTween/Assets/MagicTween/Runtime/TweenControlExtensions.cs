@@ -56,7 +56,7 @@ namespace MagicTween
 
             var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(self.GetEntity());
 
-            if (status.status == TweenStatusType.Paused)
+            if (status.value == TweenStatusType.Paused)
             {
                 GetController(ref self).Play(self.GetEntity());
             }

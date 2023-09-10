@@ -353,7 +353,7 @@ namespace MagicTween.Core
         {
             var state = new TweenStatus()
             {
-                status = TweenStatusType.WaitingForStart
+                value = TweenStatusType.WaitingForStart
             };
             EntityManager.SetComponentData(entity, state);
 

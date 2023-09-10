@@ -27,7 +27,7 @@ namespace MagicTween.Core
         public static bool TryPlay(in Entity entity, out bool started)
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is not (TweenStatusType.WaitingForStart or TweenStatusType.Paused))
+            if (status.value is not (TweenStatusType.WaitingForStart or TweenStatusType.Paused))
             {
                 started = false;
                 return false;
@@ -40,12 +40,12 @@ namespace MagicTween.Core
             if (time < 0f)
             {
                 started = false;
-                status.status = TweenStatusType.Delayed;
+                status.value = TweenStatusType.Delayed;
             }
             else
             {
-                started = status.status == TweenStatusType.WaitingForStart;
-                status.status = TweenStatusType.Playing;
+                started = status.value == TweenStatusType.WaitingForStart;
+                status.value = TweenStatusType.Playing;
                 EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
             }
 
@@ -56,9 +56,9 @@ namespace MagicTween.Core
         public static bool TryPause(in Entity entity)
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is not (TweenStatusType.Delayed or TweenStatusType.Playing)) return false;
+            if (status.value is not (TweenStatusType.Delayed or TweenStatusType.Playing)) return false;
 
-            status.status = TweenStatusType.Paused;
+            status.value = TweenStatusType.Paused;
             EntityManager.SetComponentData(entity, status);
             return true;
         }
@@ -66,9 +66,9 @@ namespace MagicTween.Core
         public static bool TryKill(in Entity entity)
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
 
-            status.status = TweenStatusType.Killed;
+            status.value = TweenStatusType.Killed;
             EntityManager.SetComponentData(entity, status);
             CleanupSystem.Enqueue(entity);
             return true;
@@ -77,7 +77,7 @@ namespace MagicTween.Core
         public static bool TryComplete(in Entity entity)
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
 
             var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
             if (loops < 0) return false;
@@ -85,7 +85,7 @@ namespace MagicTween.Core
             var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
             var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
-            status.status = TweenStatusType.Completed;
+            status.value = TweenStatusType.Completed;
 
             EntityManager.SetComponentData(entity, status);
             EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
@@ -99,7 +99,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed)
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed)
             {
                 currentValue = default;
                 return false;
@@ -121,7 +121,7 @@ namespace MagicTween.Core
             var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
             var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
 
-            status.status = TweenStatusType.Completed;
+            status.value = TweenStatusType.Completed;
 
             if (ease == Ease.Custom)
             {
@@ -153,7 +153,7 @@ namespace MagicTween.Core
         public static bool TryCompleteAndKill(in Entity entity)
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
 
             var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
             if (loops < 0) return false;
@@ -161,7 +161,7 @@ namespace MagicTween.Core
             var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
             var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
-            status.status = TweenStatusType.Killed;
+            status.value = TweenStatusType.Killed;
 
             EntityManager.SetComponentData(entity, status);
             EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
@@ -178,7 +178,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed)
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed)
             {
                 currentValue = default;
                 return false;
@@ -194,7 +194,7 @@ namespace MagicTween.Core
             var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
             var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
 
-            status.status = TweenStatusType.Killed;
+            status.value = TweenStatusType.Killed;
 
             var plugin = default(TPlugin);
             var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
@@ -235,10 +235,10 @@ namespace MagicTween.Core
         public static bool TryRestart(in Entity entity)
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
 
             var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
-            status.status = delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
+            status.value = delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
             EntityManager.SetComponentData(entity, status);
             EntityManager.SetComponentData(entity, new TweenPosition(0f));
@@ -251,7 +251,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
             var status = EntityManager.GetComponentData<TweenStatus>(entity);
-            if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed or TweenStatusType.WaitingForStart)
+            if (status.value is TweenStatusType.Invalid or TweenStatusType.Killed or TweenStatusType.WaitingForStart)
             {
                 currentValue = default;
                 return false;
@@ -260,7 +260,7 @@ namespace MagicTween.Core
             var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
             var delay = EntityManager.GetComponentData<TweenParameterDelay>(entity).value;
 
-            status.status = delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
+            status.value = delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
             var plugin = default(TPlugin);
             var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
