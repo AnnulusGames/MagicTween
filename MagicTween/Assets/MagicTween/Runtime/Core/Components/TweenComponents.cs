@@ -32,11 +32,13 @@ namespace MagicTween.Core.Components
 
     public struct TweenInvertFlag : IComponentData
     {
+        public TweenInvertFlag(bool value) => this.value = value;
         public bool value;
     }
 
     public struct TweenStartedFlag : IComponentData
     {
+        public TweenStartedFlag(bool value) => this.value = value;
         public bool value;
     }
 
@@ -47,13 +49,19 @@ namespace MagicTween.Core.Components
 
     public struct TweenPosition : IComponentData
     {
-        public float position;
-        public int completedLoops;
+        public TweenPosition(float value) => this.value = value;
+        public float value;
+    }
+
+    public struct TweenCompletedLoops : IComponentData
+    {
+        public TweenCompletedLoops(int value) => this.value = value;
+        public int value;
     }
 
     public struct TweenProgress : IComponentData
     {
-        public float progress;
+        public float value;
     }
 
     public struct TweenClip : IComponentData

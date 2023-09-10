@@ -28,6 +28,7 @@ namespace MagicTween.Core
                 typeof(TweenInvertFlag),
                 typeof(TweenStatus),
                 typeof(TweenPosition),
+                typeof(TweenCompletedLoops),
                 typeof(TweenProgress),
                 typeof(TweenClip),
                 typeof(TweenPlaybackSpeed),

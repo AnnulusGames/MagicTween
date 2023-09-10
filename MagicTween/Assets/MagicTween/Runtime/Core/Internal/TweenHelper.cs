@@ -4,12 +4,14 @@ using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
+    using static TweenWorld;
+
     internal static class TweenHelper
     {
         public static float GetDuration(in Entity entity)
         {
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var playbackSpeed = TweenWorld.EntityManager.GetComponentData<TweenPlaybackSpeed>(entity);
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
+            var playbackSpeed = EntityManager.GetComponentData<TweenPlaybackSpeed>(entity);
             return GetDuration(clip, playbackSpeed);
         }
 
@@ -22,16 +24,16 @@ namespace MagicTween.Core
 
         public static bool TryPlay(in Entity entity, out bool started)
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is not (TweenStatusType.WaitingForStart or TweenStatusType.Paused))
             {
                 started = false;
                 return false;
             }
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-            var time = position.position - clip.delay;
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
+            var position = EntityManager.GetComponentData<TweenPosition>(entity);
+            var time = position.value - clip.delay;
 
             if (time < 0f)
             {
@@ -42,50 +44,50 @@ namespace MagicTween.Core
             {
                 started = status.status == TweenStatusType.WaitingForStart;
                 status.status = TweenStatusType.Playing;
-                TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
+                EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
             }
 
-            TweenWorld.EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, status);
             return true;
         }
 
         public static bool TryPause(in Entity entity)
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is not (TweenStatusType.Delayed or TweenStatusType.Playing)) return false;
 
             status.status = TweenStatusType.Paused;
-            TweenWorld.EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, status);
             return true;
         }
 
         public static bool TryKill(in Entity entity)
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
 
             status.status = TweenStatusType.Killed;
-            TweenWorld.EntityManager.SetComponentData(entity, status);
-            TweenWorld.CleanupSystem.Enqueue(entity);
+            EntityManager.SetComponentData(entity, status);
+            CleanupSystem.Enqueue(entity);
             return true;
         }
 
         public static bool TryComplete(in Entity entity)
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
             if (clip.loops < 0) return false;
 
             status.status = TweenStatusType.Completed;
-            position.position = clip.duration * clip.loops + clip.delay;
-            position.completedLoops = clip.loops;
+            var position = clip.duration * clip.loops + clip.delay;
+            var completedLoops = clip.loops;
 
-            TweenWorld.EntityManager.SetComponentData(entity, status);
-            TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
+            EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, new TweenPosition(position));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
             return true;
         }
 
@@ -93,29 +95,28 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed)
             {
                 currentValue = default;
                 return false;
             }
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
             if (clip.loops < 0)
             {
                 currentValue = default;
                 return false;
             }
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
 
             var plugin = default(TPlugin);
-            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).value;
-            var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
-            var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
+            var invertMode = EntityManager.GetComponentData<TweenInvertMode>(entity).value;
+            var isRelative = EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
+            var easing = EntityManager.GetComponentData<TweenEasing>(entity);
 
             status.status = TweenStatusType.Completed;
-            position.position = clip.duration * clip.loops + clip.delay;
-            position.completedLoops = clip.loops;
+            var position = clip.duration * clip.loops + clip.delay;
+            var completedLoops = clip.loops;
 
             currentValue = plugin.Evaluate(
                 entity,
@@ -124,31 +125,31 @@ namespace MagicTween.Core
                 invertMode != InvertMode.None
             );
 
-            TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
+            EntityManager.SetComponentData(entity, new TweenPosition(position));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
 
             return true;
         }
 
         public static bool TryCompleteAndKill(in Entity entity)
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed) return false;
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
             if (clip.loops < 0) return false;
 
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-
             status.status = TweenStatusType.Killed;
-            position.position = clip.duration + clip.duration;
-            position.completedLoops = clip.loops;
+            var position = clip.duration + clip.duration;
+            var completedLoops = clip.loops;
 
-            TweenWorld.EntityManager.SetComponentData(entity, status);
-            TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
+            EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, new TweenPosition(position));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
 
-            TweenWorld.CleanupSystem.Enqueue(entity);
+            CleanupSystem.Enqueue(entity);
 
             return true;
         }
@@ -157,30 +158,28 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Completed or TweenStatusType.Killed)
             {
                 currentValue = default;
                 return false;
             }
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
             if (clip.loops < 0)
             {
                 currentValue = default;
                 return false;
             }
 
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-
             status.status = TweenStatusType.Killed;
-            position.position = clip.duration + clip.duration;
-            position.completedLoops = clip.loops;
+            var position = clip.duration + clip.duration;
+            var completedLoops = clip.loops;
 
             var plugin = default(TPlugin);
-            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).value;
-            var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
-            var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
+            var invertMode = EntityManager.GetComponentData<TweenInvertMode>(entity).value;
+            var isRelative = EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
+            var easing = EntityManager.GetComponentData<TweenEasing>(entity);
 
             currentValue = plugin.Evaluate(
                 entity,
@@ -189,29 +188,28 @@ namespace MagicTween.Core
                 invertMode != InvertMode.None
             );
 
-            TweenWorld.EntityManager.SetComponentData(entity, status);
-            TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
+            EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, new TweenPosition(position));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(completedLoops));
+            EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
 
-            TweenWorld.CleanupSystem.Enqueue(entity);
+            CleanupSystem.Enqueue(entity);
 
             return true;
         }
 
         public static bool TryRestart(in Entity entity)
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed) return false;
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
 
-            position.position = 0f;
-            position.completedLoops = 0;
             status.status = clip.delay > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
-            TweenWorld.EntityManager.SetComponentData(entity, status);
-            TweenWorld.EntityManager.SetComponentData(entity, position);
+            EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, new TweenPosition(0f));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(0));
             return true;
         }
 
@@ -219,24 +217,20 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            var status = EntityManager.GetComponentData<TweenStatus>(entity);
             if (status.status is TweenStatusType.Invalid or TweenStatusType.Killed or TweenStatusType.WaitingForStart)
             {
                 currentValue = default;
                 return false;
             }
 
-            var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
-            var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-
-            position.position = 0f;
-            position.completedLoops = 0;
+            var clip = EntityManager.GetComponentData<TweenClip>(entity);
             status.status = clip.duration > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
             var plugin = default(TPlugin);
-            var inverted = TweenWorld.EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
-            var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
-            var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
+            var inverted = EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
+            var isRelative = EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
+            var easing = EntityManager.GetComponentData<TweenEasing>(entity);
 
             currentValue = plugin.Evaluate(
                 entity,
@@ -245,8 +239,9 @@ namespace MagicTween.Core
                 inverted
             );
 
-            TweenWorld.EntityManager.SetComponentData(entity, status);
-            TweenWorld.EntityManager.SetComponentData(entity, position);
+            EntityManager.SetComponentData(entity, status);
+            EntityManager.SetComponentData(entity, new TweenPosition(0f));
+            EntityManager.SetComponentData(entity, new TweenCompletedLoops(0));
 
             return true;
         }
@@ -274,9 +269,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnComplete(in Entity entity)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = TweenWorld.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onStepComplete?.Invoke();
                 callbacks.onComplete?.Invoke();
             }
@@ -285,9 +280,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnKill(in Entity entity)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = TweenWorld.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onKill?.Invoke();
             }
         }
@@ -295,9 +290,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnCompleteAndOnKill(in Entity entity)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = TweenWorld.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onStepComplete?.Invoke();
                 callbacks.onComplete?.Invoke();
                 callbacks.onKill?.Invoke();
@@ -307,9 +302,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnStartAndOnPlay(in Entity entity, bool started)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = TweenWorld.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 if (started) callbacks.onStart?.Invoke();
                 callbacks.onPlay?.Invoke();
             }
@@ -318,9 +313,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnPause(in Entity entity)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = TweenWorld.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onPause?.Invoke();
             }
         }

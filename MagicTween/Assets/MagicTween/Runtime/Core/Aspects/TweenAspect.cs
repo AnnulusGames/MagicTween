@@ -11,8 +11,11 @@ namespace MagicTween.Core
     {
         public readonly Entity entity;
         readonly RefRW<TweenStatus> statusRefRW;
+
         readonly RefRW<TweenPosition> positionRefRW;
+        readonly RefRW<TweenCompletedLoops> completedLoopsRefRW;
         readonly RefRW<TweenProgress> progressRefRW;
+
         readonly RefRW<TweenClip> clipRefRW;
         readonly RefRW<TweenPlaybackSpeed> playbackSpeedRefRW;
         readonly RefRW<TweenEasing> easingRefRW;
@@ -30,14 +33,14 @@ namespace MagicTween.Core
 
         public float position
         {
-            get => positionRefRW.ValueRO.position;
-            set => positionRefRW.ValueRW.position = value;
+            get => positionRefRW.ValueRO.value;
+            set => positionRefRW.ValueRW.value = value;
         }
 
         public int completedLoops
         {
-            get => positionRefRW.ValueRO.completedLoops;
-            set => positionRefRW.ValueRW.completedLoops = value;
+            get => completedLoopsRefRW.ValueRO.value;
+            set => completedLoopsRefRW.ValueRW.value = value;
         }
 
         public bool started
@@ -60,8 +63,8 @@ namespace MagicTween.Core
 
         public float progress
         {
-            get => progressRefRW.ValueRO.progress;
-            set => progressRefRW.ValueRW.progress = value;
+            get => progressRefRW.ValueRO.value;
+            set => progressRefRW.ValueRW.value = value;
         }
 
         public readonly float duration
