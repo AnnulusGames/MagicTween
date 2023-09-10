@@ -43,7 +43,8 @@ namespace MagicTween.Core
                 typeof(TweenParameterIsRelative),
                 typeof(TweenParameterInvertMode),
 
-                typeof(TweenId),
+                typeof(TweenIdInt),
+                typeof(TweenIdString),
 
                 typeof(TweenInvertFlag),
                 typeof(TweenStartedFlag),

@@ -107,33 +107,21 @@ namespace MagicTween
         public static T SetId<T>(this T self, int id) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var tweenId = EntityManager.GetComponentData<TweenId>(self.GetEntity());
-            tweenId.id = id;
-            EntityManager.SetComponentData(self.GetEntity(), tweenId);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenIdInt(id));
             return self;
         }
 
         public static T SetId<T>(this T self, string id) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var tweenId = EntityManager.GetComponentData<TweenId>(self.GetEntity());
-            tweenId.idString = new FixedString32Bytes(id);
-            EntityManager.SetComponentData(self.GetEntity(), tweenId);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenIdString(id));
             return self;
         }
 
         public static T SetId<T>(this T self, in FixedString32Bytes id) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var tweenId = EntityManager.GetComponentData<TweenId>(self.GetEntity());
-            tweenId.idString = id;
-            EntityManager.SetComponentData(self.GetEntity(), tweenId);
-
+            EntityManager.SetComponentData(self.GetEntity(), new TweenIdString(id));
             return self;
         }
 

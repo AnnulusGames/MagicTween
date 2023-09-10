@@ -113,10 +113,17 @@ namespace MagicTween.Core.Components
         public ValueAnimationCurve value;
     }
 
-    public struct TweenId : IComponentData
+    public readonly struct TweenIdInt : IComponentData
     {
-        public int id;
-        public FixedString32Bytes idString;
+        public TweenIdInt(int value) => this.value = value;
+        public readonly int value;
+    }
+
+    public readonly struct TweenIdString : IComponentData
+    {
+        public TweenIdString(string value) => this.value = value;
+        public TweenIdString(in FixedString32Bytes value) => this.value = value;
+        public readonly FixedString32Bytes value;
     }
 
     public struct TweenAccessorFlags : IComponentData

@@ -34,11 +34,8 @@ namespace MagicTween.Experimental
             TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterAutoPlay(tweenParams.autoPlay));
             TweenWorld.EntityManager.SetComponentData(entity, new TweenParameterAutoKill(tweenParams.autoKill));
 
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenId()
-            {
-                id = tweenParams.customId,
-                idString = tweenParams.customIdString
-            });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenIdInt(tweenParams.customId));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenIdString(tweenParams.customIdString));
 
             return self;
         }
