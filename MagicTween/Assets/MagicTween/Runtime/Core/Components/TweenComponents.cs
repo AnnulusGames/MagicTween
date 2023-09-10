@@ -17,6 +17,19 @@ namespace MagicTween.Core.Components
         public readonly bool value;
     }
 
+    public readonly struct TweenIgnoreTimeScaleFlag : IComponentData
+    {
+        public TweenIgnoreTimeScaleFlag(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+    public readonly struct TweenIsRelativeFlag : IComponentData
+    {
+        public TweenIsRelativeFlag(bool value) => this.value = value;
+        public readonly bool value;
+    }
+
+
     public struct TweenInvertFlag : IComponentData
     {
         public bool value;
@@ -57,11 +70,9 @@ namespace MagicTween.Core.Components
         public float speed;
     }
 
-    public struct TweenParameters : IComponentData
+    public struct TweenInvertMode : IComponentData
     {
         public InvertMode invertMode;
-        public bool isRelative;
-        public bool ignoreTimeScale;
     }
 
     [BurstCompile]

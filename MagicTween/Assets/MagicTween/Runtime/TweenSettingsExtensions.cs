@@ -78,7 +78,6 @@ namespace MagicTween
         public static T SetPlaybackSpeed<T>(this T self, float playbackSpeed) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
             TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenPlaybackSpeed() { speed = playbackSpeed });
             return self;
         }
@@ -86,22 +85,14 @@ namespace MagicTween
         public static T SetIgnoreTimeScale<T>(this T self, bool ignoreTimeScale = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(self.GetEntity());
-            parameters.ignoreTimeScale = ignoreTimeScale;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
-
+            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenIgnoreTimeScaleFlag(ignoreTimeScale));
             return self;
         }
 
         public static T SetRelative<T>(this T self, bool relative = true) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(self.GetEntity());
-            parameters.isRelative = relative;
-            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
-
+            TweenWorld.EntityManager.SetComponentData(self.GetEntity(), new TweenIsRelativeFlag(relative));
             return self;
         }
 
@@ -109,7 +100,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(self.GetEntity());
+            var parameters = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(self.GetEntity());
             parameters.invertMode = invertMode;
             TweenWorld.EntityManager.SetComponentData(self.GetEntity(), parameters);
 

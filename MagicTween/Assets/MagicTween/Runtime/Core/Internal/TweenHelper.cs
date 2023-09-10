@@ -109,7 +109,8 @@ namespace MagicTween.Core
             var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
 
             var plugin = default(TPlugin);
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(entity);
+            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).invertMode;
+            var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
             var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
 
             status.status = TweenStatusType.Completed;
@@ -119,8 +120,8 @@ namespace MagicTween.Core
             currentValue = plugin.Evaluate(
                 entity,
                 GetProgressOnCompleted(easing, clip.loops, clip.loopType),
-                parameters.isRelative,
-                parameters.invertMode != InvertMode.None
+                isRelative,
+                invertMode != InvertMode.None
             );
 
             TweenWorld.EntityManager.SetComponentData(entity, position);
@@ -177,14 +178,15 @@ namespace MagicTween.Core
             position.completedLoops = clip.loops;
 
             var plugin = default(TPlugin);
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(entity);
+            var invertMode = TweenWorld.EntityManager.GetComponentData<TweenInvertMode>(entity).invertMode;
+            var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
             var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
 
             currentValue = plugin.Evaluate(
                 entity,
                 GetProgressOnCompleted(easing, clip.loops, clip.loopType),
-                parameters.isRelative,
-                parameters.invertMode != InvertMode.None
+                isRelative,
+                invertMode != InvertMode.None
             );
 
             TweenWorld.EntityManager.SetComponentData(entity, status);
@@ -226,20 +228,20 @@ namespace MagicTween.Core
 
             var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
             var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-            var inverted = TweenWorld.EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
 
             position.position = 0f;
             position.completedLoops = 0;
             status.status = clip.duration > 0f ? TweenStatusType.Delayed : TweenStatusType.Playing;
 
             var plugin = default(TPlugin);
-            var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(entity);
+            var inverted = TweenWorld.EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
+            var isRelative = TweenWorld.EntityManager.GetComponentData<TweenIsRelativeFlag>(entity).value;
             var easing = TweenWorld.EntityManager.GetComponentData<TweenEasing>(entity);
 
             currentValue = plugin.Evaluate(
                 entity,
                 GetProgressOnCompleted(easing, clip.loops, clip.loopType),
-                parameters.isRelative,
+                isRelative,
                 inverted
             );
 

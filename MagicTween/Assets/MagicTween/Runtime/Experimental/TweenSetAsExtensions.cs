@@ -33,12 +33,12 @@ namespace MagicTween.Experimental
                 speed = tweenParams.playbackSpeed
             });
 
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenParameters()
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenInvertMode()
             {
                 invertMode = tweenParams.fromMode,
-                isRelative = tweenParams.isRelative,
-                ignoreTimeScale = tweenParams.ignoreTimeScale
             });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenIgnoreTimeScaleFlag(tweenParams.ignoreTimeScale));
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenIsRelativeFlag(tweenParams.isRelative));
 
             TweenWorld.EntityManager.SetComponentData(entity, new TweenAutoPlayFlag(tweenParams.autoPlay));
             TweenWorld.EntityManager.SetComponentData(entity, new TweenAutoKillFlag(tweenParams.autoKill));

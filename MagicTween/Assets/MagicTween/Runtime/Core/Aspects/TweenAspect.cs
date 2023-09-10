@@ -16,7 +16,7 @@ namespace MagicTween.Core
         readonly RefRW<TweenClip> clipRefRW;
         readonly RefRW<TweenPlaybackSpeed> playbackSpeedRefRW;
         readonly RefRW<TweenEasing> easingRefRW;
-        readonly RefRW<TweenParameters> parametersRefRW;
+        readonly RefRW<TweenInvertMode> invertModeRefRW;
         readonly RefRW<TweenId> idRefRW;
         readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
@@ -24,6 +24,9 @@ namespace MagicTween.Core
 
         readonly RefRO<TweenAutoPlayFlag> autoPlayFlagRefRO;
         readonly RefRO<TweenAutoKillFlag> autoKillFlagRefRO;
+
+        readonly RefRO<TweenIgnoreTimeScaleFlag> ignoreTimeScaleFlagRefRO;
+        readonly RefRO<TweenIsRelativeFlag> isRelativeFlagRefRO;
 
         public float position
         {
@@ -95,21 +98,12 @@ namespace MagicTween.Core
 
         public InvertMode fromMode
         {
-            get => parametersRefRW.ValueRO.invertMode;
-            set => parametersRefRW.ValueRW.invertMode = value;
+            get => invertModeRefRW.ValueRO.invertMode;
+            set => invertModeRefRW.ValueRW.invertMode = value;
         }
 
-        public bool isRelative
-        {
-            get => parametersRefRW.ValueRO.isRelative;
-            set => parametersRefRW.ValueRW.isRelative = value;
-        }
-
-        public bool ignoreTimeScale
-        {
-            get => parametersRefRW.ValueRO.ignoreTimeScale;
-            set => parametersRefRW.ValueRW.ignoreTimeScale = value;
-        }
+        public bool isRelative => isRelativeFlagRefRO.ValueRO.value;
+        public bool ignoreTimeScale => ignoreTimeScaleFlagRefRO.ValueRO.value;
 
         public int id
         {

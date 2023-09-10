@@ -382,18 +382,14 @@ namespace MagicTween.Core
             {
                 ease = MagicTweenSettings.defaultEase
             };
-            var parameters = new TweenParameters()
-            {
-                ignoreTimeScale = MagicTweenSettings.defaultIgnoreTimeScale
-            };
 
             entityManager.SetComponentData(entity, new TweenAutoPlayFlag(MagicTweenSettings.defaultAutoPlay));
             entityManager.SetComponentData(entity, new TweenAutoKillFlag(MagicTweenSettings.defaultAutoKill));
+            entityManager.SetComponentData(entity, new TweenIgnoreTimeScaleFlag(MagicTweenSettings.defaultIgnoreTimeScale));
             entityManager.SetComponentData(entity, state);
             entityManager.SetComponentData(entity, clip);
             entityManager.SetComponentData(entity, playbackSpeed);
             entityManager.SetComponentData(entity, easing);
-            entityManager.SetComponentData(entity, parameters);
         }
 
         static void InitializeLambdaTweenComponents<TValue, TPlugin>(
