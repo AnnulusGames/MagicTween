@@ -48,7 +48,7 @@ namespace MagicTween.Core
                 typeof(TweenInvertFlag),
                 typeof(TweenStartedFlag),
                 typeof(TweenCallbackFlags),
-                typeof(TweenAccessorFlag),
+                typeof(TweenAccessorFlags),
 
                 typeof(TweenControllerReference),
                 typeof(TweenRootFlag),

@@ -123,7 +123,7 @@ namespace MagicTween.Core
     public partial class LambdaStringTweenTranslationSystem : SystemBase
     {
         EntityQuery query1;
-        ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+        ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentTypeHandle<TweenStartValue<UnsafeText>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<UnsafeText>> valueTypeHandle;
         ComponentTypeHandle<TweenPropertyAccessor<string>> accessorTypeHandle;
@@ -135,7 +135,7 @@ namespace MagicTween.Core
                 .WithAspect<StringTweenAspect>()
                 .WithAll<TweenPropertyAccessor<string>>()
                 .Build();
-            callbackFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenCallbackFlags>(true);
+            accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<UnsafeText>>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<UnsafeText>>();
             accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<string>>(true);
@@ -144,14 +144,14 @@ namespace MagicTween.Core
         protected override void OnUpdate()
         {
             CompleteDependency();
-            callbackFlagsTypeHandle.Update(this);
+            accessorFlagsTypeHandle.Update(this);
             startValueTypeHandle.Update(this);
             valueTypeHandle.Update(this);
             accessorTypeHandle.Update(this);
             var job1 = new SystemJob1()
             {
                 entityManager = EntityManager,
-                callbackFlagsTypeHandle = callbackFlagsTypeHandle,
+                accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 startValueTypeHandle = startValueTypeHandle,
                 valueTypeHandle = valueTypeHandle,
                 accessorTypeHandle = accessorTypeHandle
@@ -162,14 +162,14 @@ namespace MagicTween.Core
         unsafe struct SystemJob1 : IJobChunk
         {
             public EntityManager entityManager;
-            [ReadOnly] public ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<UnsafeText>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<UnsafeText>> valueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessor<string>> accessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                var callbackFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref callbackFlagsTypeHandle);
+                var callbackFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var startValueArrayPtr = chunk.GetComponentDataPtrRO(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref accessorTypeHandle, entityManager);
@@ -181,10 +181,8 @@ namespace MagicTween.Core
                         var accessor = accessors[i];
                         if (accessor == null) continue;
 
-                        var callbackPtr = callbackFlagsArrayPtr + i;
-                        if ((callbackPtr->flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) continue;
-
-                        if ((callbackPtr->flags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+                        var flagsPtr = callbackFlagsArrayPtr + i;
+                        if ((flagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                         {
                             if (accessor.getter != null)
                             {
@@ -192,7 +190,7 @@ namespace MagicTween.Core
                                 if (ptr->value.IsCreated) ptr->value.CopyFrom(accessor.getter());
                             }
                         }
-                        else if ((callbackPtr->flags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+                        if ((flagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                         {
                             if (accessor.setter != null)
                             {

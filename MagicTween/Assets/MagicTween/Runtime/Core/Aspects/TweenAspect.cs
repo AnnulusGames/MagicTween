@@ -34,6 +34,7 @@ namespace MagicTween.Core
         readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
         readonly RefRW<TweenCallbackFlags> callbackFlagsRefRW;
+        readonly RefRW<TweenAccessorFlags> accessorFlagsRefRW;
 
         public float position
         {
@@ -91,6 +92,12 @@ namespace MagicTween.Core
             set => callbackFlagsRefRW.ValueRW.flags = value;
         }
 
+        public AccessorFlags accessorFlags
+        {
+            get => accessorFlagsRefRW.ValueRO.flags;
+            set => accessorFlagsRefRW.ValueRW.flags = value;
+        }
+
         [BurstCompile]
         public float GetEasedValue(float t)
         {
@@ -104,6 +111,7 @@ namespace MagicTween.Core
             UpdateCore(this, currentPosition, ref parallelWriter);
         }
 
+        [BurstCompile]
         public void Kill(ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             status = TweenStatusType.Killed;
@@ -119,6 +127,7 @@ namespace MagicTween.Core
         static void UpdateCore(in TweenAspect aspect, float currentPosition, ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             aspect.callbackFlags = CallbackFlags.None;
+            aspect.accessorFlags = AccessorFlags.None;
 
             switch (aspect.status)
             {
@@ -150,6 +159,11 @@ namespace MagicTween.Core
 
             if (aspect.status is not (TweenStatusType.Playing or TweenStatusType.Delayed or TweenStatusType.RewindCompleted or TweenStatusType.Completed)) return;
 
+            // cache parameters  -----------------------------------------------------------------------
+
+            int loops = aspect.loops;
+            float duration = aspect.duration;
+
             // get current progress  -------------------------------------------------------------------
 
             float currentTime = currentPosition - aspect.delay;
@@ -161,27 +175,27 @@ namespace MagicTween.Core
 
             bool isCompleted;
 
-            if (aspect.duration == 0f)
+            if (duration == 0f)
             {
                 isCompleted = currentTime > 0f;
 
                 if (isCompleted)
                 {
                     currentProgress = 1f;
-                    currentCompletedLoops = aspect.loops;
+                    currentCompletedLoops = loops;
                 }
                 else
                 {
                     currentProgress = 0f;
                     currentCompletedLoops = currentTime < 0f ? -1 : 0;
                 }
-                clampedCompletedLoops = aspect.loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, aspect.loops);
+                clampedCompletedLoops = loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, loops);
             }
             else
             {
                 currentCompletedLoops = (int)math.floor(currentTime / aspect.duration);
-                clampedCompletedLoops = aspect.loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, aspect.loops);
-                isCompleted = aspect.loops >= 0 && clampedCompletedLoops > aspect.loops - 1;
+                clampedCompletedLoops = loops < 0 ? math.max(0, currentCompletedLoops) : math.clamp(currentCompletedLoops, 0, loops);
+                isCompleted = loops >= 0 && clampedCompletedLoops > loops - 1;
 
                 if (isCompleted)
                 {
@@ -189,8 +203,8 @@ namespace MagicTween.Core
                 }
                 else
                 {
-                    float currentLoopTime = currentTime - aspect.duration * clampedCompletedLoops;
-                    currentProgress = math.clamp(currentLoopTime / aspect.duration, 0f, 1f);
+                    float currentLoopTime = currentTime - duration * clampedCompletedLoops;
+                    currentProgress = math.clamp(currentLoopTime / duration, 0f, 1f);
                 }
             }
 
@@ -209,8 +223,7 @@ namespace MagicTween.Core
                     if ((clampedCompletedLoops + (int)currentProgress) % 2 == 1) aspect.progress = 1f - aspect.progress;
                     break;
                 case LoopType.Incremental:
-                    aspect.progress = aspect.GetEasedValue(1f) * clampedCompletedLoops +
-                        aspect.GetEasedValue(math.fmod(currentProgress, 1f));
+                    aspect.progress = aspect.GetEasedValue(1f) * clampedCompletedLoops + aspect.GetEasedValue(math.fmod(currentProgress, 1f));
                     break;
             }
 
@@ -261,6 +274,17 @@ namespace MagicTween.Core
                         aspect.callbackFlags |= CallbackFlags.OnStepComplete;
                     }
                 }
+            }
+
+            // set accessor flags ----------------------------------------------------------------------
+
+            if ((aspect.callbackFlags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+            {
+                aspect.accessorFlags |= AccessorFlags.Getter;
+            }
+            if ((aspect.callbackFlags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+            {
+                aspect.accessorFlags |= AccessorFlags.Setter;
             }
 
             // set from  -------------------------------------------------------------------------------

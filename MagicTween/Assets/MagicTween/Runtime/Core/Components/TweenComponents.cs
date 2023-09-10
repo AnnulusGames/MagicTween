@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -118,9 +119,9 @@ namespace MagicTween.Core.Components
         public FixedString32Bytes idString;
     }
 
-    public struct TweenAccessorFlag : IComponentData
+    public struct TweenAccessorFlags : IComponentData
     {
-        public TweenAccessorFlagType value;
+        public AccessorFlags flags;
     }
 
     public struct TweenCallbackFlags : IComponentData
@@ -134,10 +135,11 @@ namespace MagicTween.Core.Components
         public readonly short controllerId;
     }
 
-    public enum TweenAccessorFlagType : byte
+    [Flags]
+    public enum AccessorFlags : byte
     {
-        None,
-        Getter,
-        Setter
+        None = 0,
+        Getter = 1,
+        Setter = 2
     }
 }

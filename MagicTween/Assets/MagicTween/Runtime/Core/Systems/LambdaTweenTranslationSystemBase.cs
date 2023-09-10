@@ -16,7 +16,7 @@ namespace MagicTween.Core
         EntityQuery query1;
         EntityQuery query2;
 
-        ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+        ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
         ComponentTypeHandle<TweenPropertyAccessor<TValue>> accessorTypeHandle;
@@ -34,7 +34,7 @@ namespace MagicTween.Core
                 .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPropertyAccessorUnsafe<TValue>>()
                 .Build();
 
-            callbackFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenCallbackFlags>(true);
+            accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<TValue>>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<TValue>>();
             accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<TValue>>(true);
@@ -45,7 +45,7 @@ namespace MagicTween.Core
         protected override void OnUpdate()
         {
             CompleteDependency();
-            callbackFlagsTypeHandle.Update(this);
+            accessorFlagsTypeHandle.Update(this);
             startValueTypeHandle.Update(this);
             valueTypeHandle.Update(this);
             accessorTypeHandle.Update(this);
@@ -54,7 +54,7 @@ namespace MagicTween.Core
             var job1 = new SystemJob1()
             {
                 entityManager = EntityManager,
-                callbackFlagsTypeHandle = callbackFlagsTypeHandle,
+                accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 startValueTypeHandle = startValueTypeHandle,
                 valueTypeHandle = valueTypeHandle,
                 accessorTypeHandle = accessorTypeHandle
@@ -64,7 +64,7 @@ namespace MagicTween.Core
             var job2 = new SystemJob2()
             {
                 entityManager = EntityManager,
-                callbackFlagsTypeHandle = callbackFlagsTypeHandle,
+                accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 startValueTypeHandle = startValueTypeHandle,
                 valueTypeHandle = valueTypeHandle,
                 unsafeAccessorTypeHandle = unsafeAccessorTypeHandle
@@ -75,14 +75,14 @@ namespace MagicTween.Core
         unsafe partial struct SystemJob1 : IJobChunk
         {
             public EntityManager entityManager;
-            [ReadOnly] public ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessor<TValue>> accessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                var callbackFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref callbackFlagsTypeHandle);
+                var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var startValueArrayPtr = chunk.GetComponentDataPtrRO(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref accessorTypeHandle, entityManager);
@@ -94,14 +94,13 @@ namespace MagicTween.Core
                         var accessor = accessors[i];
                         if (accessor == null) continue;
 
-                        var callbackPtr = callbackFlagsArrayPtr + i;
-                        if ((callbackPtr->flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) continue;
+                        var accessorFlagsPtr = accessorFlagsArrayPtr + i;
 
-                        if ((callbackPtr->flags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+                        if ((accessorFlagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                         {
                             if (accessor.getter != null) (startValueArrayPtr + i)->value = accessor.getter();
                         }
-                        if ((callbackPtr->flags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+                        if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                         {
                             accessor.setter?.Invoke((valueArrayPtr + i)->value);
                         }
@@ -117,14 +116,14 @@ namespace MagicTween.Core
         unsafe partial struct SystemJob2 : IJobChunk
         {
             public EntityManager entityManager;
-            [ReadOnly] public ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessorUnsafe<TValue>> unsafeAccessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                var callbackFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref callbackFlagsTypeHandle);
+                var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var startValueArrayPtr = chunk.GetComponentDataPtrRO(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref unsafeAccessorTypeHandle, entityManager);
@@ -136,18 +135,15 @@ namespace MagicTween.Core
                         var accessor = accessors[i];
                         if (accessor == null) continue;
 
-                        var callbackPtr = callbackFlagsArrayPtr + i;
-                        if ((callbackPtr->flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) continue;
+                        var accessorFlagsPtr = accessorFlagsArrayPtr + i;
 
-                        if ((callbackPtr->flags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+                        if ((accessorFlagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                         {
-                            if (accessor.getter == null) continue;
-                            (startValueArrayPtr + i)->value = accessor.getter(accessor.target);
+                            if (accessor.getter != null) (startValueArrayPtr + i)->value = accessor.getter(accessor.target);
                         }
-                        else if ((callbackPtr->flags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+                        if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                         {
-                            if (accessor.setter == null) continue;
-                            accessor.setter(accessor.target, (valueArrayPtr + i)->value);
+                            accessor.setter?.Invoke(accessor.target, (valueArrayPtr + i)->value);
                         }
                     }
                 }

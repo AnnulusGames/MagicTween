@@ -133,7 +133,7 @@ namespace MagicTween.Core
     {
         EntityQuery query1;
         EntityQuery query2;
-        ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+        ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         BufferTypeHandle<PathPoint> pointsTypeHandle;
         ComponentTypeHandle<TweenValue<float3>> valueTypeHandle;
         ComponentTypeHandle<TweenPropertyAccessor<float3>> accessorTypeHandle;
@@ -149,7 +149,7 @@ namespace MagicTween.Core
                 .WithAspect<TweenAspect>()
                 .WithAspect<PathTweenAspect>()
                 .Build();
-            callbackFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenCallbackFlags>(true);
+            accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             pointsTypeHandle = SystemAPI.GetBufferTypeHandle<PathPoint>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<float3>>();
             accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<float3>>(true);
@@ -158,14 +158,14 @@ namespace MagicTween.Core
         protected override void OnUpdate()
         {
             CompleteDependency();
-            callbackFlagsTypeHandle.Update(this);
+            accessorFlagsTypeHandle.Update(this);
             pointsTypeHandle.Update(this);
             valueTypeHandle.Update(this);
             accessorTypeHandle.Update(this);
             var job1 = new SystemJob1()
             {
                 entityManager = EntityManager,
-                callbackFlagsTypeHandle = callbackFlagsTypeHandle,
+                accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 pointsTypeHandle = pointsTypeHandle,
                 valueTypeHandle = valueTypeHandle,
                 accessorTypeHandle = accessorTypeHandle
@@ -176,14 +176,14 @@ namespace MagicTween.Core
         unsafe partial struct SystemJob1 : IJobChunk
         {
             public EntityManager entityManager;
-            [ReadOnly] public ComponentTypeHandle<TweenCallbackFlags> callbackFlagsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public BufferTypeHandle<PathPoint> pointsTypeHandle;
             public ComponentTypeHandle<TweenValue<float3>> valueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessor<float3>> accessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
-                var callbackFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref callbackFlagsTypeHandle);
+                var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var pointsBufferAccessor = chunk.GetBufferAccessor(ref pointsTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref accessorTypeHandle, entityManager);
@@ -195,10 +195,8 @@ namespace MagicTween.Core
                         var accessor = accessors[i];
                         if (accessor == null) continue;
 
-                        var callbackPtr = callbackFlagsArrayPtr + i;
-                        if ((callbackPtr->flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) continue;
-
-                        if ((callbackPtr->flags & CallbackFlags.OnStartUp) == CallbackFlags.OnStartUp)
+                        var flagsPtr = accessorFlagsArrayPtr + i;
+                        if ((flagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                         {
                             if (accessor.getter != null)
                             {
@@ -206,7 +204,7 @@ namespace MagicTween.Core
                                 buffer[0] = new PathPoint() { point = accessor.getter() };
                             }
                         }
-                        else if ((callbackPtr->flags & (CallbackFlags.OnUpdate | CallbackFlags.OnComplete | CallbackFlags.OnRewind)) != 0)
+                        if ((flagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                         {
                             accessor.setter?.Invoke((valueArrayPtr + i)->value);
                         }
