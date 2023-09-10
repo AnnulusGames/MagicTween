@@ -96,7 +96,7 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
 
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
 
             return new Tween<TValue, PunchTweenOptions>(entity);
@@ -126,7 +126,7 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
 
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
@@ -160,7 +160,7 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
 
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
 
             return new Tween<TValue, ShakeTweenOptions>(entity);
@@ -191,7 +191,7 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
 
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
@@ -232,7 +232,7 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, end);
             entityManager.SetComponentData(entity, value);
             entityManager.SetComponentData(entity, new TweenPropertyAccessor<string>(getter, setter));
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
 
             return new Tween<UnsafeText, StringTweenOptions>(entity);
         }
@@ -269,7 +269,7 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, end);
             entityManager.SetComponentData(entity, value);
             entityManager.SetComponentData(entity, new TweenPropertyAccessor<string>(null, setter));
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
 
             return new Tween<UnsafeText, StringTweenOptions>(entity);
         }
@@ -293,7 +293,7 @@ namespace MagicTween.Core
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<float3, PathTweenPlugin>>();
 
             entityManager.SetComponentData(entity, new TweenPropertyAccessor<float3>(getter, setter));
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
 
             return new Tween<float3, PathTweenOptions>(entity);
         }
@@ -343,7 +343,7 @@ namespace MagicTween.Core
             InitializeCoreComponents(ref entityManager, entity, duration);
 
             var controllerId = TweenControllerContainer.GetId<UnitTweenController>();
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
 
             return new Tween(entity);
         }
@@ -357,7 +357,7 @@ namespace MagicTween.Core
             InitializeCoreComponents(ref entityManager, entity, 0f);
 
             var controllerId = TweenControllerContainer.GetId<SequenceTweenController>();
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
 
             return new Sequence(entity);
         }
@@ -401,7 +401,7 @@ namespace MagicTween.Core
 
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
             entityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
         }
 
@@ -415,7 +415,7 @@ namespace MagicTween.Core
 
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
             entityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
 
             entityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
                 target,
@@ -434,7 +434,7 @@ namespace MagicTween.Core
 
             entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
             entityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TTranslator() { TargetEntity = target });
         }
 
@@ -447,7 +447,7 @@ namespace MagicTween.Core
             var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TPlugin>>();
 
             entityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
-            entityManager.SetComponentData(entity, new TweenControllerReference() { controllerId = controllerId });
+            entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
             entityManager.SetComponentData(entity, new TTranslator() { TargetEntity = target });
         }
     }

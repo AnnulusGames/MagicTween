@@ -106,9 +106,10 @@ namespace MagicTween.Core.Components
         public CallbackFlags flags;
     }
 
-    public struct TweenControllerReference : IComponentData
+    public readonly struct TweenControllerReference : IComponentData
     {
-        public short controllerId;
+        public TweenControllerReference(short controllerId) => this.controllerId = controllerId;
+        public readonly short controllerId;
     }
 
     public enum TweenAccessorFlagType : byte
