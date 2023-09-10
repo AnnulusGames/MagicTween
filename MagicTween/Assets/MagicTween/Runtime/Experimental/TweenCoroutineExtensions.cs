@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Unity.Entities;
 using MagicTween.Core;
 using MagicTween.Diagnostics;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Experimental
 {

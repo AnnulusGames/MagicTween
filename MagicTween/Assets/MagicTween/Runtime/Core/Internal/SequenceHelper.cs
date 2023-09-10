@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Collections;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween.Core

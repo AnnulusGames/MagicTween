@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Collections;
-using UnityEngine;
-using System.Collections.Generic;
-using System;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -25,7 +25,7 @@ namespace MagicTween.Core
         {
             coreComponentTypes = new NativeArray<ComponentType>(new ComponentType[]
             {
-                typeof(TweenInverted),
+                typeof(TweenInvertFlag),
                 typeof(TweenStatus),
                 typeof(TweenPosition),
                 typeof(TweenProgress),

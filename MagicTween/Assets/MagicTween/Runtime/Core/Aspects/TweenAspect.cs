@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -18,7 +19,7 @@ namespace MagicTween.Core
         readonly RefRW<TweenEasing> easingRefRW;
         readonly RefRW<TweenParameters> parametersRefRW;
         readonly RefRW<TweenId> idRefRW;
-        readonly RefRW<TweenInverted> fromEnabledRefRW;
+        readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
         readonly RefRW<TweenCallbackFlags> callbackFlagsRefRW;
 
@@ -36,14 +37,14 @@ namespace MagicTween.Core
 
         public bool started
         {
-            get => flagsRefRW.ValueRO.started;
-            set => flagsRefRW.ValueRW.started = value;
+            get => flagsRefRW.ValueRO.value;
+            set => flagsRefRW.ValueRW.value = value;
         }
 
         public bool inverted
         {
-            get => fromEnabledRefRW.ValueRO.inverted;
-            set => fromEnabledRefRW.ValueRW.inverted = value;
+            get => invertedFlagRefRW.ValueRO.value;
+            set => invertedFlagRefRW.ValueRW.value = value;
         }
 
         public TweenStatusType status

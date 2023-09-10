@@ -4,6 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using Unity.Assertions;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween

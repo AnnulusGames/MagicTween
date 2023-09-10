@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Unity.Entities;
 using Unity.Assertions;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Diagnostics
 {
@@ -42,7 +43,7 @@ namespace MagicTween.Diagnostics
         [Conditional("UNITY_ASSERTIONS")]
         public static void SequenceItemIsNotStarted<T>(in T item) where T : struct, ITweenHandle
         {
-            var started = TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(item.GetEntity()).started;
+            var started = TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(item.GetEntity()).value;
             Assert.IsFalse(started, Error_CannotAddPlayingTween);
         }
 

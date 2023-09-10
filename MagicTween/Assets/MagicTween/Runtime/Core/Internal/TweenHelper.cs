@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Unity.Entities;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
@@ -41,7 +42,7 @@ namespace MagicTween.Core
             {
                 started = status.status == TweenStatusType.WaitingForStart;
                 status.status = TweenStatusType.Playing;
-                TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { started = true });
+                TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
             }
 
             TweenWorld.EntityManager.SetComponentData(entity, status);
@@ -84,7 +85,7 @@ namespace MagicTween.Core
 
             TweenWorld.EntityManager.SetComponentData(entity, status);
             TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { started = true });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
             return true;
         }
 
@@ -106,7 +107,6 @@ namespace MagicTween.Core
                 return false;
             }
             var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-            var fromEnabled = TweenWorld.EntityManager.GetComponentData<TweenInverted>(entity);
 
             var plugin = default(TPlugin);
             var parameters = TweenWorld.EntityManager.GetComponentData<TweenParameters>(entity);
@@ -123,9 +123,8 @@ namespace MagicTween.Core
                 parameters.invertMode != InvertMode.None
             );
 
-            TweenWorld.EntityManager.SetComponentData(entity, fromEnabled);
             TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { started = true });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
 
             return true;
         }
@@ -146,7 +145,7 @@ namespace MagicTween.Core
 
             TweenWorld.EntityManager.SetComponentData(entity, status);
             TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { started = true });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
 
             TweenWorld.CleanupSystem.Enqueue(entity);
 
@@ -190,7 +189,7 @@ namespace MagicTween.Core
 
             TweenWorld.EntityManager.SetComponentData(entity, status);
             TweenWorld.EntityManager.SetComponentData(entity, position);
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { started = true });
+            TweenWorld.EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
 
             TweenWorld.CleanupSystem.Enqueue(entity);
 
@@ -227,7 +226,7 @@ namespace MagicTween.Core
 
             var clip = TweenWorld.EntityManager.GetComponentData<TweenClip>(entity);
             var position = TweenWorld.EntityManager.GetComponentData<TweenPosition>(entity);
-            var fromEnabled = TweenWorld.EntityManager.GetComponentData<TweenInverted>(entity);
+            var inverted = TweenWorld.EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
 
             position.position = 0f;
             position.completedLoops = 0;
@@ -241,7 +240,7 @@ namespace MagicTween.Core
                 entity,
                 GetProgressOnCompleted(easing, clip.loops, clip.loopType),
                 parameters.isRelative,
-                fromEnabled.inverted
+                inverted
             );
 
             TweenWorld.EntityManager.SetComponentData(entity, status);

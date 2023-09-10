@@ -1,8 +1,8 @@
-using System;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {

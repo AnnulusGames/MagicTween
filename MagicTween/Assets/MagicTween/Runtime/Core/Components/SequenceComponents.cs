@@ -1,7 +1,7 @@
 using System;
 using Unity.Entities;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Components
 {
     public struct SequenceState : IComponentData
     {

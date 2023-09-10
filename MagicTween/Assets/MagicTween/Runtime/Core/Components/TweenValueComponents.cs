@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Components
 {
     public struct TweenValue<T> : IComponentData
         where T : unmanaged
@@ -13,6 +13,7 @@ namespace MagicTween.Core
     {
         public T value;
     }
+    
     public struct TweenEndValue<T> : IComponentData
         where T : unmanaged
     {

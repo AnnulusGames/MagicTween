@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Burst;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 [assembly: RegisterGenericComponentType(typeof(TweenOptions<ShakeTweenOptions>))]
 

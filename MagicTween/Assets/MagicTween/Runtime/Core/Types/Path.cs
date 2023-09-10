@@ -6,6 +6,7 @@ using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 [assembly: RegisterGenericComponentType(typeof(TweenOptions<PathTweenOptions>))]

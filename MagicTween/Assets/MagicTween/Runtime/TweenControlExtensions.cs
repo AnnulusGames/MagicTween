@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween

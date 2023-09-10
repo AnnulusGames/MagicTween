@@ -1,5 +1,6 @@
-using MagicTween.Core;
 using Unity.Entities;
+using MagicTween.Core;
+using MagicTween.Core.Components;
 
 [assembly: RegisterGenericComponentType(typeof(TweenOptions<NoOptions>))]
 

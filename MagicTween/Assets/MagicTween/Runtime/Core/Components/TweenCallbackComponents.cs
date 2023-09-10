@@ -2,7 +2,7 @@ using System;
 using Unity.Entities;
 using UnityEngine;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Components
 {
     public sealed class TweenPropertyAccessor<T> : IComponentData
     {

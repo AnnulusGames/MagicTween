@@ -2,13 +2,18 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Components
 {
     public readonly struct TweenRootFlag : IComponentData, IEnableableComponent { }
-
-    public struct TweenInverted : IComponentData
+    
+    public struct TweenInvertFlag : IComponentData
     {
-        public bool inverted;
+        public bool value;
+    }
+
+    public struct TweenStartedFlag : IComponentData
+    {
+        public bool value;
     }
 
     public struct TweenStatus : IComponentData
@@ -73,11 +78,6 @@ namespace MagicTween.Core
     {
         public int id;
         public FixedString32Bytes idString;
-    }
-
-    public struct TweenStartedFlag : IComponentData
-    {
-        public bool started;
     }
 
     public struct TweenAccessorFlag : IComponentData

@@ -1,6 +1,7 @@
 using Unity.Collections;
 using MagicTween.Core;
 using MagicTween.Diagnostics;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Experimental
 {

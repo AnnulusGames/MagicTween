@@ -1,4 +1,5 @@
 using Unity.Entities;
+using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {

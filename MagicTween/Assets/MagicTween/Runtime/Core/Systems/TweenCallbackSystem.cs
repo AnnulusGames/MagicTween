@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
-using MagicTween.Diagnostics;
 using Unity.Entities;
+using MagicTween.Core.Components;
+using MagicTween.Diagnostics;
 
 namespace MagicTween.Core
 {

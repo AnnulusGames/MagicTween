@@ -3,6 +3,7 @@ using Unity.Burst.Intrinsics;
 using Unity.Entities;
 using Unity.Collections;
 using MagicTween.Core;
+using MagicTween.Core.Components;
 
 namespace MagicTween
 {
