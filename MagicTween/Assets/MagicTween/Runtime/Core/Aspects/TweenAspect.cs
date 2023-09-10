@@ -18,9 +18,11 @@ namespace MagicTween.Core
 
         readonly RefRW<TweenClip> clipRefRW;
         readonly RefRW<TweenPlaybackSpeed> playbackSpeedRefRW;
+
         readonly RefRW<TweenEasing> easingRefRW;
         readonly RefRW<TweenInvertMode> invertModeRefRW;
         readonly RefRW<TweenId> idRefRW;
+    
         readonly RefRW<TweenInvertFlag> invertedFlagRefRW;
         readonly RefRW<TweenStartedFlag> flagsRefRW;
         readonly RefRW<TweenCallbackFlags> callbackFlagsRefRW;

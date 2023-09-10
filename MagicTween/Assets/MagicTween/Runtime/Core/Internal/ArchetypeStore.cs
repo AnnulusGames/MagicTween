@@ -25,25 +25,31 @@ namespace MagicTween.Core
         {
             coreComponentTypes = new NativeArray<ComponentType>(new ComponentType[]
             {
-                typeof(TweenInvertFlag),
                 typeof(TweenStatus),
                 typeof(TweenPosition),
                 typeof(TweenCompletedLoops),
                 typeof(TweenProgress),
+
                 typeof(TweenClip),
                 typeof(TweenPlaybackSpeed),
+
+                typeof(TweenEasing),
+                typeof(TweenInvertMode),
+                typeof(TweenId),
+
+                typeof(TweenInvertFlag),
+                typeof(TweenStartedFlag),
+                typeof(TweenCallbackFlags),
+                typeof(TweenAccessorFlag),
+
                 typeof(TweenAutoPlayFlag),
                 typeof(TweenAutoKillFlag),
                 typeof(TweenIgnoreTimeScaleFlag),
                 typeof(TweenIsRelativeFlag),
-                typeof(TweenEasing),
-                typeof(TweenInvertMode),
-                typeof(TweenId),
-                typeof(TweenStartedFlag),
-                typeof(TweenCallbackFlags),
+
                 typeof(TweenControllerReference),
+
                 typeof(TweenRootFlag),
-                typeof(TweenAccessorFlag)
             }, Allocator.Persistent);
             cache.Clear();
         }
