@@ -105,7 +105,7 @@ namespace MagicTween
 
                     ref var target = ref targetComponentLookup.GetRefRW(targetEntity).ValueRW;
 
-                    if ((optionsArrayPtr + i)->options == TweenTranslationOptions.To &&
+                    if ((optionsArrayPtr + i)->value == TweenTranslationOptions.To &&
                         ((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                     {
                         (startValueArrayPtr + i)->value = translator.GetValue(ref target);

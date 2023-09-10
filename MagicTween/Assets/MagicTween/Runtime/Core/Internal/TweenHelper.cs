@@ -46,7 +46,7 @@ namespace MagicTween.Core
             {
                 started = status.status == TweenStatusType.WaitingForStart;
                 status.status = TweenStatusType.Playing;
-                EntityManager.SetComponentData(entity, new TweenStartedFlag() { value = true });
+                EntityManager.SetComponentData(entity, new TweenStartedFlag(true));
             }
 
             EntityManager.SetComponentData(entity, status);
@@ -120,16 +120,28 @@ namespace MagicTween.Core
             var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
             var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
             var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
-            var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
 
             status.status = TweenStatusType.Completed;
-            
-            currentValue = plugin.Evaluate(
-                entity,
-                ease == Ease.Custom ? GetProgressOnCompleted(ref customCurve, loops, loopType) : GetProgressOnCompleted(ease, loops, loopType),
-                isRelative,
-                invertMode != InvertMode.None
-            );
+
+            if (ease == Ease.Custom)
+            {
+                var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                currentValue = plugin.Evaluate(
+                    entity,
+                    GetProgressOnCompleted(ref customCurve, loops, loopType),
+                    isRelative,
+                    invertMode != InvertMode.None
+                );
+            }
+            else
+            {
+                currentValue = plugin.Evaluate(
+                    entity,
+                    GetProgressOnCompleted(ease, loops, loopType),
+                    isRelative,
+                    invertMode != InvertMode.None
+                );
+            }
 
             EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
             EntityManager.SetComponentData(entity, new TweenCompletedLoops(loops));
@@ -172,7 +184,6 @@ namespace MagicTween.Core
                 return false;
             }
 
-
             var loops = EntityManager.GetComponentData<TweenParameterLoops>(entity).value;
             if (loops < 0)
             {
@@ -190,14 +201,26 @@ namespace MagicTween.Core
             var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
             var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
             var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
-            var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
 
-            currentValue = plugin.Evaluate(
-                entity,
-                ease == Ease.Custom ? GetProgressOnCompleted(ref customCurve, loops, loopType) : GetProgressOnCompleted(ease, loops, loopType),
-                isRelative,
-                invertMode != InvertMode.None
-            );
+            if (ease == Ease.Custom)
+            {
+                var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                currentValue = plugin.Evaluate(
+                    entity,
+                    GetProgressOnCompleted(ref customCurve, loops, loopType),
+                    isRelative,
+                    invertMode != InvertMode.None
+                );
+            }
+            else
+            {
+                currentValue = plugin.Evaluate(
+                    entity,
+                    GetProgressOnCompleted(ease, loops, loopType),
+                    isRelative,
+                    invertMode != InvertMode.None
+                );
+            }
 
             EntityManager.SetComponentData(entity, status);
             EntityManager.SetComponentData(entity, new TweenPosition(duration * loops + delay));
@@ -244,14 +267,27 @@ namespace MagicTween.Core
             var inverted = EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
             var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
             var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
-            var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
 
-            currentValue = plugin.Evaluate(
-                entity,
-                ease == Ease.Custom ? GetProgressOnCompleted(ref customCurve, loops, loopType) : GetProgressOnCompleted(ease, loops, loopType),
-                isRelative,
-                inverted
-            );
+            if (ease == Ease.Custom)
+            {
+                var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                currentValue = plugin.Evaluate(
+                    entity,
+                    GetProgressOnCompleted(ref customCurve, loops, loopType),
+                    isRelative,
+                    inverted
+                );
+            }
+            else
+            {
+                currentValue = plugin.Evaluate(
+                    entity,
+                    GetProgressOnCompleted(ease, loops, loopType),
+                    isRelative,
+                    inverted
+                );
+            }
+
 
             EntityManager.SetComponentData(entity, status);
             EntityManager.SetComponentData(entity, new TweenPosition(0f));
