@@ -47,7 +47,7 @@ namespace MagicTween
         public static float GetDuration<T>(this T self) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            return TweenHelper.GetDuration(self.GetEntity());
+            return TweenHelper.GetDuration(ref TweenWorld.EntityManagerRef, self.GetEntity());
         }
 
         public static TValue GetValue<TValue, TOptions>(this Tween<TValue, TOptions> self)

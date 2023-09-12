@@ -3,6 +3,8 @@ using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
+    using static TweenWorld;
+
     public abstract class TweenControllerBase<TValue, TPlugin> : ITweenController
         where TValue : unmanaged
         where TPlugin : unmanaged, ITweenPlugin<TValue>
@@ -53,7 +55,7 @@ namespace MagicTween.Core
 
         public void Restart(in Entity entity)
         {
-            if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
+            if (!EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 Play(entity);
                 return;

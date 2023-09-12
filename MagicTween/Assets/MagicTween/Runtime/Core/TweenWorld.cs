@@ -17,6 +17,7 @@ namespace MagicTween.Core
 
         public static World World => _world;
         public static EntityManager EntityManager => _entityManager;
+        public static ref EntityManager EntityManagerRef => ref _entityManager;
         public static TweenCleanupSystem CleanupSystem => _cleanupSystem;
     }
 }
