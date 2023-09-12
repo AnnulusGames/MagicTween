@@ -39,7 +39,7 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public PathTweenOptions options => optionsRef.ValueRO.options;
+        public PathTweenOptions options => optionsRef.ValueRO.value;
     }
 
     [BurstCompile]
@@ -47,10 +47,16 @@ namespace MagicTween.Core
     {
         public float3 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var buffer = TweenWorld.EntityManager.GetBuffer<PathPoint>(entity);
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(entity).options;
-            EvaluateCore(buffer, t, isRelative, isFrom, options, out var result);
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, isRelative, isFrom, out var result);
             return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, bool isRelative, bool isFrom, out float3 result)
+        {
+            var buffer = entityManager.GetBuffer<PathPoint>(entity);
+            var options = entityManager.GetComponentData<TweenOptions<PathTweenOptions>>(entity).value;
+            EvaluateCore(buffer, t, isRelative, isFrom, options, out result);
         }
 
         [BurstCompile]

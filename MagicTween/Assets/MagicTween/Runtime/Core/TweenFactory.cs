@@ -85,13 +85,13 @@ namespace MagicTween.Core
 
             EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
             {
-                options = new PunchTweenOptions()
+                value = new PunchTweenOptions()
                 {
                     frequency = 10,
                     dampingRatio = 1f
                 }
             });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { strength = strength });
+            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
             EntityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
 
@@ -111,13 +111,13 @@ namespace MagicTween.Core
 
             EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
             {
-                options = new PunchTweenOptions()
+                value = new PunchTweenOptions()
                 {
                     frequency = 10,
                     dampingRatio = 1f
                 }
             });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { strength = strength });
+            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
             EntityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
                 target,
@@ -140,14 +140,14 @@ namespace MagicTween.Core
 
             EntityManager.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
             {
-                options = new ShakeTweenOptions()
+                value = new ShakeTweenOptions()
                 {
                     frequency = 10,
                     dampingRatio = 1f,
                     randomSeed = 0
                 }
             });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { strength = strength });
+            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
             EntityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
 
@@ -167,14 +167,14 @@ namespace MagicTween.Core
 
             EntityManagerRef.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
             {
-                options = new ShakeTweenOptions()
+                value = new ShakeTweenOptions()
                 {
                     frequency = 10,
                     dampingRatio = 1f,
                     randomSeed = 0
                 }
             });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { strength = strength });
+            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
 
             EntityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(

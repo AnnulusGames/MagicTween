@@ -20,7 +20,7 @@ namespace MagicTween.Core
     public struct VibrationStrength<TValue> : IComponentData
         where TValue : unmanaged
     {
-        public TValue strength;
+        public TValue value;
     }
 
     public readonly partial struct PunchTweenAspect : IAspect
@@ -37,19 +37,27 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public float strength => strengthRef.ValueRO.strength;
-        public PunchTweenOptions options => optionsRef.ValueRO.options;
+        public float strength => strengthRef.ValueRO.value;
+        public PunchTweenOptions options => optionsRef.ValueRO.value;
     }
 
+    [BurstCompile]
     public readonly struct PunchTweenPlugin : ITweenPlugin<float>
     {
         public float Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(entity).options;
-            var strength = TweenWorld.EntityManager.GetComponentData<VibrationStrength<float>>(entity).strength;
-            VibrationUtils.EvaluateStrength(strength, options.frequency, options.dampingRatio, t, out var result);
-            return startValue + result;
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, out var result);
+            return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, out float result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<float>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(entity).value;
+            var strength = entityManager.GetComponentData<VibrationStrength<float>>(entity).value;
+            VibrationUtils.EvaluateStrength(strength, options.frequency, options.dampingRatio, t, out result);
+            result = startValue + result;
         }
     }
 
@@ -90,8 +98,8 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public float2 strength => strengthRef.ValueRO.strength;
-        public PunchTweenOptions options => optionsRef.ValueRO.options;
+        public float2 strength => strengthRef.ValueRO.value;
+        public PunchTweenOptions options => optionsRef.ValueRO.value;
     }
 
     [BurstCompile]
@@ -99,11 +107,18 @@ namespace MagicTween.Core
     {
         public float2 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float2>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(entity).options;
-            var strength = TweenWorld.EntityManager.GetComponentData<VibrationStrength<float2>>(entity).strength;
-            VibrationUtils.EvaluateStrength(strength, options.frequency, options.dampingRatio, t, out var result);
-            return startValue + result;
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, out var result);
+            return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, out float2 result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<float2>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(entity).value;
+            var strength = entityManager.GetComponentData<VibrationStrength<float2>>(entity).value;
+            VibrationUtils.EvaluateStrength(strength, options.frequency, options.dampingRatio, t, out result);
+            result = startValue + result;
         }
     }
 
@@ -144,8 +159,8 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public float3 strength => strengthRef.ValueRO.strength;
-        public PunchTweenOptions options => optionsRef.ValueRO.options;
+        public float3 strength => strengthRef.ValueRO.value;
+        public PunchTweenOptions options => optionsRef.ValueRO.value;
     }
 
     [BurstCompile]
@@ -153,11 +168,18 @@ namespace MagicTween.Core
     {
         public float3 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float3>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(entity).options;
-            var strength = TweenWorld.EntityManager.GetComponentData<VibrationStrength<float3>>(entity).strength;
-            VibrationUtils.EvaluateStrength(strength, options.frequency, options.dampingRatio, t, out var result);
-            return startValue + result;
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, out var result);
+            return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t,  out float3 result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<float3>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(entity).value;
+            var strength = entityManager.GetComponentData<VibrationStrength<float3>>(entity).value;
+            VibrationUtils.EvaluateStrength(strength, options.frequency, options.dampingRatio, t, out result);
+            result = startValue + result;
         }
     }
     [BurstCompile]

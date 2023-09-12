@@ -13,7 +13,7 @@ namespace MagicTween.Core.Components
     {
         public T value;
     }
-    
+
     public struct TweenEndValue<T> : IComponentData
         where T : unmanaged
     {
@@ -23,6 +23,6 @@ namespace MagicTween.Core.Components
     public struct TweenOptions<TOptions> : IComponentData
         where TOptions : unmanaged, ITweenOptions
     {
-        public TOptions options;
+        public TOptions value;
     }
 }

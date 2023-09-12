@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using MagicTween.Core;
 using MagicTween.Core.Components;
 
 [assembly: RegisterGenericComponentType(typeof(TweenValue<double3>))]
@@ -37,10 +36,16 @@ namespace MagicTween.Core
     {
         public double3 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<double3>>(entity).value;
-            var endValue = TweenWorld.EntityManager.GetComponentData<TweenEndValue<double3>>(entity).value;
-            EvaluateCore(startValue, endValue, t, isRelative, isFrom, out var result);
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, isRelative, isFrom, out var result);
             return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, bool isRelative, bool isFrom, out double3 result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<double3>>(entity).value;
+            var endValue = entityManager.GetComponentData<TweenEndValue<double3>>(entity).value;
+            EvaluateCore(startValue, endValue, t, isRelative, isFrom, out result);
         }
 
         [BurstCompile]

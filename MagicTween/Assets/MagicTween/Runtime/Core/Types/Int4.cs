@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using MagicTween.Core;
 using MagicTween.Core.Components;
 
 [assembly: RegisterGenericComponentType(typeof(TweenValue<int4>))]
@@ -28,7 +27,7 @@ namespace MagicTween.Core
             set => currentRefRW.ValueRW.value = value;
         }
 
-        public RoundingMode roundingMode => optionsRefRO.ValueRO.options.roundingMode;
+        public RoundingMode roundingMode => optionsRefRO.ValueRO.value.roundingMode;
     }
 
     [BurstCompile]
@@ -36,11 +35,17 @@ namespace MagicTween.Core
     {
         public int4 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<int4>>(entity).value;
-            var endValue = TweenWorld.EntityManager.GetComponentData<TweenEndValue<int4>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<IntegerTweenOptions>>(entity).options;
-            EvaluateCore(startValue, endValue, t, isRelative, isFrom, options.roundingMode, out var result);
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, isRelative, isFrom, out var result);
             return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, bool isRelative, bool isFrom, out int4 result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<int4>>(entity).value;
+            var endValue = entityManager.GetComponentData<TweenEndValue<int4>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<IntegerTweenOptions>>(entity).value;
+            EvaluateCore(startValue, endValue, t, isRelative, isFrom, options.roundingMode, out result);
         }
 
         [BurstCompile]

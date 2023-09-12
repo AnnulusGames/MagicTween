@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using MagicTween.Core;
 using MagicTween.Core.Components;
 
 [assembly: RegisterGenericComponentType(typeof(TweenValue<float>))]
@@ -36,9 +35,13 @@ namespace MagicTween.Core
     public readonly struct FloatTweenPlugin : ITweenPlugin<float>
     {
         public float Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
+            => EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, isRelative, isFrom);
+
+        [BurstCompile]
+        public static float EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float>>(entity).value;
-            var endValue = TweenWorld.EntityManager.GetComponentData<TweenEndValue<float>>(entity).value;
+            var startValue = entityManager.GetComponentData<TweenStartValue<float>>(entity).value;
+            var endValue = entityManager.GetComponentData<TweenEndValue<float>>(entity).value;
             return EvaluateCore(startValue, endValue, t, isRelative, isFrom);
         }
 

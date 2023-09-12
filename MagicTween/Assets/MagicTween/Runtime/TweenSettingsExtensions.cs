@@ -152,7 +152,7 @@ namespace MagicTween
 
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<IntegerTweenOptions>()
             {
-                options = new IntegerTweenOptions() { roundingMode = roundingMode }
+                value = new IntegerTweenOptions() { roundingMode = roundingMode }
             });
 
             return self;
@@ -163,7 +163,7 @@ namespace MagicTween
             AssertTween.IsActive(self);
 
             var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
-            options.options.richTextEnabled = richTextEnabled;
+            options.value.richTextEnabled = richTextEnabled;
             EntityManager.SetComponentData(self.GetEntity(), options);
 
             return self;
@@ -181,7 +181,7 @@ namespace MagicTween
             }
 
             var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
-            options.options.scrambleMode = scrambleMode;
+            options.value.scrambleMode = scrambleMode;
             EntityManager.SetComponentData(self.GetEntity(), options);
 
             return self;
@@ -197,7 +197,7 @@ namespace MagicTween
             }
 
             var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
-            options.options.scrambleMode = ScrambleMode.Custom;
+            options.value.scrambleMode = ScrambleMode.Custom;
             EntityManager.SetComponentData(self.GetEntity(), options);
 
             var component = EntityManager.GetComponentData<StringTweenCustomScrambleChars>(self.GetEntity());
@@ -219,11 +219,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).value;
             options.pathType = pathType;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PathTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;
@@ -233,11 +233,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PathTweenOptions>>(self.GetEntity()).value;
             options.isClosed = closed ? (byte)1 : (byte)0;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PathTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;
@@ -248,11 +248,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).value;
             options.frequency = frequency;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PunchTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;
@@ -263,11 +263,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<PunchTweenOptions>>(self.GetEntity()).value;
             options.dampingRatio = dampingRatio;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<PunchTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;
@@ -278,11 +278,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).value;
             options.frequency = frequency;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;
@@ -293,11 +293,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).value;
             options.dampingRatio = dampingRatio;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;
@@ -308,11 +308,11 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).options;
+            var options = EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(self.GetEntity()).value;
             options.randomSeed = seed;
             EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<ShakeTweenOptions>()
             {
-                options = options
+                value = options
             });
 
             return self;

@@ -14,7 +14,7 @@ namespace MagicTween.Core
         public float dampingRatio;
         public uint randomSeed;
     }
-    
+
     public struct ShakeRandomState : IComponentData
     {
         public Random random;
@@ -35,8 +35,8 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public float strength => strengthRef.ValueRO.strength;
-        public ShakeTweenOptions options => optionsRef.ValueRO.options;
+        public float strength => strengthRef.ValueRO.value;
+        public ShakeTweenOptions options => optionsRef.ValueRO.value;
 
         public ref ShakeRandomState random => ref randomRef.ValueRW;
     }
@@ -46,13 +46,19 @@ namespace MagicTween.Core
     {
         public float Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(entity).options;
-            var strength = TweenWorld.EntityManager.GetComponentData<VibrationStrength<float>>(entity).strength;
-            var random = TweenWorld.EntityManager.GetComponentData<ShakeRandomState>(entity).random;
-            EvaluateCore(startValue, options, strength, t, ref random, out var result);
-            TweenWorld.EntityManager.SetComponentData<ShakeRandomState>(entity, new() { random = random });
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, out var result);
             return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, out float result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<float>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(entity).value;
+            var strength = entityManager.GetComponentData<VibrationStrength<float>>(entity).value;
+            var random = entityManager.GetComponentData<ShakeRandomState>(entity).random;
+            EvaluateCore(startValue, options, strength, t, ref random, out result);
+            entityManager.SetComponentData<ShakeRandomState>(entity, new() { random = random });
         }
 
         [BurstCompile]
@@ -111,8 +117,8 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public float2 strength => strengthRef.ValueRO.strength;
-        public ShakeTweenOptions options => optionsRef.ValueRO.options;
+        public float2 strength => strengthRef.ValueRO.value;
+        public ShakeTweenOptions options => optionsRef.ValueRO.value;
 
         public ref ShakeRandomState random => ref randomRef.ValueRW;
     }
@@ -122,13 +128,19 @@ namespace MagicTween.Core
     {
         public float2 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float2>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(entity).options;
-            var strength = TweenWorld.EntityManager.GetComponentData<VibrationStrength<float2>>(entity).strength;
-            var random = TweenWorld.EntityManager.GetComponentData<ShakeRandomState>(entity).random;
-            EvaluateCore(startValue, options, strength, t, ref random, out var result);
-            TweenWorld.EntityManager.SetComponentData<ShakeRandomState>(entity, new() { random = random });
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, out var result);
             return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, out float2 result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<float2>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(entity).value;
+            var strength = entityManager.GetComponentData<VibrationStrength<float2>>(entity).value;
+            var random = entityManager.GetComponentData<ShakeRandomState>(entity).random;
+            EvaluateCore(startValue, options, strength, t, ref random, out result);
+            entityManager.SetComponentData<ShakeRandomState>(entity, new() { random = random });
         }
 
         [BurstCompile]
@@ -187,8 +199,8 @@ namespace MagicTween.Core
             set => current.ValueRW.value = value;
         }
 
-        public float3 strength => strengthRef.ValueRO.strength;
-        public ShakeTweenOptions options => optionsRef.ValueRO.options;
+        public float3 strength => strengthRef.ValueRO.value;
+        public ShakeTweenOptions options => optionsRef.ValueRO.value;
 
         public ref ShakeRandomState random => ref randomRef.ValueRW;
     }
@@ -198,13 +210,19 @@ namespace MagicTween.Core
     {
         public float3 Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<float3>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(entity).options;
-            var strength = TweenWorld.EntityManager.GetComponentData<VibrationStrength<float3>>(entity).strength;
-            var random = TweenWorld.EntityManager.GetComponentData<ShakeRandomState>(entity).random;
-            EvaluateCore(startValue, options, strength, t, ref random, out var result);
-            TweenWorld.EntityManager.SetComponentData<ShakeRandomState>(entity, new() { random = random });
+            EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, out var result);
             return result;
+        }
+
+        [BurstCompile]
+        public static void EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, out float3 result)
+        {
+            var startValue = entityManager.GetComponentData<TweenStartValue<float3>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<ShakeTweenOptions>>(entity).value;
+            var strength = entityManager.GetComponentData<VibrationStrength<float3>>(entity).value;
+            var random = entityManager.GetComponentData<ShakeRandomState>(entity).random;
+            EvaluateCore(startValue, options, strength, t, ref random, out result);
+            entityManager.SetComponentData<ShakeRandomState>(entity, new() { random = random });
         }
 
         [BurstCompile]
