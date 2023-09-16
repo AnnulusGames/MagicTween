@@ -9,7 +9,7 @@ namespace MagicTween.Core
     {
         protected override void OnCreate()
         {
-            if (TweenWorld.World != null && TweenWorld.World != World) return;
+            if (TweenWorld.World != null && TweenWorld.World.IsCreated && TweenWorld.World != World) return;
 
             TweenWorld.Initialize();
             ArchetypeStore.Initialize();
