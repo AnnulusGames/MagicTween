@@ -35,6 +35,7 @@ In addition to powerful tweening functionality compatible with traditional compo
 - [UniTask](#unitask)
 - [Implementation for ECS](#implementation-for-ecs)
 - [Other Features](#other-features)
+- [Optimization](#optimization)
 - [Experimental Features](#experimental-features)
 - [Known Issues](#known-issues)
 - [Support](#support)
@@ -837,6 +838,33 @@ The easing functions used internally by Tween can be accessed via EaseUtility.
 float value1 = EaseUtility.Evaluate(0.5f, Ease.OutQuad);
 float value2 = EaseUtility.InOutQuad(0.5f);
 ```
+
+## Optimization
+
+### Tween Caching
+
+Usually, the cost of creating Tweens or Sequences is not a significant concern. However, in scenarios where you repeatedly use the same animations, creating them from scratch each time may not be very efficient. Caching Tweens and reusing them can be an effective approach in such cases.
+
+```cs
+// Create a Tween and change settings to manually control play and kill
+Tween tween = transform.TweenPosition(Vector3.up, 2f)
+    .SetAutoPlay(false)
+    .SetAutoKill(false);
+
+// Play or Restart the Tween using Play() or Restart()
+tween.Play();
+tween.Restart();
+
+// Manually call Kill() when you're done using the Tween
+tween.Kill();
+
+// Alternatively, you can use SetLink to tie the Tween's lifetime to a GameObject
+// tween.SetLink(transform);
+```
+
+When reusing tweens, always make sure to set `SetAutoKill(false)`. If this is set to true, the Tween will be automatically destroyed when it completes playing. Also, if you want to manually manage the play timing, you can set `SetAutoPlay(false)` accordingly.
+
+When `SetAutoKill(false)` is set, be sure to call `Kill()` manually when you are done with the Tween. Alternatively, you can use `SetLink()` to associate the tween's lifetime with a GameObject, so it gets destroyed when the GameObject is destroyed.
 
 ## Experimental Features
 
