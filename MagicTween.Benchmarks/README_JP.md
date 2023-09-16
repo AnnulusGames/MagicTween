@@ -107,15 +107,19 @@ StartUpについては、トゥイーンを作成するのにかかる時間の�
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_startup.png" width="800">
 
-|  | Time |
+| | Time |
 | - | - |
-| GoKit | 3,394.66ms |
-| ZestKit | 413.5ms |
-| AnimeRx | 296.22ms |
-| DOTween | 82.16ms |
-| AnimeTask | 81.45ms |
-| UnityTweens | 77.46ms |
-| MagicTween (for ECS) | 70.81ms |
-| MagicTween | 47.78ms |
-| LeanTween | 45.4ms |
+| GoKit | 3,398.14ms |
+| ZestKit | 416.52ms |
+| AnimeRx | 302.5ms |
+| AnimeTask | 100.49ms |
+| UnityTweens | 80.24ms |
+| DOTween | 80.16ms |
+| LeanTween | 52ms |
+| MagicTween | 36.45ms |
 | PrimeTween | 34.02ms |
+| MagicTween (for ECS) | 28.3ms |
+| PrimeTween (DISABLE_ASSERTIONS) | 4.72ms |
+
+> **Note**
+> Magic TweenはTweenをキャッシュすることでアニメーションの開始を高速化できます。詳細はREADMEの[最適化の項目](https://github.com/AnnulusGames/MagicTween/blob/main/README_JP.md#最適化)を参照してください。
