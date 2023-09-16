@@ -132,7 +132,6 @@ namespace MagicTween.Core
 
             switch (aspect.status)
             {
-                case TweenStatusType.Invalid:
                 case TweenStatusType.Killed:
                     return;
                 case TweenStatusType.WaitingForStart:

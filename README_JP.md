@@ -35,6 +35,7 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 - [UniTask](#unitask)
 - [ECS向けの実装](#ecs向けの実装)
 - [その他の機能](#その他の機能)
+- [最適化](#最適化)
 - [実験的機能](#実験的機能)
 - [既知の問題点](#既知の問題点)
 - [サポート](#サポート)
@@ -858,6 +859,34 @@ Tweenの内部で用いられているイージング関数はEaseUtilityから�
 float value1 = EaseUtility.Evaluate(0.5f, Ease.OutQuad);
 float value2 = EaseUtility.InOutQuad(0.5f);
 ```
+
+## 最適化
+
+### Tweenのキャッシュ
+
+通常TweenやSequenceの作成コストはほとんど問題になりませんが、繰り返し同じアニメーションを利用する場面では、再生のたびに毎回作成を行うのはあまり効率的ではありません。このような場面ではTweenをキャッシュして使い回すことが有効な手段になります。
+
+```cs
+// トゥイーンを作成し、手動で再生/破棄を行うように設定を変更する
+Tween tween = transform.TweenPosition(Vector3.up. 2f)
+    .SetAutoPlay(false)
+    .SetAutoKill(false);
+
+// PlayやRestartを用いてトゥイーンを再生する
+tween.Play();
+tween.Restart();
+
+// 使い終わったら手動でKillを呼び出す
+tween.Kill();
+
+// または、SetLinkを用いてライフタイムをGameObjectに紐付けることも可能
+// tween.SetLink(transform);
+```
+
+Tweenを使い回す場合には必ず`SetAutoKill(false)`を設定します。これがtrueの場合、再生が完了したTweenは自動で破棄されます。
+また、再生タイミングを手動で管理したいには合わせて`SetAutoPlay(false)`を設定します。
+
+`SetAutoKill(false)`を設定した場合、必ず使い終わったタイミングで`Kill()`を呼び出してTweenを破棄してください。または、`SetLink()`を用いてGameObject破棄されたタイミングでTweenを破棄するように設定することも可能です。
 
 ## 実験的機能
 

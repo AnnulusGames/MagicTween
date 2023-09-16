@@ -107,15 +107,19 @@ The StartUp item is the result of measuring the time it takes to create the twee
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_startup.png" width="800">
 
-|  | Time |
+| | Time |
 | - | - |
-| GoKit | 3,394.66ms |
-| ZestKit | 413.5ms |
-| AnimeRx | 296.22ms |
-| DOTween | 82.16ms |
-| AnimeTask | 81.45ms |
-| UnityTweens | 77.46ms |
-| MagicTween (for ECS) | 70.81ms |
-| MagicTween | 47.78ms |
-| LeanTween | 45.4ms |
+| GoKit | 3,398.14ms |
+| ZestKit | 416.52ms |
+| AnimeRx | 302.5ms |
+| AnimeTask | 100.49ms |
+| UnityTweens | 80.24ms |
+| DOTween | 80.16ms |
+| LeanTween | 52ms |
+| MagicTween | 36.45ms |
 | PrimeTween | 34.02ms |
+| MagicTween (for ECS) | 28.3ms |
+| PrimeTween (DISABLE_ASSERTIONS) | 4.72ms |
+
+> **Note**
+> Magic Tween can speed up the start of animations by caching tweens. For details, please refer to [Optimization](https://github.com/AnnulusGames/MagicTween/blob/main/README.md#optimization) in README.

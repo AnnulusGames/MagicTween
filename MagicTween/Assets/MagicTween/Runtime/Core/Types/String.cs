@@ -29,8 +29,8 @@ namespace MagicTween.Core
         public ref UnsafeText endValue => ref endRefRW.ValueRW.value;
         public ref UnsafeText currentValue => ref currentRefRW.ValueRW.value;
         public ref UnsafeText customScrambleChars => ref customScrambleCharsRefRW.ValueRW.customChars;
-        public bool richTextEnabled => optionsRefRO.ValueRO.options.richTextEnabled;
-        public ScrambleMode scrambleMode => optionsRefRO.ValueRO.options.scrambleMode;
+        public bool richTextEnabled => optionsRefRO.ValueRO.value.richTextEnabled;
+        public ScrambleMode scrambleMode => optionsRefRO.ValueRO.value.scrambleMode;
     }
 
     public struct StringTweenOptions : ITweenOptions
@@ -48,11 +48,14 @@ namespace MagicTween.Core
     public readonly struct StringTweenPlugin : ITweenPlugin<UnsafeText>
     {
         public UnsafeText Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
+            => EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, isRelative, isFrom);
+
+        public static UnsafeText EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<UnsafeText>>(entity).value;
-            var endValue = TweenWorld.EntityManager.GetComponentData<TweenEndValue<UnsafeText>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(entity).options;
-            var customChars = TweenWorld.EntityManager.GetComponentData<StringTweenCustomScrambleChars>(entity).customChars;
+            var startValue = entityManager.GetComponentData<TweenStartValue<UnsafeText>>(entity).value;
+            var endValue = entityManager.GetComponentData<TweenEndValue<UnsafeText>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<StringTweenOptions>>(entity).value;
+            var customChars = entityManager.GetComponentData<StringTweenCustomScrambleChars>(entity).customChars;
             return EvaluateCore(startValue, endValue, t, isFrom, options.richTextEnabled, options.scrambleMode, customChars);
         }
 

@@ -9,6 +9,8 @@ namespace MagicTween.Core
     {
         protected override void OnCreate()
         {
+            if (TweenWorld.World != null && TweenWorld.World != World) return;
+
             TweenWorld.Initialize();
             ArchetypeStore.Initialize();
             TweenControllerContainer.Clear();
@@ -20,6 +22,8 @@ namespace MagicTween.Core
 
         protected override void OnDestroy()
         {
+            if (TweenWorld.World != World) return;
+
             ArchetypeStore.Dispose();
         }
     }

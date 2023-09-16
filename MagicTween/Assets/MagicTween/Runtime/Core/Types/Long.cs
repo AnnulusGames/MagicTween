@@ -29,17 +29,21 @@ namespace MagicTween.Core
             set => currentRefRW.ValueRW.value = value;
         }
 
-        public RoundingMode roundingMode => optionsRefRO.ValueRO.options.roundingMode;
+        public RoundingMode roundingMode => optionsRefRO.ValueRO.value.roundingMode;
     }
 
     [BurstCompile]
     public readonly struct LongTweenPlugin : ITweenPlugin<long>
     {
         public long Evaluate(in Entity entity, float t, bool isRelative, bool isFrom)
+            => EvaluateCore(ref TweenWorld.EntityManagerRef, entity, t, isRelative, isFrom);
+
+        [BurstCompile]
+        public static long EvaluateCore(ref EntityManager entityManager, in Entity entity, float t, bool isRelative, bool isFrom)
         {
-            var startValue = TweenWorld.EntityManager.GetComponentData<TweenStartValue<long>>(entity).value;
-            var endValue = TweenWorld.EntityManager.GetComponentData<TweenEndValue<long>>(entity).value;
-            var options = TweenWorld.EntityManager.GetComponentData<TweenOptions<IntegerTweenOptions>>(entity).options;
+            var startValue = entityManager.GetComponentData<TweenStartValue<long>>(entity).value;
+            var endValue = entityManager.GetComponentData<TweenEndValue<long>>(entity).value;
+            var options = entityManager.GetComponentData<TweenOptions<IntegerTweenOptions>>(entity).value;
             return EvaluateCore(startValue, endValue, t, isRelative, isFrom, options.roundingMode);
         }
 
