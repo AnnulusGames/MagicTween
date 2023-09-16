@@ -4,9 +4,7 @@ using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Unity.Entities;
 using MagicTween.Core;
-using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 
 namespace MagicTween
@@ -114,7 +112,7 @@ namespace MagicTween
 
             public void UnsafeOnCompleted(Action continuation)
             {
-                TweenWorld.EntityManager.GetComponentData<TweenCallbackActions>(tween.GetEntity()).onKill = PooledTweenCallback.Create(continuation);
+                tween.GetOrAddCallbackActions().onKill = PooledTweenCallback.Create(continuation);
             }
         }
 
@@ -247,7 +245,7 @@ namespace MagicTween
                     return;
                 }
 
-                var callbacks = TweenWorld.EntityManager.GetComponentData<TweenCallbackActions>(tween.GetEntity());
+                var callbacks = tween.GetOrAddCallbackActions();
 
                 switch (cancelBehaviour)
                 {
