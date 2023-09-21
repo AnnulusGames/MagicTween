@@ -56,7 +56,7 @@ public class TextMeshProSample : MonoBehaviour
         for (int i = 0; i < tmpText6.GetCharCount(); i++)
         {
             tmpText6.PunchCharScale(i, Vector3.one * 0.7f, 0.7f)
-                .SetFreqnency(5)
+                .SetFrequency(5)
                 .SetDelay(i * 0.05f)
                 .SetEase(Ease.OutSine);
         }
@@ -64,7 +64,7 @@ public class TextMeshProSample : MonoBehaviour
         for (int i = 0; i < tmpText7.GetCharCount(); i++)
         {
             tmpText7.ShakeCharOffset(i, Random.insideUnitSphere * 30f, 3f)
-                .SetFreqnency(1)
+                .SetFrequency(1)
                 .SetDampingRatio(1f)
                 .SetEase(Ease.OutSine);
         }
