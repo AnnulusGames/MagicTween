@@ -243,7 +243,7 @@ namespace MagicTween
             return self;
         }
 
-        public static Tween<TValue, PunchTweenOptions> SetFreqnency<TValue>(this Tween<TValue, PunchTweenOptions> self, int frequency)
+        public static Tween<TValue, PunchTweenOptions> SetFrequency<TValue>(this Tween<TValue, PunchTweenOptions> self, int frequency)
             where TValue : unmanaged
         {
             AssertTween.IsActive(self);
@@ -273,7 +273,7 @@ namespace MagicTween
             return self;
         }
 
-        public static Tween<TValue, ShakeTweenOptions> SetFreqnency<TValue>(this Tween<TValue, ShakeTweenOptions> self, int frequency)
+        public static Tween<TValue, ShakeTweenOptions> SetFrequency<TValue>(this Tween<TValue, ShakeTweenOptions> self, int frequency)
             where TValue : unmanaged
         {
             AssertTween.IsActive(self);

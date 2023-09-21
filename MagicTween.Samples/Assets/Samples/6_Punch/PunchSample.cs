@@ -16,7 +16,7 @@ public class PunchSample : MonoBehaviour
         // You can set the frequency using SetFrequency(). Default value is 10.
         target2.PunchPositionY(-4f, 1.5f)
             .SetEase(Ease.OutSine)
-            .SetFreqnency(20);
+            .SetFrequency(20);
 
         // You can also set the vibration damping ratio using SetDampingRatio(). Default value is 1f.
         target3.PunchPositionY(4f, 1.5f)
