@@ -16,6 +16,8 @@ namespace MagicTween
         const string Error_AnimationCurveKeyframes = "The number of keyframe in Animation Curve must be 2 or more.";
         const string Error_DelayMustBeZeroOrHigher = "Delay must be 0 or higher";
         const string Error_EaseCustom = "Ease.Custom cannot be specified explicitly. If you want to specify a custom easing curve, use SetEase(AnimationCurve) instead.";
+        const string Error_ScrambleModeCustom = "ScrambleChars.Custom cannot be specified explicitly. Use SetScrambleMode(string) instead.";
+        const string Error_EmptyCustomScrambleChars = "scrambleChars cannot be null or an empty string. If you want to disable scramble chars, please specify ScrambleMode.None.";
 
         public static T SetEase<T>(this T self, Ease ease) where T : struct, ITweenHandle
         {
@@ -173,12 +175,7 @@ namespace MagicTween
         public static Tween<UnsafeText, StringTweenOptions> SetScrambleMode(this Tween<UnsafeText, StringTweenOptions> self, ScrambleMode scrambleMode)
         {
             AssertTween.IsActive(self);
-
-            if (scrambleMode == ScrambleMode.Custom)
-            {
-                // TODO: 
-                return self;
-            }
+            Assert.IsFalse(scrambleMode == ScrambleMode.Custom, Error_ScrambleModeCustom);
 
             var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
             options.value.scrambleMode = scrambleMode;
@@ -190,11 +187,7 @@ namespace MagicTween
         public static Tween<UnsafeText, StringTweenOptions> SetScrambleMode(this Tween<UnsafeText, StringTweenOptions> self, string customScrambleChars)
         {
             AssertTween.IsActive(self);
-
-            if (string.IsNullOrEmpty(customScrambleChars))
-            {
-                return self;
-            }
+            Assert.IsFalse(string.IsNullOrEmpty(customScrambleChars), Error_EmptyCustomScrambleChars);
 
             var options = EntityManager.GetComponentData<TweenOptions<StringTweenOptions>>(self.GetEntity());
             options.value.scrambleMode = ScrambleMode.Custom;
