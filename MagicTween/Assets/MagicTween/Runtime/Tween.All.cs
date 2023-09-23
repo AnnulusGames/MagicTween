@@ -11,7 +11,9 @@ namespace MagicTween
         {
             return TweenWorld.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<TweenControllerReference>(),
-                ComponentType.ReadOnly<TweenRootFlag>()
+                ComponentType.ReadOnly<TweenRootFlag>(),
+                ComponentType.ReadOnly<TweenIdInt>(),
+                ComponentType.ReadOnly<TweenIdString>()
             );
         }
 
