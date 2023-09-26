@@ -102,6 +102,7 @@ namespace MagicTween
                     var translator = *(commandComponentPtr + i);
                     var targetEntity = translator.TargetEntity;
                     if (!entityLookup.Exists(targetEntity)) continue;
+                    if (!targetComponentLookup.HasComponent(targetEntity)) continue;
 
                     ref var target = ref targetComponentLookup.GetRefRW(targetEntity).ValueRW;
 
