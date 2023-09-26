@@ -23,11 +23,11 @@ namespace MagicTween
                 {
                     case LinkBehaviour.PlayOnEnable:
                     case LinkBehaviour.PauseOnDisablePlayOnEnable:
-                        tween.Play();
+                        if (tween.IsActive()) tween.Play();
                         break;
                     case LinkBehaviour.RestartOnEnable:
                     case LinkBehaviour.PauseOnDisableRestartOnEnable:
-                        tween.Restart();
+                        if (tween.IsActive()) tween.Restart();
                         break;
                 }
             }
@@ -46,16 +46,16 @@ namespace MagicTween
                     case LinkBehaviour.PauseOnDisable:
                     case LinkBehaviour.PauseOnDisablePlayOnEnable:
                     case LinkBehaviour.PauseOnDisableRestartOnEnable:
-                        tween.Pause();
+                        if (tween.IsActive()) tween.Pause();
                         break;
                     case LinkBehaviour.KillOnDisable:
-                        tween.Kill();
+                        if (tween.IsActive()) tween.Kill();
                         break;
                     case LinkBehaviour.CompleteOnDisable:
-                        tween.Complete();
+                        if (tween.IsActive()) tween.Complete();
                         break;
                     case LinkBehaviour.CompleteAndKillOnDisable:
-                        tween.CompleteAndKill();
+                        if (tween.IsActive()) tween.CompleteAndKill();
                         break;
                 }
             }
@@ -69,7 +69,7 @@ namespace MagicTween
             for (int i = 0; i < items.Count; i++)
             {
                 var (tween, linkBehaviour) = items[i];
-                tween.Kill();
+                if (tween.IsActive()) tween.Kill();
             }
         }
 
