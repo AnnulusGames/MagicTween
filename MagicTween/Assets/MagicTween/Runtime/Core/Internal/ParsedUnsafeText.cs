@@ -18,7 +18,7 @@ namespace MagicTween.Core
                 var text = new UnsafeText(source.Length, allocator);
                 text.CopyFrom(source);
                 symbols.Add(new TextSymbol(SymbolType.Text, text));
-                parsedStringLength = source.Length;
+                parsedStringLength = StringUtils.GetLengthOfUnsafeTextChars(ref source);
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace MagicTween.Core
                         var text = new UnsafeText(buffer.Length, allocator);
                         text.CopyFrom(buffer);
                         symbols.Add(new TextSymbol(currentSymbol, text));
-                        if (currentSymbol == SymbolType.Text) parsedStringLength += text.Length;
+                        if (currentSymbol == SymbolType.Text) parsedStringLength += StringUtils.GetLengthOfUnsafeTextChars(ref text);
                         buffer.Clear();
                     }
                     buffer.Append(current);
@@ -74,7 +74,7 @@ namespace MagicTween.Core
                         var text = new UnsafeText(buffer.Length, allocator);
                         text.CopyFrom(buffer);
                         symbols.Add(new TextSymbol(currentSymbol, text));
-                        if (currentSymbol == SymbolType.Text) parsedStringLength += text.Length;
+                        if (currentSymbol == SymbolType.Text) parsedStringLength += StringUtils.GetLengthOfUnsafeTextChars(ref text);
                         buffer.Clear();
                     }
                     currentSymbol = SymbolType.Text;
@@ -92,7 +92,7 @@ namespace MagicTween.Core
                 var text = new UnsafeText(buffer.Length, allocator);
                 text.CopyFrom(buffer);
                 symbols.Add(new TextSymbol(currentSymbol, text));
-                parsedStringLength += text.Length;
+                parsedStringLength += StringUtils.GetLengthOfUnsafeTextChars(ref text);
             }
 
             buffer.Dispose();
@@ -118,7 +118,7 @@ namespace MagicTween.Core
                         while (enumerator.MoveNext())
                         {
                             var current = enumerator.Current;
-                            if (from <= offset && offset <= to)
+                            if (from <= offset && offset < to)
                             {
                                 text.Append(current);
                                 resultLength++;
