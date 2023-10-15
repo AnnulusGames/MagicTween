@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MagicTween.Core;
 using UnityEngine;
 
 namespace MagicTween
@@ -38,6 +39,7 @@ namespace MagicTween
 #if UNITY_EDITOR
             if (isQuittingPlayMode) return;
 #endif
+            if (!TweenWorld.World.IsCreated) return;
             for (int i = 0; i < items.Count; i++)
             {
                 var (tween, linkBehaviour) = items[i];
@@ -66,6 +68,7 @@ namespace MagicTween
 #if UNITY_EDITOR
             if (isQuittingPlayMode) return;
 #endif
+            if (!TweenWorld.World.IsCreated) return;
             for (int i = 0; i < items.Count; i++)
             {
                 var (tween, linkBehaviour) = items[i];
