@@ -1,5 +1,5 @@
 # Magic Tween
- Extremely fast tween library implemented in Unity ECS
+ Extremely fast tween library implemented with Unity ECS
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween/Assets/MagicTween/Documentation~/Header.png" width="800">
 
