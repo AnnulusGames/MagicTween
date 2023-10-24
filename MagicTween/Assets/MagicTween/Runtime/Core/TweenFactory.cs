@@ -339,13 +339,20 @@ namespace MagicTween.Core
             entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
         }
 
+        [BurstCompile]
+        static void SetStartAndEndValue<TValue>(in Entity entity, in TValue startValue, in TValue endValue)
+            where TValue : unmanaged
+        {
+            EntityManagerRef.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
+            EntityManagerRef.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+        }
+
         static void InitializeLambdaTweenComponents<TValue, TPlugin>(
             in Entity entity, in TValue startValue, in TValue endValue, TweenGetter<TValue> getter, TweenSetter<TValue> setter)
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            EntityManagerRef.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
-            EntityManagerRef.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+            SetStartAndEndValue(entity, startValue, endValue);
             EntityManagerRef.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
         }
 
@@ -355,8 +362,7 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            EntityManagerRef.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
-            EntityManagerRef.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+            SetStartAndEndValue(entity, startValue, endValue);
             EntityManagerRef.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
@@ -364,6 +370,7 @@ namespace MagicTween.Core
             ));
         }
 
+        [BurstCompile]
         static void InitializeEntityTweenComponents<TValue, TTranslator>(
             ref EntityManager entityManager, in Entity entity, in TValue startValue, in TValue endValue, in Entity target)
             where TValue : unmanaged
@@ -372,10 +379,10 @@ namespace MagicTween.Core
             var translator = default(TTranslator);
             translator.TargetEntity = target;
 
-            entityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
-            entityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+            SetStartAndEndValue(entity, startValue, endValue);
             entityManager.SetComponentData(entity, translator);
         }
+        [BurstCompile]
 
         static void InitializeEntityTweenComponents<TValue, TTranslator>(
             ref EntityManager entityManager, in Entity entity, in TValue endValue, in Entity target)
