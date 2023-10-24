@@ -16,10 +16,17 @@ namespace MagicTween
             }
             else
             {
-                // Use EntityCommandBuffer to avoid structural changes
                 var actions = new TweenCallbackActions();
-                var commandBuffer = TweenWorld.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-                commandBuffer.AddComponent(entity, actions);
+                if (TweenWorld.CallbackSystem.IsExecuting)
+                {
+                    // Use EntityCommandBuffer to avoid structural changes
+                    var commandBuffer = TweenWorld.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+                    commandBuffer.AddComponent(entity, actions);
+                }
+                else
+                {
+                    TweenWorld.EntityManager.AddComponentData(entity, actions);
+                }
                 return actions;
             }
         }

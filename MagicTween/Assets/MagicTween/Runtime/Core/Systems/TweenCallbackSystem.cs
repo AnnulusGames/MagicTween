@@ -9,6 +9,9 @@ namespace MagicTween.Core
     [UpdateInGroup(typeof(MagicTweenCallbackSystemGroup))]
     public sealed partial class TweenCallbackSystem : SystemBase
     {
+        public bool IsExecuting => _isExecuting;
+
+        bool _isExecuting;
         EntityQuery query;
 
         protected override void OnCreate()
@@ -21,9 +24,17 @@ namespace MagicTween.Core
 
         protected override void OnUpdate()
         {
-            CompleteDependency();
-            var job = new SystemJob();
-            job.Run(query);
+            _isExecuting = true;
+            try
+            {
+                CompleteDependency();
+                var job = new SystemJob();
+                job.Run(query);
+            }
+            finally
+            {
+                _isExecuting = false;
+            }
         }
 
         partial struct SystemJob : IJobEntity

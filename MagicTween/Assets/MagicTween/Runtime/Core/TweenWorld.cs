@@ -10,18 +10,21 @@ namespace MagicTween.Core
             _world = World.DefaultGameObjectInjectionWorld;
             _entityManager = _world.EntityManager;
             _cleanupSystem = _world.GetExistingSystemManaged<TweenCleanupSystem>();
+            _callbackSystem = _world.GetExistingSystemManaged<TweenCallbackSystem>();
             ArchetypeStorage.Create(Allocator.Persistent, out _archetypeStorage);
         }
 
         static World _world;
         static EntityManager _entityManager;
         static TweenCleanupSystem _cleanupSystem;
+        static TweenCallbackSystem _callbackSystem;
         static ArchetypeStorage _archetypeStorage;
 
         public static World World => _world;
         public static EntityManager EntityManager => _entityManager;
         public static ref EntityManager EntityManagerRef => ref _entityManager;
         public static TweenCleanupSystem CleanupSystem => _cleanupSystem;
+        public static TweenCallbackSystem CallbackSystem => _callbackSystem;
         internal static ref ArchetypeStorage ArchetypeStorageRef => ref _archetypeStorage;
     }
 }
