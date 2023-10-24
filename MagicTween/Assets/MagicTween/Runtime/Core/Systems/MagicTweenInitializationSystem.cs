@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace MagicTween.Core
@@ -12,7 +13,7 @@ namespace MagicTween.Core
             if (TweenWorld.World != null && TweenWorld.World.IsCreated && TweenWorld.World != World) return;
 
             TweenWorld.Initialize();
-            ArchetypeStore.Initialize();
+            //ArchetypeStore.Initialize();
             TweenControllerContainer.Clear();
             MagicTweenSettings.Initialize();
             SharedRandom.InitState((uint)DateTime.Now.Ticks);
@@ -24,7 +25,9 @@ namespace MagicTween.Core
         {
             if (TweenWorld.World != World) return;
 
-            ArchetypeStore.Dispose();
+            //ArchetypeStore.Dispose();
+
+            if (TweenWorld.ArchetypeStorageRef.IsCreated) TweenWorld.ArchetypeStorageRef.Dispose();
         }
     }
 }

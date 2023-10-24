@@ -18,7 +18,7 @@ namespace MagicTween.Core
             where TOptions : unmanaged, ITweenOptions
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetLambdaTweenArchetype<TValue, TOptions>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetLambdaTweenArchetype<TValue, TOptions>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -33,7 +33,7 @@ namespace MagicTween.Core
             where TOptions : unmanaged, ITweenOptions
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetLambdaTweenArchetype<TValue, TOptions>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetLambdaTweenArchetype<TValue, TOptions>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -49,7 +49,7 @@ namespace MagicTween.Core
             where TOptions : unmanaged, ITweenOptions
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
             var controllerId = TweenControllerContainer.GetId<UnsafeLambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -64,7 +64,7 @@ namespace MagicTween.Core
             where TOptions : unmanaged, ITweenOptions
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
             var controllerId = TweenControllerContainer.GetId<UnsafeLambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -78,7 +78,7 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetPunchLambdaTweenArchetype<TValue>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetPunchLambdaTweenArchetype<TValue>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -104,7 +104,7 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetUnsafePunchLambdaTweenArchetype<TValue>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafePunchLambdaTweenArchetype<TValue>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -133,7 +133,7 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetShakeLambdaTweenArchetype<TValue>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetShakeLambdaTweenArchetype<TValue>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -160,7 +160,7 @@ namespace MagicTween.Core
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = ArchetypeStore.GetUnsafeShakeLambdaTweenArchetype<TValue>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeShakeLambdaTweenArchetype<TValue>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -188,7 +188,7 @@ namespace MagicTween.Core
 
         public static Tween<UnsafeText, StringTweenOptions> CreateStringToTween(TweenGetter<string> getter, TweenSetter<string> setter, string endValue, float duration)
         {
-            var archetype = ArchetypeStore.GetStringLambdaTweenArchetype();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetStringLambdaTweenArchetype();
             var controllerId = TweenControllerContainer.GetId<StringLambdaTweenController>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -219,7 +219,7 @@ namespace MagicTween.Core
         }
         public static Tween<UnsafeText, StringTweenOptions> CreateStringFromToTween(TweenSetter<string> setter, string startValue, string endValue, float duration)
         {
-            var archetype = ArchetypeStore.GetStringLambdaTweenArchetype();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetStringLambdaTweenArchetype();
             var controllerId = TweenControllerContainer.GetId<StringLambdaTweenController>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -253,7 +253,7 @@ namespace MagicTween.Core
 
         public unsafe static Tween<float3, PathTweenOptions> CreatePathTween(TweenGetter<float3> getter, TweenSetter<float3> setter, float3[] points, float duration)
         {
-            var archetype = ArchetypeStore.GetPathLambdaTweenArchetype();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetPathLambdaTweenArchetype();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<float3, PathTweenPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -277,7 +277,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
             where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
         {
-            var archetype = ArchetypeStore.GetEntityTweenArchetype<TValue, TOptions, TTranslator>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetEntityTweenArchetype<TValue, TOptions, TTranslator>();
             var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -294,7 +294,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
             where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
         {
-            var archetype = ArchetypeStore.GetEntityTweenArchetype<TValue, TOptions, TTranslator>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetEntityTweenArchetype<TValue, TOptions, TTranslator>();
             var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -307,7 +307,7 @@ namespace MagicTween.Core
 
         public static Tween CreateUnitTween(float duration)
         {
-            var archetype = ArchetypeStore.GetUnitTweenArchetype();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetUnitTweenArchetype();
             var controllerId = TweenControllerContainer.GetId<UnitTweenController>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -316,7 +316,7 @@ namespace MagicTween.Core
 
         public static Sequence CreateSequence()
         {
-            var archetype = ArchetypeStore.GetSequenceArchetype();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetSequenceArchetype();
             var controllerId = TweenControllerContainer.GetId<SequenceTweenController>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, 0f, controllerId, out var entity);
