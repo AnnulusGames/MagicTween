@@ -1,14 +1,15 @@
 using System;
-using System.Collections.Generic;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Entities;
-using Unity.Mathematics;
+using Unity.Burst;
 using Unity.Collections;
+using Unity.Entities;
 using MagicTween.Core.Components;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Mathematics;
 
 namespace MagicTween.Core
 {
-    internal static class ArchetypeStore
+    [BurstCompile]
+    internal struct ArchetypeStorage : IDisposable
     {
         readonly struct LambdaTweenTypeKey<TValue, TOptions> { }
         readonly struct UnsafeLambdaTweenTypeKey<TValue, TOptions> { }
@@ -18,56 +19,92 @@ namespace MagicTween.Core
         readonly struct UnitTweenTypeKey { }
         readonly struct SequenceTypeKey { }
 
-        static NativeArray<ComponentType> coreComponentTypes;
-        readonly static Dictionary<Type, EntityArchetype> cache = new();
-
-        public static void Initialize()
+        [BurstCompile]
+        readonly struct SharedTypeIndex<T>
         {
-            coreComponentTypes = new NativeArray<ComponentType>(new ComponentType[]
+            static readonly SharedStatic<int> _index = SharedStatic<int>.GetOrCreate<T>();
+            static readonly SharedStatic<bool> isCreated = SharedStatic<bool>.GetOrCreate<SharedTypeIndex<T>>();
+
+            public static int Data
             {
-                typeof(TweenStatus),
-                typeof(TweenPosition),
-                typeof(TweenCompletedLoops),
-                typeof(TweenProgress),
+                [BurstCompile]
+                get
+                {
+                    if (!isCreated.Data)
+                    {
+                        _index.Data = _sharedTypeIndexOffset.Data;
+                        _sharedTypeIndexOffset.Data++;
+                        isCreated.Data = true;
+                    }
 
-                typeof(TweenParameterDuration),
-                typeof(TweenParameterDelay),
-                typeof(TweenParameterLoops),
-                typeof(TweenParameterLoopType),
-                typeof(TweenParameterPlaybackSpeed),
-                typeof(TweenParameterEase),
-                typeof(TweenParameterCustomEasingCurve),
-                typeof(TweenParameterAutoPlay),
-                typeof(TweenParameterAutoKill),
-                typeof(TweenParameterIgnoreTimeScale),
-                typeof(TweenParameterIsRelative),
-                typeof(TweenParameterInvertMode),
-
-                typeof(TweenIdInt),
-                typeof(TweenIdString),
-
-                typeof(TweenInvertFlag),
-                typeof(TweenStartedFlag),
-                typeof(TweenCallbackFlags),
-                typeof(TweenAccessorFlags),
-
-                typeof(TweenControllerReference),
-                typeof(TweenRootFlag),
-            }, Allocator.Persistent);
-            cache.Clear();
+                    return _index.Data;
+                }
+            }
         }
 
-        public static void Dispose()
+        static readonly SharedStatic<int> _sharedTypeIndexOffset = SharedStatic<int>.GetOrCreate<ArchetypeStorage>();
+
+        NativeHashMap<int, EntityArchetype> cache;
+        NativeArray<ComponentType> coreComponentTypes;
+
+        public bool IsCreated => cache.IsCreated && coreComponentTypes.IsCreated;
+
+        [BurstCompile]
+        public static void Create(Allocator allocator, out ArchetypeStorage archetypeStorage)
         {
+            archetypeStorage = new ArchetypeStorage
+            {
+                cache = new(32, allocator)
+            };
+
+            var list = new NativeList<ComponentType>(allocator)
+            {
+                ComponentType.ReadWrite<TweenStatus>(),
+                ComponentType.ReadWrite<TweenPosition>(),
+                ComponentType.ReadWrite<TweenCompletedLoops>(),
+                ComponentType.ReadWrite<TweenProgress>(),
+
+                ComponentType.ReadWrite<TweenParameterDuration>(),
+                ComponentType.ReadWrite<TweenParameterDelay>(),
+                ComponentType.ReadWrite<TweenParameterLoops>(),
+                ComponentType.ReadWrite<TweenParameterLoopType>(),
+                ComponentType.ReadWrite<TweenParameterPlaybackSpeed>(),
+                ComponentType.ReadWrite<TweenParameterEase>(),
+                ComponentType.ReadWrite<TweenParameterCustomEasingCurve>(),
+                ComponentType.ReadWrite<TweenParameterAutoPlay>(),
+                ComponentType.ReadWrite<TweenParameterAutoKill>(),
+                ComponentType.ReadWrite<TweenParameterIgnoreTimeScale>(),
+                ComponentType.ReadWrite<TweenParameterIsRelative>(),
+                ComponentType.ReadWrite<TweenParameterInvertMode>(),
+
+                ComponentType.ReadWrite<TweenIdInt>(),
+                ComponentType.ReadWrite<TweenIdString>(),
+
+                ComponentType.ReadWrite<TweenInvertFlag>(),
+                ComponentType.ReadWrite<TweenStartedFlag>(),
+                ComponentType.ReadWrite<TweenCallbackFlags>(),
+                ComponentType.ReadWrite<TweenAccessorFlags>(),
+
+                ComponentType.ReadWrite<TweenControllerReference>(),
+                ComponentType.ReadWrite<TweenRootFlag>(),
+            };
+
+            archetypeStorage.coreComponentTypes = list.AsArray();
+        }
+
+        public void Dispose()
+        {
+            cache.Dispose();
             coreComponentTypes.Dispose();
         }
 
-        public static EntityArchetype GetLambdaTweenArchetype<TValue, TOptions>()
+        [BurstCompile]
+        public EntityArchetype GetLambdaTweenArchetype<TValue, TOptions>()
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
         {
-            var typeKey = typeof(LambdaTweenTypeKey<TValue, TOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<LambdaTweenTypeKey<TValue, TOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -78,18 +115,19 @@ namespace MagicTween.Core
                     typeof(TweenPropertyAccessor<TValue>)
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetUnsafeLambdaTweenArchetype<TValue, TOptions>()
+        [BurstCompile]
+        public EntityArchetype GetUnsafeLambdaTweenArchetype<TValue, TOptions>()
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
         {
-            var typeKey = typeof(UnsafeLambdaTweenTypeKey<TValue, TOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<UnsafeLambdaTweenTypeKey<TValue, TOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -100,16 +138,17 @@ namespace MagicTween.Core
                     typeof(TweenPropertyAccessorUnsafe<TValue>)
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetStringLambdaTweenArchetype()
+        [BurstCompile]
+        public EntityArchetype GetStringLambdaTweenArchetype()
         {
-            var typeKey = typeof(LambdaTweenTypeKey<string, StringTweenOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<LambdaTweenTypeKey<string, StringTweenOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -121,17 +160,18 @@ namespace MagicTween.Core
                     typeof(TweenPropertyAccessor<string>)
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetPunchLambdaTweenArchetype<TValue>()
+        [BurstCompile]
+        public EntityArchetype GetPunchLambdaTweenArchetype<TValue>()
             where TValue : unmanaged
         {
-            var typeKey = typeof(VibrationTweenTypeKey<TValue, PunchTweenOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<VibrationTweenTypeKey<TValue, PunchTweenOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -143,16 +183,17 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetUnsafePunchLambdaTweenArchetype<TValue>()
+        [BurstCompile]
+        public EntityArchetype GetUnsafePunchLambdaTweenArchetype<TValue>()
             where TValue : unmanaged
         {
-            var typeKey = typeof(UnsafeVibrationTweenTypeKey<TValue, PunchTweenOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<UnsafeVibrationTweenTypeKey<TValue, PunchTweenOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -164,17 +205,17 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-
-        public static EntityArchetype GetShakeLambdaTweenArchetype<TValue>()
+        [BurstCompile]
+        public EntityArchetype GetShakeLambdaTweenArchetype<TValue>()
             where TValue : unmanaged
         {
-            var typeKey = typeof(VibrationTweenTypeKey<TValue, ShakeTweenOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<VibrationTweenTypeKey<TValue, ShakeTweenOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -187,16 +228,17 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetUnsafeShakeLambdaTweenArchetype<TValue>()
+        [BurstCompile]
+        public EntityArchetype GetUnsafeShakeLambdaTweenArchetype<TValue>()
             where TValue : unmanaged
         {
-            var typeKey = typeof(UnsafeVibrationTweenTypeKey<TValue, ShakeTweenOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<UnsafeVibrationTweenTypeKey<TValue, ShakeTweenOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -209,15 +251,16 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetPathLambdaTweenArchetype()
+        [BurstCompile]
+        public EntityArchetype GetPathLambdaTweenArchetype()
         {
-            var typeKey = typeof(LambdaTweenTypeKey<float3, PathTweenOptions>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<LambdaTweenTypeKey<float3, PathTweenOptions>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -228,18 +271,19 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetEntityTweenArchetype<TValue, TOptions, TTranslator>()
+        [BurstCompile]
+        public EntityArchetype GetEntityTweenArchetype<TValue, TOptions, TTranslator>()
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
             where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
         {
-            var typeKey = typeof(EntityTweenTypeKey<TValue, TOptions, TTranslator>);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<EntityTweenTypeKey<TValue, TOptions, TTranslator>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -252,26 +296,28 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetUnitTweenArchetype()
+        [BurstCompile]
+        public EntityArchetype GetUnitTweenArchetype()
         {
-            var typeKey = typeof(UnitTweenTypeKey);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<UnitTweenTypeKey>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 archetype = TweenWorld.EntityManager.CreateArchetype(coreComponentTypes);
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
 
-        public static EntityArchetype GetSequenceArchetype()
+        [BurstCompile]
+        public EntityArchetype GetSequenceArchetype()
         {
-            var typeKey = typeof(SequenceTypeKey);
-            if (!cache.TryGetValue(typeKey, out var archetype))
+            var index = SharedTypeIndex<SequenceTypeKey>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
@@ -280,7 +326,7 @@ namespace MagicTween.Core
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
-                cache.Add(typeKey, archetype);
+                cache.Add(index, archetype);
             }
             return archetype;
         }
