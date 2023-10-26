@@ -16,6 +16,14 @@ public static class GoKitTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CleanUp(TestClass instance)
+    {
+        Go.killAllTweensWithTarget(instance);
+        GameObject.Destroy(Go.instance);
+        GC.Collect();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CleanUp(Transform[] tranforms)
     {
         for (int i = 0; i < tranforms.Length; i++)
@@ -24,6 +32,15 @@ public static class GoKitTester
         }
         GameObject.Destroy(Go.instance);
         GC.Collect();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        GoTweenConfig goConfig = new GoTweenConfig();
+        goConfig.clearProperties();
+        goConfig.floatProp(TestClass.PropertyName, 10f);
+        Go.to(instance, duration, goConfig);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

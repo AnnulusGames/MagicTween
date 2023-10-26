@@ -13,6 +13,12 @@ public static class MagicTweenTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        Tween.FromTo(instance, (obj, x) => obj.value = x, 0f, 10f, duration);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CreateFloatTweens(TestClass[] array, float duration)
     {
         for (int i = 0; i < array.Length; i++)

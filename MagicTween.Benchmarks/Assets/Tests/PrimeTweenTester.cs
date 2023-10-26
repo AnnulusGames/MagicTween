@@ -22,6 +22,12 @@ public static class PrimeTweenTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        Tween.Custom(instance, 0f, 10f, duration, (obj, x) => obj.value = x);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CreateFloatTweens(TestClass[] array, float duration)
     {
         for (int i = 0; i < array.Length; i++)

@@ -23,6 +23,14 @@ public static class AnimeRxTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        Anime.Play(0f, 10f, Easing.Linear(duration))
+            .Subscribe(x => instance.value = x)
+            .AddTo(disposables);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CreateFloatTweens(TestClass[] array, float duration)
     {
         for (int i = 0; i < array.Length; i++)

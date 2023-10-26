@@ -5,6 +5,8 @@ using Prime31.ZestKit;
 
 public static class ZestKitTester
 {
+    const string PropertyName = "valueProperty";
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CleanUp()
     {
@@ -13,11 +15,17 @@ public static class ZestKitTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        PropertyTweens.floatPropertyTo(instance, PropertyName, 10f, duration).start();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CreateFloatTweens(TestClass[] array, float duration)
     {
         for (int i = 0; i < array.Length; i++)
         {
-            PropertyTweens.floatPropertyTo(array[i], "valueProperty", 10f, duration).start();
+            PropertyTweens.floatPropertyTo(array[i], PropertyName, 10f, duration).start();
         }
     }
 

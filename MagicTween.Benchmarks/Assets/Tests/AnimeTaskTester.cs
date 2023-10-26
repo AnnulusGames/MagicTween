@@ -24,6 +24,12 @@ public static class AnimeTaskTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        Easing.Create<Linear>(0f, 10f, duration).ToAction(x => instance.value = x, cancellationToken: cts.Token);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CreateFloatTweens(TestClass[] array, float duration)
     {
         for (int i = 0; i < array.Length; i++)

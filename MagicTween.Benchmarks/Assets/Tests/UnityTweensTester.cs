@@ -23,6 +23,19 @@ public static class UnityTweensTester
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void CreateFloatTween(TestClass instance, float duration)
+    {
+        var tween = new FloatTween
+        {
+            from = 0f,
+            to = 10f,
+            duration = duration,
+            onUpdate = (_, value) => instance.value = value,
+        };
+        bindTarget.AddTween(tween);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CreateFloatTweens(TestClass[] array, float duration)
     {
         for (int i = 0; i < array.Length; i++)
