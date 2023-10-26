@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Unity.Entities;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
+using System.Collections.Generic;
 
 namespace MagicTween.Core
 {
@@ -70,20 +71,27 @@ namespace MagicTween.Core
         {
             public void Execute(TweenCallbackActionsNoAlloc actions, in TweenCallbackFlags callbackFlags)
             {
-                if ((callbackFlags.flags & CallbackFlags.OnStart) == CallbackFlags.OnStart) TryInvoke(actions.target, actions.onStart);
-                if ((callbackFlags.flags & CallbackFlags.OnPlay) == CallbackFlags.OnPlay) TryInvoke(actions.target, actions.onPlay);
-                if ((callbackFlags.flags & CallbackFlags.OnPause) == CallbackFlags.OnPause) TryInvoke(actions.target, actions.onPause);
-                if ((callbackFlags.flags & CallbackFlags.OnUpdate) == CallbackFlags.OnUpdate) TryInvoke(actions.target, actions.onUpdate);
-                if ((callbackFlags.flags & CallbackFlags.OnRewind) == CallbackFlags.OnRewind) TryInvoke(actions.target, actions.onRewind);
-                if ((callbackFlags.flags & CallbackFlags.OnStepComplete) == CallbackFlags.OnStepComplete) TryInvoke(actions.target, actions.onStepComplete);
-                if ((callbackFlags.flags & CallbackFlags.OnComplete) == CallbackFlags.OnComplete) TryInvoke(actions.target, actions.onComplete);
-                if ((callbackFlags.flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) TryInvoke(actions.target, actions.onKill);
+                if ((callbackFlags.flags & CallbackFlags.OnStart) == CallbackFlags.OnStart) TryInvoke(actions.onStart);
+                if ((callbackFlags.flags & CallbackFlags.OnPlay) == CallbackFlags.OnPlay) TryInvoke(actions.onPlay);
+                if ((callbackFlags.flags & CallbackFlags.OnPause) == CallbackFlags.OnPause) TryInvoke(actions.onPause);
+                if ((callbackFlags.flags & CallbackFlags.OnUpdate) == CallbackFlags.OnUpdate) TryInvoke(actions.onUpdate);
+                if ((callbackFlags.flags & CallbackFlags.OnRewind) == CallbackFlags.OnRewind) TryInvoke(actions.onRewind);
+                if ((callbackFlags.flags & CallbackFlags.OnStepComplete) == CallbackFlags.OnStepComplete) TryInvoke(actions.onStepComplete);
+                if ((callbackFlags.flags & CallbackFlags.OnComplete) == CallbackFlags.OnComplete) TryInvoke(actions.onComplete);
+                if ((callbackFlags.flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) TryInvoke(actions.onKill);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            void TryInvoke(object target, Action<object> action)
+            void TryInvoke(List<(object, Action<object>)> actions)
             {
-                try { action?.Invoke(target); }
+                try
+                {
+                    for (int i = 0; i < actions.Count; i++)
+                    {
+                        var action = actions[i];
+                        action.Item2.Invoke(action.Item1);
+                    }
+                }
                 catch (Exception ex) { Debugger.LogExceptionInsideTween(ex); }
             }
         }

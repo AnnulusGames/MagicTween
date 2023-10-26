@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
@@ -71,18 +72,16 @@ namespace MagicTween.Core.Components
 
     public sealed class TweenCallbackActionsNoAlloc : IComponentData, IDisposable
     {
-        public object target;
-
-        public Action<object> onStart;
-        public Action<object> onPlay;
-        public Action<object> onPause;
-        public Action<object> onUpdate;
-        public Action<object> onStepComplete;
-        public Action<object> onComplete;
-        public Action<object> onKill;
+        public readonly List<(object target, Action<object> action)> onStart = new(8);
+        public readonly List<(object target, Action<object> action)> onPlay = new(8);
+        public readonly List<(object target, Action<object> action)> onPause = new(8);
+        public readonly List<(object target, Action<object> action)> onUpdate = new(8);
+        public readonly List<(object target, Action<object> action)> onStepComplete = new(8);
+        public readonly List<(object target, Action<object> action)> onComplete = new(8);
+        public readonly List<(object target, Action<object> action)> onKill = new(8);
 
         // internal callback
-        public Action<object> onRewind;
+        public readonly List<(object target, Action<object> action)> onRewind = new(8);
 
         public void Dispose()
         {
@@ -91,14 +90,14 @@ namespace MagicTween.Core.Components
 
         internal bool HasAction()
         {
-            if (onStart != null) return true;
-            if (onPlay != null) return true;
-            if (onPause != null) return true;
-            if (onUpdate != null) return true;
-            if (onStepComplete != null) return true;
-            if (onComplete != null) return true;
-            if (onKill != null) return true;
-            if (onRewind != null) return true;
+            if (onStart.Count > 0) return true;
+            if (onPlay.Count > 0) return true;
+            if (onPause.Count > 0) return true;
+            if (onUpdate.Count > 0) return true;
+            if (onStepComplete.Count > 0) return true;
+            if (onComplete.Count > 0) return true;
+            if (onKill.Count > 0) return true;
+            if (onRewind.Count > 0) return true;
             return false;
         }
     }

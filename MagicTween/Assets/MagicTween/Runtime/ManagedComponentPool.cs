@@ -187,14 +187,12 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenCallbackActionsNoAlloc Rent(object target)
+        public static TweenCallbackActionsNoAlloc Rent()
         {
             if (!stack.TryPop(out var result))
             {
                 result = new();
             }
-
-            result.target = target;
 
             return result;
         }
@@ -202,17 +200,16 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Return(TweenCallbackActionsNoAlloc instance)
         {
-            if (instance.target != null)
+            if (instance.HasAction())
             {
-                instance.target = null;
-                instance.onStart = null;
-                instance.onPlay = null;
-                instance.onPause = null;
-                instance.onUpdate = null;
-                instance.onStepComplete = null;
-                instance.onComplete = null;
-                instance.onKill = null;
-                instance.onRewind = null;
+                instance.onStart.Clear();
+                instance.onPlay.Clear();
+                instance.onPause.Clear();
+                instance.onUpdate.Clear();
+                instance.onStepComplete.Clear();
+                instance.onComplete.Clear();
+                instance.onKill.Clear();
+                instance.onRewind.Clear();
                 stack.Push(instance);
             }
         }
