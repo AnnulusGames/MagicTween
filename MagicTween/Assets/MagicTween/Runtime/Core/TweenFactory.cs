@@ -93,7 +93,7 @@ namespace MagicTween.Core
             });
             EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorPool<TValue>.Rent(getter, setter));
 
             return new Tween<TValue, PunchTweenOptions>(entity);
         }
@@ -119,7 +119,7 @@ namespace MagicTween.Core
             });
             EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorUnsafePool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -149,7 +149,7 @@ namespace MagicTween.Core
             });
             EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorPool<TValue>.Rent(getter, setter));
 
             return new Tween<TValue, ShakeTweenOptions>(entity);
         }
@@ -177,7 +177,7 @@ namespace MagicTween.Core
             EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
 
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorUnsafePool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -213,7 +213,7 @@ namespace MagicTween.Core
             EntityManager.SetComponentData(entity, start);
             EntityManager.SetComponentData(entity, end);
             EntityManager.SetComponentData(entity, value);
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<string>(getter, setter));
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorPool<string>.Rent(getter, setter));
 
             return new Tween<UnsafeText, StringTweenOptions>(entity);
         }
@@ -246,7 +246,7 @@ namespace MagicTween.Core
             EntityManager.SetComponentData(entity, start);
             EntityManager.SetComponentData(entity, end);
             EntityManager.SetComponentData(entity, value);
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<string>(null, setter));
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorPool<string>.Rent(null, setter));
 
             return new Tween<UnsafeText, StringTweenOptions>(entity);
         }
@@ -266,7 +266,7 @@ namespace MagicTween.Core
                 UnsafeUtility.MemCpy((float3*)buffer.AsNativeArray().GetUnsafePtr() + 1, src, points.Length * sizeof(float3));
             }
 
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<float3>(getter, setter));
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorPool<float3>.Rent(getter, setter));
 
             return new Tween<float3, PathTweenOptions>(entity);
         }
@@ -353,7 +353,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
             SetStartAndEndValue(entity, startValue, endValue);
-            EntityManagerRef.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
+            EntityManagerRef.SetComponentData(entity, TweenPropertyAccessorPool<TValue>.Rent(getter, setter));
         }
 
         static void InitializeUnsafeLambdaTweenComponents<TObject, TValue, TPlugin>(
@@ -363,7 +363,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
             SetStartAndEndValue(entity, startValue, endValue);
-            EntityManagerRef.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
+            EntityManagerRef.SetComponentData(entity, TweenPropertyAccessorUnsafePool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)

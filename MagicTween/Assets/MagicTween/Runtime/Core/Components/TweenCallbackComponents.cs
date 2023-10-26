@@ -6,14 +6,16 @@ namespace MagicTween.Core.Components
 {
     public sealed class TweenPropertyAccessor<T> : IComponentData
     {
-        public readonly TweenGetter<T> getter;
-        public readonly TweenSetter<T> setter;
+        public TweenGetter<T> getter;
+        public TweenSetter<T> setter;
 
         public TweenPropertyAccessor() { }
-        public TweenPropertyAccessor(TweenGetter<T> getter, TweenSetter<T> setter)
+
+        // Implement pooling using Dispose of Managed Component.
+        // This is not the expected use of Dispose, but it works.
+        public void Dispose()
         {
-            this.getter = getter;
-            this.setter = setter;
+            TweenPropertyAccessorPool<T>.Return(this);
         }
     }
 
@@ -21,21 +23,20 @@ namespace MagicTween.Core.Components
     // use UnsafeUtility.As to force assignment of delegates when creating components.
     // So the type of the target and the type of the TweenGetter/TweenSetter argument must match absolutely,
     // otherwise undefined behavior will result.
-    public sealed class TweenPropertyAccessorUnsafe<T> : IComponentData
+    public sealed class TweenPropertyAccessorUnsafe<T> : IComponentData, IDisposable
     {
-        [HideInInspector] public readonly object target;
-        [HideInInspector] public readonly TweenGetter<object, T> getter;
-        [HideInInspector] public readonly TweenSetter<object, T> setter;
+        [HideInInspector] public object target;
+        [HideInInspector] public TweenGetter<object, T> getter;
+        [HideInInspector] public TweenSetter<object, T> setter;
 
         public TweenPropertyAccessorUnsafe() { }
-        public TweenPropertyAccessorUnsafe(object target, TweenGetter<object, T> getter, TweenSetter<object, T> setter)
+
+        public void Dispose()
         {
-            this.target = target;
-            this.getter = getter;
-            this.setter = setter;
+            TweenPropertyAccessorUnsafePool<T>.Return(this);
         }
     }
-    
+
     public sealed class TweenCallbackActions : IComponentData
     {
         public Action onStart;
