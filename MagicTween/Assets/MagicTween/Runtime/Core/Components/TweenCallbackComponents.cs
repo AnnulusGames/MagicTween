@@ -37,7 +37,7 @@ namespace MagicTween.Core.Components
         }
     }
 
-    public sealed class TweenCallbackActions : IComponentData
+    public sealed class TweenCallbackActions : IComponentData, IDisposable
     {
         public Action onStart;
         public Action onPlay;
@@ -49,5 +49,23 @@ namespace MagicTween.Core.Components
 
         // internal callback
         public Action onRewind;
+
+        public void Dispose()
+        {
+            TweenCallbackActionsPool.Return(this);
+        }
+
+        internal bool HasAction()
+        {
+            if (onStart != null) return true;
+            if (onPlay != null) return true;
+            if (onPause != null) return true;
+            if (onUpdate != null) return true;
+            if (onStepComplete != null) return true;
+            if (onComplete != null) return true;
+            if (onKill != null) return true;
+            if (onRewind != null) return true;
+            return false;
+        }
     }
 }

@@ -1,19 +1,23 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
-    internal static class TweenPropertyAccessorPool<T>
+    public static class TweenPropertyAccessorPool<T>
     {
         readonly static Stack<TweenPropertyAccessor<T>> stack;
-        const int InitialSize = 32;
+        const int InitialSize = 256;
 
         static TweenPropertyAccessorPool()
         {
             stack = new(InitialSize);
-            for (int i = 0; i < InitialSize; i++)
+            Prewarm(InitialSize);
+        }
+
+        public static void Prewarm(int count)
+        {
+            for (int i = 0; i < count; i++)
             {
                 stack.Push(new());
             }
@@ -56,15 +60,20 @@ namespace MagicTween.Core
         }
     }
 
-    internal static class TweenPropertyAccessorUnsafePool<T>
+    public static class TweenPropertyAccessorUnsafePool<T>
     {
         readonly static Stack<TweenPropertyAccessorUnsafe<T>> stack;
-        const int InitialSize = 32;
+        const int InitialSize = 256;
 
         static TweenPropertyAccessorUnsafePool()
         {
             stack = new(InitialSize);
-            for (int i = 0; i < InitialSize; i++)
+            Prewarm(InitialSize);
+        }
+
+        public static void Prewarm(int count)
+        {
+            for (int i = 0; i < count; i++)
             {
                 stack.Push(new());
             }
@@ -105,6 +114,54 @@ namespace MagicTween.Core
                 instance.target = null;
                 instance.getter = null;
                 instance.setter = null;
+                stack.Push(instance);
+            }
+        }
+    }
+
+    public static class TweenCallbackActionsPool
+    {
+        readonly static Stack<TweenCallbackActions> stack;
+        const int InitialSize = 256;
+
+        static TweenCallbackActionsPool()
+        {
+            stack = new(InitialSize);
+            Prewarm(InitialSize);
+        }
+
+        public static void Prewarm(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                stack.Push(new());
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TweenCallbackActions Rent()
+        {
+            if (!stack.TryPop(out var result))
+            {
+                result = new();
+            }
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Return(TweenCallbackActions instance)
+        {
+            if (instance.HasAction())
+            {
+                instance.onStart = null;
+                instance.onPlay = null;
+                instance.onPause = null;
+                instance.onUpdate = null;
+                instance.onStepComplete = null;
+                instance.onComplete = null;
+                instance.onKill= null;
+                instance.onRewind = null;
                 stack.Push(instance);
             }
         }
