@@ -68,4 +68,38 @@ namespace MagicTween.Core.Components
             return false;
         }
     }
+
+    public sealed class TweenCallbackActionsNoAlloc : IComponentData, IDisposable
+    {
+        public object target;
+
+        public Action<object> onStart;
+        public Action<object> onPlay;
+        public Action<object> onPause;
+        public Action<object> onUpdate;
+        public Action<object> onStepComplete;
+        public Action<object> onComplete;
+        public Action<object> onKill;
+
+        // internal callback
+        public Action<object> onRewind;
+
+        public void Dispose()
+        {
+            TweenCallbackActionsNoAllocPool.Return(this);
+        }
+
+        internal bool HasAction()
+        {
+            if (onStart != null) return true;
+            if (onPlay != null) return true;
+            if (onPause != null) return true;
+            if (onUpdate != null) return true;
+            if (onStepComplete != null) return true;
+            if (onComplete != null) return true;
+            if (onKill != null) return true;
+            if (onRewind != null) return true;
+            return false;
+        }
+    }
 }
