@@ -1,5 +1,7 @@
 using System;
 using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.PerformanceTesting;
 
 public class GCAllocationTest
@@ -7,7 +9,7 @@ public class GCAllocationTest
     TestClass instance;
 
     const int WarmupCount = 5;
-    const int MeasurementCount = 1000;
+    const int MeasurementCount = 10000;
 
     void MeasureGCAlloc(Action action)
     {
@@ -128,6 +130,17 @@ public class GCAllocationTest
     {
         MagicTween.Core.TweenPropertyAccessorUnsafePool<float>.Prewarm(WarmupCount + MeasurementCount + 100);
 
+        // In Unity ECS, managed components are managed as a huge array, but the process of expanding this array may affect GC Allocation measurement.
+        // To avoid this, add a Dummy managed component and adjust the array size in advance.
+        var world = World.DefaultGameObjectInjectionWorld;
+        var archetype = world.EntityManager.CreateArchetype(ComponentType.ReadWrite<DummyManagedComponent>());
+        var entities = world.EntityManager.CreateEntity(archetype, WarmupCount + MeasurementCount, Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            world.EntityManager.SetComponentData(entities[i], new DummyManagedComponent());
+        }
+        world.EntityManager.DestroyEntity(entities);
+
         MeasureGCAlloc(() =>
         {
             MagicTweenTester.CreateFloatTween(instance, 10f);
@@ -135,4 +148,6 @@ public class GCAllocationTest
 
         MagicTweenTester.CleanUp();
     }
+
+    class DummyManagedComponent : IComponentData { }
 }
