@@ -3,6 +3,7 @@ using NUnit.Framework;
 using Unity.PerformanceTesting;
 using Unity.Collections;
 using Unity.Entities;
+using MagicTween;
 
 public class TweenSetupPerformanceTest
 {
@@ -209,6 +210,30 @@ public class TweenSetupPerformanceTest
         .MeasurementCount(MeasurementCount)
         .Run();
     }
+
+    [Test, Performance]
+    public void MagicTweenSetupCached()
+    {
+        MagicTween.Tween[] tweens = new MagicTween.Tween[array.Length];
+
+        Measure.Method(() =>
+        {
+            for (int i = 0; i < tweens.Length; i++) tweens[i].Restart();
+        })
+        .SetUp(() =>
+        {
+            for (int i = 0; i < tweens.Length; i++) tweens[i] = MagicTween.Tween.To(array[i], obj => obj.value, (obj, x) => obj.value = x, 10f, 10f).SetAutoPlay(false);
+        })
+        .CleanUp(() =>
+        {
+            for (int i = 0; i < tweens.Length; i++) tweens[i].Kill();
+            MagicTweenTester.CleanUp();
+        })
+        .WarmupCount(WarmupCount)
+        .MeasurementCount(MeasurementCount)
+        .Run();
+    }
+
 
     [Test, Performance]
     public void MagicTweenECSSetup()
