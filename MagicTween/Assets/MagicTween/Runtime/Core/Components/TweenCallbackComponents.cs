@@ -23,17 +23,17 @@ namespace MagicTween.Core.Components
     // use UnsafeUtility.As to force assignment of delegates when creating components.
     // So the type of the target and the type of the TweenGetter/TweenSetter argument must match absolutely,
     // otherwise undefined behavior will result.
-    public sealed class TweenPropertyAccessorUnsafe<T> : IComponentData, IDisposable
+    public sealed class TweenPropertyAccessorNoAlloc<T> : IComponentData, IDisposable
     {
         [HideInInspector] public object target;
         [HideInInspector] public TweenGetter<object, T> getter;
         [HideInInspector] public TweenSetter<object, T> setter;
 
-        public TweenPropertyAccessorUnsafe() { }
+        public TweenPropertyAccessorNoAlloc() { }
 
         public void Dispose()
         {
-            TweenPropertyAccessorUnsafePool<T>.Return(this);
+            TweenPropertyAccessorNoAllocPool<T>.Return(this);
         }
     }
 

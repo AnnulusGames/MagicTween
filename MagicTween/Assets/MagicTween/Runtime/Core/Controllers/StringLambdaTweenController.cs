@@ -26,7 +26,7 @@ namespace MagicTween.Core
             text.value.CopyFrom(currentValue);
             TweenWorld.EntityManager.SetComponentData(entity, text);
 
-            var accessor = TweenWorld.EntityManager.GetComponentData<TweenPropertyAccessorUnsafe<string>>(entity);
+            var accessor = TweenWorld.EntityManager.GetComponentData<TweenPropertyAccessorNoAlloc<string>>(entity);
             accessor.setter(accessor.target, currentValue.ConvertToString());
             currentValue.Dispose();
         }

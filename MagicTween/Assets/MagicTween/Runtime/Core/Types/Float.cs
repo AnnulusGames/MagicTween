@@ -7,7 +7,7 @@ using MagicTween.Core.Components;
 [assembly: RegisterGenericComponentType(typeof(TweenStartValue<float>))]
 [assembly: RegisterGenericComponentType(typeof(TweenEndValue<float>))]
 [assembly: RegisterGenericComponentType(typeof(TweenPropertyAccessor<float>))]
-[assembly: RegisterGenericComponentType(typeof(TweenPropertyAccessorUnsafe<float>))]
+[assembly: RegisterGenericComponentType(typeof(TweenPropertyAccessorNoAlloc<float>))]
 
 namespace MagicTween.Core
 {

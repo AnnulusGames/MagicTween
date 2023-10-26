@@ -42,30 +42,30 @@ namespace MagicTween.Core
             return new Tween<TValue, TOptions>(entity);
         }
 
-        public static Tween<TValue, TOptions> CreateToTweenUnsafe<TObject, TValue, TOptions, TPlugin>(
+        public static Tween<TValue, TOptions> CreateToTweenNoAlloc<TObject, TValue, TOptions, TPlugin>(
             TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, in TValue endValue, float duration)
             where TObject : class
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
-            var controllerId = TweenControllerContainer.GetId<UnsafeLambdaTweenController<TValue, TPlugin>>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetNoAllocLambdaTweenArchetype<TValue, TOptions>();
+            var controllerId = TweenControllerContainer.GetId<NoAllocLambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
             InitializeUnsafeLambdaTweenComponents<TObject, TValue, TPlugin>(entity, target, getter(target), endValue, getter, setter);
 
             return new Tween<TValue, TOptions>(entity);
         }
-        public static Tween<TValue, TOptions> CreateFromToTweenUnsafe<TObject, TValue, TOptions, TPlugin>(
+        public static Tween<TValue, TOptions> CreateFromToTweenNoAlloc<TObject, TValue, TOptions, TPlugin>(
             TObject target, in TValue startValue, in TValue endValue, float duration, TweenSetter<TObject, TValue> setter)
             where TObject : class
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
-            var controllerId = TweenControllerContainer.GetId<UnsafeLambdaTweenController<TValue, TPlugin>>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetNoAllocLambdaTweenArchetype<TValue, TOptions>();
+            var controllerId = TweenControllerContainer.GetId<NoAllocLambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
             InitializeUnsafeLambdaTweenComponents<TObject, TValue, TPlugin>(entity, target, startValue, endValue, null, setter);
@@ -98,13 +98,13 @@ namespace MagicTween.Core
             return new Tween<TValue, PunchTweenOptions>(entity);
         }
 
-        public static Tween<TValue, PunchTweenOptions> CreateUnsafePunchTween<TObject, TValue, TPlugin>(
+        public static Tween<TValue, PunchTweenOptions> CreatePunchTweenNoAlloc<TObject, TValue, TPlugin>(
             TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, TValue strength, float duration)
             where TObject : class
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafePunchLambdaTweenArchetype<TValue>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetNoAllocPunchLambdaTweenArchetype<TValue>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -119,7 +119,7 @@ namespace MagicTween.Core
             });
             EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
-            EntityManager.SetComponentData(entity, TweenPropertyAccessorUnsafePool<TValue>.Rent(
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -154,13 +154,13 @@ namespace MagicTween.Core
             return new Tween<TValue, ShakeTweenOptions>(entity);
         }
 
-        public static Tween<TValue, ShakeTweenOptions> CreateUnsafeShakeTween<TObject, TValue, TPlugin>(
+        public static Tween<TValue, ShakeTweenOptions> CreateShakeTweenNoAlloc<TObject, TValue, TPlugin>(
             TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, TValue strength, float duration)
             where TObject : class
             where TValue : unmanaged
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeShakeLambdaTweenArchetype<TValue>();
+            var archetype = TweenWorld.ArchetypeStorageRef.GetNoAllocShakeLambdaTweenArchetype<TValue>();
             var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
 
             CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
@@ -177,7 +177,7 @@ namespace MagicTween.Core
             EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
             EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
 
-            EntityManager.SetComponentData(entity, TweenPropertyAccessorUnsafePool<TValue>.Rent(
+            EntityManager.SetComponentData(entity, TweenPropertyAccessorNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -363,7 +363,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue>
         {
             SetStartAndEndValue(entity, startValue, endValue);
-            EntityManagerRef.SetComponentData(entity, TweenPropertyAccessorUnsafePool<TValue>.Rent(
+            EntityManagerRef.SetComponentData(entity, TweenPropertyAccessorNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)

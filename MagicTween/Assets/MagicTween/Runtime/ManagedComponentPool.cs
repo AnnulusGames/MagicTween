@@ -60,12 +60,12 @@ namespace MagicTween.Core
         }
     }
 
-    public static class TweenPropertyAccessorUnsafePool<T>
+    public static class TweenPropertyAccessorNoAllocPool<T>
     {
-        readonly static Stack<TweenPropertyAccessorUnsafe<T>> stack;
+        readonly static Stack<TweenPropertyAccessorNoAlloc<T>> stack;
         const int InitialSize = 256;
 
-        static TweenPropertyAccessorUnsafePool()
+        static TweenPropertyAccessorNoAllocPool()
         {
             stack = new(InitialSize);
             Prewarm(InitialSize);
@@ -80,7 +80,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenPropertyAccessorUnsafe<T> Rent()
+        public static TweenPropertyAccessorNoAlloc<T> Rent()
         {
             if (!stack.TryPop(out var result))
             {
@@ -91,7 +91,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenPropertyAccessorUnsafe<T> Rent(object target, TweenGetter<object, T> getter, TweenSetter<object, T> setter)
+        public static TweenPropertyAccessorNoAlloc<T> Rent(object target, TweenGetter<object, T> getter, TweenSetter<object, T> setter)
         {
             if (!stack.TryPop(out var result))
             {
@@ -107,7 +107,7 @@ namespace MagicTween.Core
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Return(TweenPropertyAccessorUnsafe<T> instance)
+        public static void Return(TweenPropertyAccessorNoAlloc<T> instance)
         {
             if (instance.target != null)
             {
@@ -160,7 +160,7 @@ namespace MagicTween.Core
                 instance.onUpdate = null;
                 instance.onStepComplete = null;
                 instance.onComplete = null;
-                instance.onKill= null;
+                instance.onKill = null;
                 instance.onRewind = null;
                 stack.Push(instance);
             }

@@ -20,7 +20,7 @@ namespace MagicTween.Core
         ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
         ComponentTypeHandle<TweenPropertyAccessor<TValue>> accessorTypeHandle;
-        ComponentTypeHandle<TweenPropertyAccessorUnsafe<TValue>> unsafeAccessorTypeHandle;
+        ComponentTypeHandle<TweenPropertyAccessorNoAlloc<TValue>> unsafeAccessorTypeHandle;
 
         [BurstCompile]
         protected override void OnCreate()
@@ -31,14 +31,14 @@ namespace MagicTween.Core
                 .Build();
             query2 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPropertyAccessorUnsafe<TValue>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPropertyAccessorNoAlloc<TValue>>()
                 .Build();
 
             accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<TValue>>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<TValue>>();
             accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<TValue>>(true);
-            unsafeAccessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessorUnsafe<TValue>>(true);
+            unsafeAccessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessorNoAlloc<TValue>>(true);
         }
 
         [BurstCompile]
@@ -119,7 +119,7 @@ namespace MagicTween.Core
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessorUnsafe<TValue>> unsafeAccessorTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessorNoAlloc<TValue>> unsafeAccessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {

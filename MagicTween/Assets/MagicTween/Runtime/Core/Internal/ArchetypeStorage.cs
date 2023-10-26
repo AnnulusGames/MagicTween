@@ -122,7 +122,7 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
-        public EntityArchetype GetUnsafeLambdaTweenArchetype<TValue, TOptions>()
+        public EntityArchetype GetNoAllocLambdaTweenArchetype<TValue, TOptions>()
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
         {
@@ -135,7 +135,7 @@ namespace MagicTween.Core
                     typeof(TweenStartValue<TValue>),
                     typeof(TweenEndValue<TValue>),
                     typeof(TweenOptions<TOptions>),
-                    typeof(TweenPropertyAccessorUnsafe<TValue>)
+                    typeof(TweenPropertyAccessorNoAlloc<TValue>)
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
@@ -189,7 +189,7 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
-        public EntityArchetype GetUnsafePunchLambdaTweenArchetype<TValue>()
+        public EntityArchetype GetNoAllocPunchLambdaTweenArchetype<TValue>()
             where TValue : unmanaged
         {
             var index = SharedTypeIndex<UnsafeVibrationTweenTypeKey<TValue, PunchTweenOptions>>.Data;
@@ -200,7 +200,7 @@ namespace MagicTween.Core
                     typeof(TweenValue<TValue>),
                     typeof(TweenStartValue<TValue>),
                     typeof(TweenOptions<PunchTweenOptions>),
-                    typeof(TweenPropertyAccessorUnsafe<TValue>),
+                    typeof(TweenPropertyAccessorNoAlloc<TValue>),
                     typeof(VibrationStrength<TValue>)
                 };
                 types.AddRange(coreComponentTypes);
@@ -234,7 +234,7 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
-        public EntityArchetype GetUnsafeShakeLambdaTweenArchetype<TValue>()
+        public EntityArchetype GetNoAllocShakeLambdaTweenArchetype<TValue>()
             where TValue : unmanaged
         {
             var index = SharedTypeIndex<UnsafeVibrationTweenTypeKey<TValue, ShakeTweenOptions>>.Data;
@@ -245,7 +245,7 @@ namespace MagicTween.Core
                     typeof(TweenValue<TValue>),
                     typeof(TweenStartValue<TValue>),
                     typeof(TweenOptions<ShakeTweenOptions>),
-                    typeof(TweenPropertyAccessorUnsafe<TValue>),
+                    typeof(TweenPropertyAccessorNoAlloc<TValue>),
                     typeof(VibrationStrength<TValue>),
                     typeof(ShakeRandomState)
                 };
