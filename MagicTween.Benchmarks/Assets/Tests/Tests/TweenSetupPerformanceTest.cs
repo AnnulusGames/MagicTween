@@ -33,61 +33,49 @@ public class TweenSetupPerformanceTest
     [Test, Performance]
     public void AnimeTaskSetup()
     {
+        AnimeTaskTester.Init();
+
         Measure.Method(() =>
         {
             AnimeTaskTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            AnimeTaskTester.Init();
-        })
-        .CleanUp(() =>
-        {
-            AnimeTaskTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        AnimeTaskTester.CleanUp();
     }
 
     [Test, Performance]
     public void AnimeRxSetup()
     {
+        AnimeRxTester.Init();
+
         Measure.Method(() =>
         {
             AnimeRxTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            AnimeRxTester.Init();
-        })
-        .CleanUp(() =>
-        {
-            AnimeRxTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        AnimeRxTester.CleanUp();
     }
 
     [Test, Performance]
     public void UnityTweensSetup()
     {
+        UnityTweensTester.Init();
+
         Measure.Method(() =>
         {
             UnityTweensTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            UnityTweensTester.Init();
-        })
-        .CleanUp(() =>
-        {
-            UnityTweensTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        UnityTweensTester.CleanUp();
     }
 
     [Test, Performance]
@@ -97,17 +85,11 @@ public class TweenSetupPerformanceTest
         {
             GoKitTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            
-        })
-        .CleanUp(() =>
-        {
-            GoKitTester.CleanUp(array);
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        GoKitTester.CleanUp(array);
     }
 
     [Test, Performance]
@@ -117,78 +99,60 @@ public class TweenSetupPerformanceTest
         {
             ZestKitTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            
-        })
-        .CleanUp(() =>
-        {
-            ZestKitTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        ZestKitTester.CleanUp();
     }
 
 
     [Test, Performance]
     public void LeanTweenSetup()
     {
+        LeanTweenTester.Init(array.Length);
+
         Measure.Method(() =>
         {
             LeanTweenTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            LeanTweenTester.Init(array.Length);
-        })
-        .CleanUp(() =>
-        {
-            LeanTweenTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        LeanTweenTester.CleanUp();
     }
 
     [Test, Performance]
     public void PrimeTweenSetup()
     {
+        PrimeTweenTester.Init(array.Length);
+
         Measure.Method(() =>
         {
             PrimeTweenTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            PrimeTweenTester.Init(array.Length);
-        })
-        .CleanUp(() =>
-        {
-            PrimeTweenTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        PrimeTweenTester.CleanUp();
     }
 
     [Test, Performance]
     public void DOTweenSetup()
     {
+        DOTweenTester.Init(array.Length + 1, 0);
+
         Measure.Method(() =>
         {
             DOTweenTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-            DOTweenTester.Init(array.Length + 1, 0);
-        })
-        .CleanUp(() =>
-        {
-            DOTweenTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        DOTweenTester.CleanUp();
     }
 
     [Test, Performance]
@@ -198,42 +162,12 @@ public class TweenSetupPerformanceTest
         {
             MagicTweenTester.CreateFloatTweens(array, 10f);
         })
-        .SetUp(() =>
-        {
-
-        })
-        .CleanUp(() =>
-        {
-            MagicTweenTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        MagicTweenTester.CleanUp();
     }
-
-    [Test, Performance]
-    public void MagicTweenSetupCached()
-    {
-        MagicTween.Tween[] tweens = new MagicTween.Tween[array.Length];
-
-        Measure.Method(() =>
-        {
-            for (int i = 0; i < tweens.Length; i++) tweens[i].Restart();
-        })
-        .SetUp(() =>
-        {
-            for (int i = 0; i < tweens.Length; i++) tweens[i] = MagicTween.Tween.To(array[i], obj => obj.value, (obj, x) => obj.value = x, 10f, 10f).SetAutoPlay(false);
-        })
-        .CleanUp(() =>
-        {
-            for (int i = 0; i < tweens.Length; i++) tweens[i].Kill();
-            MagicTweenTester.CleanUp();
-        })
-        .WarmupCount(WarmupCount)
-        .MeasurementCount(MeasurementCount)
-        .Run();
-    }
-
 
     [Test, Performance]
     public void MagicTweenECSSetup()
@@ -242,16 +176,10 @@ public class TweenSetupPerformanceTest
         {
             MagicTweenECSTester.CreateFloatTweens(entities, 10f);
         })
-        .SetUp(() =>
-        {
-            
-        })
-        .CleanUp(() =>
-        {
-            MagicTweenECSTester.CleanUp();
-        })
         .WarmupCount(WarmupCount)
         .MeasurementCount(MeasurementCount)
         .Run();
+
+        MagicTweenECSTester.CleanUp();
     }
 }
