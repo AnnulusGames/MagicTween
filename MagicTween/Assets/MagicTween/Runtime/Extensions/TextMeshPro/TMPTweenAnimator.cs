@@ -296,9 +296,21 @@ namespace MagicTween
         internal void ResizeArray()
         {
             var length = GetCharCount();
-            if (length != tweenCharInfo.Length)
+            var prevLength = tweenCharInfo.Length;
+            if (length != prevLength)
             {
                 Array.Resize(ref tweenCharInfo, length);
+
+                if (length > prevLength)
+                {
+                    for (int i = prevLength; i < length; i++)
+                    {
+                        tweenCharInfo[i].color = new(tmpText.color.r, tmpText.color.g, tmpText.color.b, tmpText.color.a);
+                        tweenCharInfo[i].rotation = Quaternion.identity;
+                        tweenCharInfo[i].scale = Vector3.one;
+                        tweenCharInfo[i].offset = Vector3.zero;
+                    }
+                }
             }
         }
 
@@ -317,9 +329,8 @@ namespace MagicTween
 
             if (!tmpText.gameObject.activeInHierarchy) return true;
 
-            ResizeArray();
-
             tmpText.ForceMeshUpdate();
+            ResizeArray();
 
             var textInfo = tmpText.textInfo;
             for (int i = 0; i < tweenCharInfo.Length; i++)
