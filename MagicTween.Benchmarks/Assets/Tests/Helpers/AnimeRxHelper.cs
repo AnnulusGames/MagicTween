@@ -55,5 +55,17 @@ namespace MagicTween.Benchmark
                     .AddTo(disposables);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CreateRotationTweens(Transform[] transforms, float duration)
+        {
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                var index = i;
+                Anime.Play(Vector3.zero, new Vector3(90f, 90f, 90f), Easing.Linear(duration))
+                    .Subscribe(x => transforms[index].eulerAngles = x)
+                    .AddTo(disposables);
+            }
+        }
     }
 }

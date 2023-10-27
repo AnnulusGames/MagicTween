@@ -37,5 +37,14 @@ namespace MagicTween.Benchmark
                 transforms[i].ZKpositionTo(Vector3.one * i, duration).start();
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CreateRotationTweens(Transform[] transforms, float duration)
+        {
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                transforms[i].ZKrotationTo(Quaternion.Euler(90f, 90f, 90f), duration).start();
+            }
+        }
     }
 }

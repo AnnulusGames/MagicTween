@@ -67,7 +67,19 @@ namespace MagicTween.Benchmark
                 transforms[i].gameObject.AddTween(tween);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CreateRotationTweens(Transform[] transforms, float duration)
+        {
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                var tween = new RotationTween
+                {
+                    to = Quaternion.Euler(90f, 90f, 90f),
+                    duration = duration,
+                };
+                transforms[i].gameObject.AddTween(tween);
+            }
+        }
     }
-
-
 }

@@ -44,5 +44,14 @@ namespace MagicTween.Benchmark
                 transforms[i].DOMove(Vector3.one * i, duration);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CreateRotationTweens(Transform[] transforms, float duration)
+        {
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                transforms[i].DORotateQuaternion(Quaternion.Euler(90f, 90f, 90f), duration);
+            }
+        }
     }
 }

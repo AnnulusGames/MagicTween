@@ -50,5 +50,15 @@ namespace MagicTween.Benchmark
                     .ToGlobalPosition(transforms[i], cancellationToken: cts.Token);
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CreateRotationTweens(Transform[] transforms, float duration)
+        {
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                Easing.Create<Linear>(Quaternion.Euler(90f, 90f, 90f), duration)
+                    .ToGlobalRotation(transforms[i], cancellationToken: cts.Token);
+            }
+        }
     }
 }
