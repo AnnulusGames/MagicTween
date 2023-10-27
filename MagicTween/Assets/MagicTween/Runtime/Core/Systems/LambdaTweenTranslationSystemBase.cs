@@ -87,28 +87,35 @@ namespace MagicTween.Core
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref accessorTypeHandle, entityManager);
 
-                try
+                for (int i = 0; i < chunk.Count; i++)
                 {
-                    for (int i = 0; i < chunk.Count; i++)
+                    var accessor = accessors[i];
+                    if (accessor == null) continue;
+
+                    var accessorFlagsPtr = accessorFlagsArrayPtr + i;
+
+                    if ((accessorFlagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                     {
-                        var accessor = accessors[i];
-                        if (accessor == null) continue;
-
-                        var accessorFlagsPtr = accessorFlagsArrayPtr + i;
-
-                        if ((accessorFlagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
+                        try
                         {
                             if (accessor.getter != null) (startValueArrayPtr + i)->value = accessor.getter();
                         }
-                        if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                        catch (Exception ex)
+                        {
+                            Debugger.LogExceptionInsideTween(ex);
+                        }
+                    }
+                    if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                    {
+                        try
                         {
                             accessor.setter?.Invoke((valueArrayPtr + i)->value);
                         }
+                        catch (Exception ex)
+                        {
+                            Debugger.LogExceptionInsideTween(ex);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debugger.LogExceptionInsideTween(ex);
                 }
             }
         }
@@ -128,28 +135,35 @@ namespace MagicTween.Core
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref unsafeAccessorTypeHandle, entityManager);
 
-                try
+                for (int i = 0; i < chunk.Count; i++)
                 {
-                    for (int i = 0; i < chunk.Count; i++)
+                    var accessor = accessors[i];
+                    if (accessor == null) continue;
+
+                    var accessorFlagsPtr = accessorFlagsArrayPtr + i;
+
+                    if ((accessorFlagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                     {
-                        var accessor = accessors[i];
-                        if (accessor == null) continue;
-
-                        var accessorFlagsPtr = accessorFlagsArrayPtr + i;
-
-                        if ((accessorFlagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
+                        try
                         {
                             if (accessor.getter != null) (startValueArrayPtr + i)->value = accessor.getter(accessor.target);
                         }
-                        if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                        catch (Exception ex)
+                        {
+                            Debugger.LogExceptionInsideTween(ex);
+                        }
+                    }
+                    if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                    {
+                        try
                         {
                             accessor.setter?.Invoke(accessor.target, (valueArrayPtr + i)->value);
                         }
+                        catch (Exception ex)
+                        {
+                            Debugger.LogExceptionInsideTween(ex);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debugger.LogExceptionInsideTween(ex);
                 }
             }
         }
