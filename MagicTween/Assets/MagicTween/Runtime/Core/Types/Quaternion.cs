@@ -52,8 +52,8 @@ namespace MagicTween.Core
         public static void EvaluateCore(in quaternion startValue, in quaternion endValue, float t, bool isRelative, bool isFrom, out quaternion result)
         {
             var resolvedEndValue = isRelative ? math.mul(startValue, endValue) : endValue;
-            if (isFrom) result = math.nlerp(resolvedEndValue, startValue, t);
-            else result = math.nlerp(startValue, resolvedEndValue, t);
+            if (isFrom) result = math.slerp(resolvedEndValue, startValue, t);
+            else result = math.slerp(startValue, resolvedEndValue, t);
         }
     }
 
