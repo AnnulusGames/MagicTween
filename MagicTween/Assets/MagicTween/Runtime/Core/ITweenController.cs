@@ -11,4 +11,9 @@ namespace MagicTween.Core
         void Kill(in Entity entity);
         void CompleteAndKill(in Entity entity);
     }
+
+    public interface ITweenController<TValue> : ITweenController
+    {
+        void SetValue(TValue value, in Entity entity);
+    }
 }

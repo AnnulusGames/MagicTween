@@ -5,9 +5,27 @@ using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
-    public sealed class StringLambdaTweenController : TweenControllerBase<UnsafeText, StringTweenPlugin>
+    public sealed class StringLambdaTweenController : ITweenController<UnsafeText>
     {
-        protected override void SetValue(UnsafeText currentValue, in Entity entity)
+        public void Complete(in Entity entity)
+            => TweenControllerHelper.Complete<UnsafeText, StringTweenPlugin, StringLambdaTweenController>(this, entity);
+
+        public void CompleteAndKill(in Entity entity)
+            => TweenControllerHelper.CompleteAndKill<UnsafeText, StringTweenPlugin, StringLambdaTweenController>(this, entity);
+
+        public void Kill(in Entity entity)
+            => TweenControllerHelper.Kill(entity);
+
+        public void Pause(in Entity entity)
+            => TweenControllerHelper.Pause(entity);
+
+        public void Play(in Entity entity)
+            => TweenControllerHelper.Play(entity);
+
+        public void Restart(in Entity entity)
+            => TweenControllerHelper.Restart(entity);
+
+        public void SetValue(UnsafeText currentValue, in Entity entity)
         {
             var text = TweenWorld.EntityManager.GetComponentData<TweenValue<UnsafeText>>(entity);
             text.value.CopyFrom(currentValue);
@@ -18,9 +36,27 @@ namespace MagicTween.Core
         }
     }
 
-    public sealed class UnsafeStringLambdaTweenController : TweenControllerBase<UnsafeText, StringTweenPlugin>
+    public sealed class NoAllocStringLambdaTweenController : ITweenController<UnsafeText>
     {
-        protected override void SetValue(UnsafeText currentValue, in Entity entity)
+        public void Complete(in Entity entity)
+            => TweenControllerHelper.Complete<UnsafeText, StringTweenPlugin, NoAllocStringLambdaTweenController>(this, entity);
+
+        public void CompleteAndKill(in Entity entity)
+            => TweenControllerHelper.CompleteAndKill<UnsafeText, StringTweenPlugin, NoAllocStringLambdaTweenController>(this, entity);
+
+        public void Kill(in Entity entity)
+            => TweenControllerHelper.Kill(entity);
+
+        public void Pause(in Entity entity)
+            => TweenControllerHelper.Pause(entity);
+
+        public void Play(in Entity entity)
+            => TweenControllerHelper.Play(entity);
+
+        public void Restart(in Entity entity)
+            => TweenControllerHelper.Restart(entity);
+        
+        public void SetValue(UnsafeText currentValue, in Entity entity)
         {
             var text = TweenWorld.EntityManager.GetComponentData<TweenValue<UnsafeText>>(entity);
             text.value.CopyFrom(currentValue);

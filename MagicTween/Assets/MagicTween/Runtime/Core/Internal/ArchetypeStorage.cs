@@ -99,7 +99,7 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
-        public EntityArchetype GetLambdaTweenArchetype<TValue, TOptions>()
+        public EntityArchetype GetLambdaTweenArchetype<TValue, TOptions>(ref EntityManager entityManager)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
         {
@@ -108,21 +108,21 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenEndValue<TValue>),
-                    typeof(TweenOptions<TOptions>),
-                    typeof(TweenPropertyAccessor<TValue>)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenEndValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<TOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessor<TValue>>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetNoAllocLambdaTweenArchetype<TValue, TOptions>()
+        public EntityArchetype GetNoAllocLambdaTweenArchetype<TValue, TOptions>(ref EntityManager entityManager)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
         {
@@ -131,43 +131,43 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenEndValue<TValue>),
-                    typeof(TweenOptions<TOptions>),
-                    typeof(TweenPropertyAccessorNoAlloc<TValue>)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenEndValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<TOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessorNoAlloc<TValue>>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetStringLambdaTweenArchetype()
+        public EntityArchetype GetStringLambdaTweenArchetype(ref EntityManager entityManager)
         {
             var index = SharedTypeIndex<LambdaTweenTypeKey<string, StringTweenOptions>>.Data;
             if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<UnsafeText>),
-                    typeof(TweenStartValue<UnsafeText>),
-                    typeof(TweenEndValue<UnsafeText>),
-                    typeof(TweenOptions<StringTweenOptions>),
-                    typeof(StringTweenCustomScrambleChars),
-                    typeof(TweenPropertyAccessor<string>)
+                    ComponentType.ReadWrite<TweenValue<UnsafeText>>(),
+                    ComponentType.ReadWrite<TweenStartValue<UnsafeText>>(),
+                    ComponentType.ReadWrite<TweenEndValue<UnsafeText>>(),
+                    ComponentType.ReadWrite<TweenOptions<StringTweenOptions>>(),
+                    ComponentType.ReadWrite<StringTweenCustomScrambleChars>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessor<string>>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManagerRef.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetPunchLambdaTweenArchetype<TValue>()
+        public EntityArchetype GetPunchLambdaTweenArchetype<TValue>(ref EntityManager entityManager)
             where TValue : unmanaged
         {
             var index = SharedTypeIndex<VibrationTweenTypeKey<TValue, PunchTweenOptions>>.Data;
@@ -175,21 +175,21 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenOptions<PunchTweenOptions>),
-                    typeof(TweenPropertyAccessor<TValue>),
-                    typeof(VibrationStrength<TValue>)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<PunchTweenOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessor<TValue>>(),
+                    ComponentType.ReadWrite<VibrationStrength<TValue>>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetNoAllocPunchLambdaTweenArchetype<TValue>()
+        public EntityArchetype GetNoAllocPunchLambdaTweenArchetype<TValue>(ref EntityManager entityManager)
             where TValue : unmanaged
         {
             var index = SharedTypeIndex<UnsafeVibrationTweenTypeKey<TValue, PunchTweenOptions>>.Data;
@@ -197,21 +197,21 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenOptions<PunchTweenOptions>),
-                    typeof(TweenPropertyAccessorNoAlloc<TValue>),
-                    typeof(VibrationStrength<TValue>)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<PunchTweenOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessorNoAlloc<TValue>>(),
+                    ComponentType.ReadWrite<VibrationStrength<TValue>>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetShakeLambdaTweenArchetype<TValue>()
+        public EntityArchetype GetShakeLambdaTweenArchetype<TValue>(ref EntityManager entityManager)
             where TValue : unmanaged
         {
             var index = SharedTypeIndex<VibrationTweenTypeKey<TValue, ShakeTweenOptions>>.Data;
@@ -219,22 +219,22 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenOptions<ShakeTweenOptions>),
-                    typeof(TweenPropertyAccessor<TValue>),
-                    typeof(VibrationStrength<TValue>),
-                    typeof(ShakeRandomState)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<ShakeTweenOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessor<TValue>>(),
+                    ComponentType.ReadWrite<VibrationStrength<TValue>>(),
+                    ComponentType.ReadWrite<ShakeRandomState>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetNoAllocShakeLambdaTweenArchetype<TValue>()
+        public EntityArchetype GetNoAllocShakeLambdaTweenArchetype<TValue>(ref EntityManager entityManager)
             where TValue : unmanaged
         {
             var index = SharedTypeIndex<UnsafeVibrationTweenTypeKey<TValue, ShakeTweenOptions>>.Data;
@@ -242,42 +242,42 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenOptions<ShakeTweenOptions>),
-                    typeof(TweenPropertyAccessorNoAlloc<TValue>),
-                    typeof(VibrationStrength<TValue>),
-                    typeof(ShakeRandomState)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<ShakeTweenOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessorNoAlloc<TValue>>(),
+                    ComponentType.ReadWrite<VibrationStrength<TValue>>(),
+                    ComponentType.ReadWrite<ShakeRandomState>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetPathLambdaTweenArchetype()
+        public EntityArchetype GetPathLambdaTweenArchetype(ref EntityManager entityManager)
         {
             var index = SharedTypeIndex<LambdaTweenTypeKey<float3, PathTweenOptions>>.Data;
             if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<float3>),
-                    typeof(PathPoint),
-                    typeof(TweenOptions<PathTweenOptions>),
-                    typeof(TweenPropertyAccessor<float3>)
+                    ComponentType.ReadWrite<TweenValue<float3>>(),
+                    ComponentType.ReadWrite<PathPoint>(),
+                    ComponentType.ReadWrite<TweenOptions<PathTweenOptions>>(),
+                    ComponentType.ReadWrite<TweenPropertyAccessor<float3>>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetEntityTweenArchetype<TValue, TOptions, TTranslator>()
+        public EntityArchetype GetEntityTweenArchetype<TValue, TOptions, TTranslator>(ref EntityManager entityManager)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
             where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
@@ -287,45 +287,45 @@ namespace MagicTween.Core
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(TweenValue<TValue>),
-                    typeof(TweenStartValue<TValue>),
-                    typeof(TweenEndValue<TValue>),
-                    typeof(TweenOptions<TOptions>),
-                    typeof(TTranslator),
-                    typeof(TweenTranslationOptionsData)
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenEndValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<TOptions>>(),
+                    ComponentType.ReadWrite<TTranslator>(),
+                    ComponentType.ReadWrite<TweenTranslationOptionsData>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetUnitTweenArchetype()
+        public EntityArchetype GetUnitTweenArchetype(ref EntityManager entityManager)
         {
             var index = SharedTypeIndex<UnitTweenTypeKey>.Data;
             if (!cache.TryGetValue(index, out var archetype))
             {
-                archetype = TweenWorld.EntityManager.CreateArchetype(coreComponentTypes);
+                archetype = entityManager.CreateArchetype(coreComponentTypes);
                 cache.Add(index, archetype);
             }
             return archetype;
         }
 
         [BurstCompile]
-        public EntityArchetype GetSequenceArchetype()
+        public EntityArchetype GetSequenceArchetype(ref EntityManager entityManager)
         {
             var index = SharedTypeIndex<SequenceTypeKey>.Data;
             if (!cache.TryGetValue(index, out var archetype))
             {
                 using var types = new NativeList<ComponentType>(0, Allocator.Temp)
                 {
-                    typeof(SequenceState),
-                    typeof(SequenceEntitiesGroup)
+                    ComponentType.ReadWrite<SequenceState>(),
+                    ComponentType.ReadWrite<SequenceEntitiesGroup>()
                 };
                 types.AddRange(coreComponentTypes);
-                archetype = TweenWorld.EntityManager.CreateArchetype(types.AsArray());
+                archetype = entityManager.CreateArchetype(types.AsArray());
                 cache.Add(index, archetype);
             }
             return archetype;

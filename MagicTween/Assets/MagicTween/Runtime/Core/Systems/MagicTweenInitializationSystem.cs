@@ -13,8 +13,6 @@ namespace MagicTween.Core
             if (TweenWorld.World != null && TweenWorld.World.IsCreated && TweenWorld.World != World) return;
 
             TweenWorld.Initialize();
-            //ArchetypeStore.Initialize();
-            TweenControllerContainer.Clear();
             MagicTweenSettings.Initialize();
             SharedRandom.InitState((uint)DateTime.Now.Ticks);
         }
@@ -24,9 +22,6 @@ namespace MagicTween.Core
         protected override void OnDestroy()
         {
             if (TweenWorld.World != World) return;
-
-            //ArchetypeStore.Dispose();
-
             if (TweenWorld.ArchetypeStorageRef.IsCreated) TweenWorld.ArchetypeStorageRef.Dispose();
         }
     }

@@ -1,43 +1,52 @@
 using System;
-using System.Collections.Generic;
+using Unity.Burst;
 
 namespace MagicTween.Core
 {
     internal static class TweenControllerContainer
     {
-        static readonly Dictionary<short, ITweenController> idToController = new();
-        static readonly Dictionary<Type, (ITweenController controller, short id)> typeDict = new();
-        static short currentId = 0;
+        static ITweenController[] idToController = new ITweenController[32];
+        static readonly SharedStatic<short> currentId = SharedStatic<short>.GetOrCreate<CurrentIdSharedStaticTag>();
 
-        public static void Clear()
+        static class Cache<T> where T : ITweenController, new()
         {
-            idToController.Clear();
-            typeDict.Clear();
-            currentId = 0;
-        }
+            static Cache()
+            {
+                id.Data = currentId.Data;
+                currentId.Data++;
 
-        static short AddAndGetId<T>(T instance) where T : ITweenController
-        {
-            idToController.Add(currentId, instance);
-            typeDict.Add(typeof(T), (instance, currentId));
-            var prevId = currentId;
-            currentId++;
-            return prevId;
+                controller = new T();
+                if (Id == idToController.Length)
+                {
+                    Array.Resize(ref idToController, Id * 2);
+                }
+                idToController[Id] = controller;
+            }
+
+            static readonly SharedStatic<short> id = SharedStatic<short>.GetOrCreate<IdSharedStaticTag>();
+            readonly struct IdSharedStaticTag { }
+
+            public static short Id
+            {
+                get => id.Data;
+                set => id.Data = value;
+            }
+
+            static readonly ITweenController controller;
+
+            public static ITweenController Get() => controller;
         }
+        
+        readonly struct CurrentIdSharedStaticTag { }
 
         public static short GetId<T>() where T : ITweenController, new()
         {
-            if (!typeDict.TryGetValue(typeof(T), out var handle))
-            {
-                var controller = new T();
-                return AddAndGetId(controller);
-            }
-            return handle.id;
+            return Cache<T>.Id;
         }
 
         public static ITweenController FindControllerById(short controllerId)
         {
-            if (idToController.TryGetValue(controllerId, out var handle)) return handle;
+            if (0 <= controllerId && controllerId < idToController.Length) return idToController[controllerId];
             return null;
         }
     }
