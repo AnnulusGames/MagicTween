@@ -5,16 +5,16 @@ using MagicTween.Core;
 using MagicTween.Diagnostics;
 using MagicTween.Core.Components;
 
-namespace MagicTween.Experimental
+namespace MagicTween
 {
     public static class TweenCoroutineExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static CallbackFlags GetCallbackFlags(in Entity entity)
+        static TweenStatusType GetStatus(in Entity entity)
         {
-            return TweenWorld.EntityManager.GetComponentData<TweenCallbackFlags>(entity).flags;
+            return TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity).value;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static bool Exists(in Entity entity)
         {
@@ -27,7 +27,7 @@ namespace MagicTween.Experimental
             if (!self.IsActive()) yield break;
 
             var entity = self.GetEntity();
-            while (Exists(entity) && (GetCallbackFlags(entity) & (CallbackFlags.OnPlay | CallbackFlags.OnKill)) != 0)
+            while (Exists(entity) && GetStatus(entity) is not (TweenStatusType.Playing or TweenStatusType.Killed))
             {
                 yield return null;
             }
@@ -39,7 +39,7 @@ namespace MagicTween.Experimental
             if (!self.IsActive()) yield break;
 
             var entity = self.GetEntity();
-            while (Exists(entity) && (GetCallbackFlags(entity) & (CallbackFlags.OnStart | CallbackFlags.OnKill)) != 0)
+            while (Exists(entity) && !TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 yield return null;
             }
@@ -51,7 +51,7 @@ namespace MagicTween.Experimental
             if (!self.IsActive()) yield break;
 
             var entity = self.GetEntity();
-            while (Exists(entity) && (GetCallbackFlags(entity) & (CallbackFlags.OnPause | CallbackFlags.OnKill)) != 0)
+            while (Exists(entity) && GetStatus(entity) is not (TweenStatusType.Paused or TweenStatusType.Killed))
             {
                 yield return null;
             }
@@ -63,20 +63,18 @@ namespace MagicTween.Experimental
             if (!self.IsActive()) yield break;
 
             var entity = self.GetEntity();
-            while (Exists(entity) && (GetCallbackFlags(entity) & (CallbackFlags.OnStepComplete | CallbackFlags.OnKill)) != 0)
+            var completedLoops = TweenWorld.EntityManager.GetComponentData<TweenCompletedLoops>(entity).value;
+            while (Exists(entity) && TweenWorld.EntityManager.GetComponentData<TweenCompletedLoops>(entity).value == completedLoops)
             {
                 yield return null;
             }
         }
 
-
         public static IEnumerator WaitForComplete<T>(this T self) where T : struct, ITweenHandle
         {
             AssertTween.IsValid(self);
-            if (!self.IsActive()) yield break;
-            
             var entity = self.GetEntity();
-            while (Exists(entity) && (GetCallbackFlags(entity) & (CallbackFlags.OnComplete | CallbackFlags.OnKill)) != 0)
+            while (Exists(entity) && GetStatus(entity) is not (TweenStatusType.Completed or TweenStatusType.Killed))
             {
                 yield return null;
             }
@@ -86,7 +84,7 @@ namespace MagicTween.Experimental
         {
             AssertTween.IsActive(self);
             var entity = self.GetEntity();
-            while (Exists(entity) && (GetCallbackFlags(entity) & CallbackFlags.OnKill) != CallbackFlags.OnKill)
+            while (Exists(entity) && GetStatus(entity) is not TweenStatusType.Killed)
             {
                 yield return null;
             }
