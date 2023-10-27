@@ -34,7 +34,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator AnimeTaskUpdateTest()
+        public IEnumerator AnimeTask()
         {
             AnimeTaskHelper.Init();
             AnimeTaskHelper.CreateRotationTweens(transforms, 1000f);
@@ -46,7 +46,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator AnimeRxUpdateTest()
+        public IEnumerator AnimeRx()
         {
             AnimeRxHelper.Init();
             AnimeRxHelper.CreateRotationTweens(transforms, 1000f);
@@ -58,7 +58,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator UnityTweensUpdateTest()
+        public IEnumerator UnityTweens()
         {
             UnityTweensHelper.CreateRotationTweens(transforms, 1000f);
             yield return Measure.Frames()
@@ -70,7 +70,7 @@ namespace MagicTween.Benchmark
 
 
         [UnityTest, Performance]
-        public IEnumerator GoKitUpdateTest()
+        public IEnumerator GoKit()
         {
             GoKitHelper.CreateRotationTweens(transforms, 1000f);
             yield return Measure.Frames()
@@ -81,7 +81,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator ZestKitUpdateTest()
+        public IEnumerator ZestKit()
         {
             ZestKitHelper.CreateRotationTweens(transforms, 1000f);
             yield return Measure.Frames()
@@ -93,7 +93,7 @@ namespace MagicTween.Benchmark
 
 
         [UnityTest, Performance]
-        public IEnumerator LeanTweenUpdateTest()
+        public IEnumerator LeanTween()
         {
             LeanTweenHelper.Init(transforms.Length);
             LeanTweenHelper.CreateRotationTweens(transforms, 1000f);
@@ -105,7 +105,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator PrimeTweenUpdateTest()
+        public IEnumerator PrimeTween()
         {
             PrimeTweenHelper.Init(transforms.Length);
             PrimeTweenHelper.CreateRotationTweens(transforms, 1000f);
@@ -117,7 +117,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator DOTweenUpdateTest()
+        public IEnumerator DOTween()
         {
             DOTweenHelper.Init(transforms.Length + 1, 0);
             DOTweenHelper.CreateRotationTweens(transforms, 1000f);
@@ -129,7 +129,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator MagicTweenUpdateTest()
+        public IEnumerator MagicTween()
         {
             MagicTweenHelper.CreateRotationTweens(transforms, 1000f);
             yield return Measure.Frames()

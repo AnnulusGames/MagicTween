@@ -27,7 +27,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void AnimeTaskSetup()
+        public void AnimeTask()
         {
             AnimeTaskHelper.Init();
 
@@ -40,7 +40,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void AnimeRxSetup()
+        public void AnimeRx()
         {
             AnimeRxHelper.Init();
 
@@ -53,7 +53,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void UnityTweensSetup()
+        public void UnityTweens()
         {
             UnityTweensHelper.Init();
 
@@ -66,7 +66,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void GoKitSetup()
+        public void GoKit()
         {
             MeasureGCAlloc(() =>
             {
@@ -77,7 +77,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void ZestKitSetup()
+        public void ZestKit()
         {
             MeasureGCAlloc(() =>
             {
@@ -89,7 +89,7 @@ namespace MagicTween.Benchmark
 
 
         [Test, Performance]
-        public void LeanTweenSetup()
+        public void LeanTween()
         {
             LeanTweenHelper.Init(WarmupCount + MeasurementCount + 100);
 
@@ -102,7 +102,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void DOTweenSetup()
+        public void DOTween()
         {
             DOTweenHelper.Init(WarmupCount + MeasurementCount + 100, 0);
 
@@ -115,7 +115,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void PrimeTweenSetup()
+        public void PrimeTween()
         {
             PrimeTweenHelper.Init(WarmupCount + MeasurementCount + 100);
 
@@ -128,9 +128,9 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void MagicTweenSetup()
+        public void MagicTween()
         {
-            MagicTween.Core.TweenPropertyAccessorNoAllocPool<float>.Prewarm(WarmupCount + MeasurementCount + 100);
+            Core.TweenPropertyAccessorNoAllocPool<float>.Prewarm(WarmupCount + MeasurementCount + 100);
 
             // In Unity ECS, managed components are managed as a huge array, but the process of expanding this array may affect GC Allocation measurement.
             // To avoid this, add a Dummy managed component and adjust the array size in advance.

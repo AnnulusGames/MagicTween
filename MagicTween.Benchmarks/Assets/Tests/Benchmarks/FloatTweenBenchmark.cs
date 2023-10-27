@@ -106,7 +106,7 @@ namespace MagicTween.Benchmark
         }
 
         [UnityTest, Performance]
-        public IEnumerator PrimeTweenUpdateTest()
+        public IEnumerator PrimeTween()
         {
             PrimeTweenHelper.Init(array.Length);
             PrimeTweenHelper.CreateFloatTweens(array, 1000f);

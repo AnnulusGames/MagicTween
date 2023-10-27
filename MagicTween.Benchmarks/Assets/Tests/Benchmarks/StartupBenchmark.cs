@@ -32,7 +32,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void AnimeTaskSetup()
+        public void AnimeTask()
         {
             AnimeTaskHelper.Init();
 
@@ -48,7 +48,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void AnimeRxSetup()
+        public void AnimeRx()
         {
             AnimeRxHelper.Init();
 
@@ -64,7 +64,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void UnityTweensSetup()
+        public void UnityTweens()
         {
             UnityTweensHelper.Init();
 
@@ -80,7 +80,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void GoKitSetup()
+        public void GoKit()
         {
             Measure.Method(() =>
             {
@@ -94,7 +94,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void ZestKitSetup()
+        public void ZestKit()
         {
             Measure.Method(() =>
             {
@@ -109,7 +109,7 @@ namespace MagicTween.Benchmark
 
 
         [Test, Performance]
-        public void LeanTweenSetup()
+        public void LeanTween()
         {
             LeanTweenHelper.Init(array.Length);
 
@@ -125,7 +125,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void PrimeTweenSetup()
+        public void PrimeTween()
         {
             PrimeTweenHelper.Init(array.Length);
 
@@ -141,7 +141,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void DOTweenSetup()
+        public void DOTween()
         {
             DOTweenHelper.Init(array.Length + 1, 0);
 
@@ -157,7 +157,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void MagicTweenSetup()
+        public void MagicTween()
         {
             Measure.Method(() =>
             {
@@ -171,7 +171,7 @@ namespace MagicTween.Benchmark
         }
 
         [Test, Performance]
-        public void MagicTweenECSSetup()
+        public void MagicTweenECS()
         {
             Measure.Method(() =>
             {
