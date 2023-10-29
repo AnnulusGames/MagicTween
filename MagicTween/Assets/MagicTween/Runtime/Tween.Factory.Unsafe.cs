@@ -105,6 +105,17 @@ namespace MagicTween
             return TweenFactory.CreateToTweenNoAlloc<TObject, quaternion, NoOptions, QuaternionTweenPlugin>(target, getter, setter, endValue, duration);
         }
 
+        public static Tween<TValue, TOptions> To<TValue, TOptions, TPlugin, TObject>(TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, in TValue endValue, float duration)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            return TweenFactory.CreateToTweenNoAlloc<TObject, TValue, TOptions, TPlugin>(target, getter, setter, endValue, duration);
+        }
+
+
         public static Tween<float, NoOptions> FromTo<TObject>(TObject target, TweenSetter<TObject, float> setter, in float startValue, in float endValue, float duration)
             where TObject : class
         {
@@ -194,6 +205,16 @@ namespace MagicTween
         {
             Assert.IsNotNull(target);
             return TweenFactory.CreateFromToTweenNoAlloc<TObject, quaternion, NoOptions, QuaternionTweenPlugin>(target, startValue, endValue, duration, setter);
+        }
+
+        public static Tween<TValue, TOptions> FromTo<TValue, TOptions, TPlugin, TObject>(TObject target, TweenSetter<TObject, TValue> setter, in TValue startValue, in TValue endValue, float duration)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            return TweenFactory.CreateFromToTweenNoAlloc<TObject, TValue, TOptions, TPlugin>(target, startValue, endValue, duration, setter);
         }
 
         public static Tween<float, PunchTweenOptions> Punch<TObject>(TObject target, TweenGetter<TObject, float> getter, TweenSetter<TObject, float> setter, in float strength, float duration)

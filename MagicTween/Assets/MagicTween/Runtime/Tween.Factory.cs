@@ -85,6 +85,14 @@ namespace MagicTween
             return TweenFactory.CreateStringToTween(getter, setter, endValue, duration);
         }
 
+        public static Tween<TValue, TOptions> To<TValue, TOptions, TPlugin>(TweenGetter<TValue> getter, TweenSetter<TValue> setter, in TValue endValue, float duration)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+        {
+            return TweenFactory.CreateToTween<TValue, TOptions, TPlugin>(getter, setter, endValue, duration);
+        }
+
         public static Tween<float, NoOptions> FromTo(TweenSetter<float> setter, in float startValue, in float endValue, float duration)
         {
             return TweenFactory.CreateFromToTween<float, NoOptions, FloatTweenPlugin>(startValue, endValue, duration, setter);
@@ -158,6 +166,14 @@ namespace MagicTween
         public static Tween<UnsafeText, StringTweenOptions> FromTo(TweenSetter<string> setter, string startValue, string endValue, float duration)
         {
             return TweenFactory.CreateStringFromToTween(setter, startValue, endValue, duration);
+        }
+
+        public static Tween<TValue, TOptions> FromTo<TValue, TOptions, TPlugin>(TweenSetter<TValue> setter, in TValue startValue, in TValue endValue, float duration)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+        {
+            return TweenFactory.CreateFromToTween<TValue, TOptions, TPlugin>(startValue, endValue, duration, setter);
         }
 
         public static Tween<float, PunchTweenOptions> Punch(TweenGetter<float> getter, TweenSetter<float> setter, in float strength, float duration)

@@ -108,6 +108,16 @@ namespace MagicTween
                 return TweenFactory.ECS.CreateTo<quaternion, NoOptions, QuaternionTweenPlugin, TComponent, TTranslator>(entity, endValue, duration);
             }
 
+            public static Tween<TValue, TOptions> To<TValue, TOptions, TPlugin, TComponent, TTranslator>(in UnityEntity entity, TValue endValue, float duration)
+                where TValue : unmanaged
+                where TOptions : unmanaged, ITweenOptions
+                where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+                where TComponent : unmanaged, IComponentData
+                where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
+            {
+                return TweenFactory.ECS.CreateTo<TValue, TOptions, TPlugin, TComponent, TTranslator>(entity, endValue, duration);
+            }
+
             public static Tween<float, NoOptions> FromTo<TComponent, TTranslator>(in UnityEntity entity, float startValue, float endValue, float duration)
                 where TComponent : unmanaged, IComponentData
                 where TTranslator : unmanaged, ITweenTranslator<float, TComponent>
@@ -204,6 +214,16 @@ namespace MagicTween
                 where TTranslator : unmanaged, ITweenTranslator<quaternion, TComponent>
             {
                 return TweenFactory.ECS.CreateFromTo<quaternion, NoOptions, QuaternionTweenPlugin, TComponent, TTranslator>(entity, startValue, endValue, duration);
+            }
+
+            public static Tween<TValue, TOptions> FromTo<TValue, TOptions, TPlugin, TComponent, TTranslator>(in UnityEntity entity, TValue startValue, TValue endValue, float duration)
+                where TValue : unmanaged
+                where TOptions : unmanaged, ITweenOptions
+                where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+                where TComponent : unmanaged, IComponentData
+                where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
+            {
+                return TweenFactory.ECS.CreateFromTo<TValue, TOptions, TPlugin, TComponent, TTranslator>(entity, startValue, endValue, duration);
             }
         }
     }
