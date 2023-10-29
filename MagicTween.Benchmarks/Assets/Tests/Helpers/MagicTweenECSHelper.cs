@@ -26,6 +26,7 @@ namespace MagicTween.Benchmark
 
     public partial class TestTweenTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, TestData, TestTweenTranslator> { }
 
+    [BurstCompile]
     public static class MagicTweenECSHelper
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -45,6 +46,7 @@ namespace MagicTween.Benchmark
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [BurstCompile]
         public static void CreateFloatTweens(in NativeArray<Entity> entities, float duration)
         {
             for (int i = 0; i < entities.Length; i++)
