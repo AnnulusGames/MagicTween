@@ -7,7 +7,8 @@ using MagicTween.Core.Components;
 
 namespace MagicTween.Plugins
 {
-    // TODO: Support for Unsafe Tween.To methods
+    // TODO: Support for NoAlloc Tween.To methods
+
     public struct StringTweenOptions : ITweenOptions
     {
         public ScrambleMode scrambleMode;

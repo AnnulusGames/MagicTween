@@ -5,10 +5,8 @@ using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
-using MagicTween.Core;
-using MagicTween.Plugins;
 
-namespace MagicTween
+namespace MagicTween.Core.Systems
 {
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]

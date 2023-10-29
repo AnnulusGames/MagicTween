@@ -2,7 +2,6 @@ using System;
 using MagicTween.Core;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
-using MagicTween.Plugins;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;

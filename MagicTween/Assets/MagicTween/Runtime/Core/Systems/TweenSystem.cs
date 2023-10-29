@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using MagicTween.Core.Components;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(MagicTweenCoreSystemGroup))]

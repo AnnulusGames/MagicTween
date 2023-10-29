@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Collections;
 using MagicTween.Core;
 using MagicTween.Core.Components;
-using MagicTween.Plugins;
+using MagicTween.Core.Systems;
 
 namespace MagicTween
 {

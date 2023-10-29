@@ -1,12 +1,11 @@
 using MagicTween.Core.Components;
-using MagicTween.Plugins;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(MagicTweenUpdateSystemGroup))]

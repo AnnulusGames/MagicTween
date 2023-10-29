@@ -3,6 +3,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections.LowLevel.Unsafe;
 using MagicTween.Core;
+using MagicTween.Core.Systems;
 using MagicTween.Plugins;
 using TMPro;
 

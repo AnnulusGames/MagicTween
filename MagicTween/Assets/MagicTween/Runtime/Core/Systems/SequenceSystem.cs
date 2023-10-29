@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using MagicTween.Core.Components;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenCoreSystemGroup))]
     [UpdateAfter(typeof(TweenSystem))]

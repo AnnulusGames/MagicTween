@@ -1,11 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Entities;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
-using System.Collections.Generic;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenCallbackSystemGroup))]
     public sealed partial class TweenCallbackSystem : SystemBase

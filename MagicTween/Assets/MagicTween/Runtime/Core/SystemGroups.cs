@@ -6,7 +6,7 @@ namespace MagicTween
     public partial class MagicTweenSystemGroup : ComponentSystemGroup { }
 }
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenSystemGroup))]
     public partial class MagicTweenCoreSystemGroup : ComponentSystemGroup { }

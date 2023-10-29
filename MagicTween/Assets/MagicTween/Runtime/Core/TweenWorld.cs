@@ -1,6 +1,7 @@
 using Unity.Entities;
 using Unity.Collections;
 using Unity.Burst;
+using MagicTween.Core.Systems;
 
 namespace MagicTween.Core
 {

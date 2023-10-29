@@ -348,7 +348,7 @@ namespace MagicTween
                 ComponentType.ReadOnly<TweenIdInt>()
             );
             TweenWorld.EntityManager.DestroyEntity(query);
-            TweenWorld.World.GetExistingSystemManaged<TweenCleanupSystem>().ClearQueue();
+            TweenWorld.CleanupSystem.ClearQueue();
         }
     }
 }

@@ -1,8 +1,7 @@
 using System;
-using Unity.Collections;
 using Unity.Entities;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenSystemGroup))]
     [UpdateBefore(typeof(MagicTweenCoreSystemGroup))]
