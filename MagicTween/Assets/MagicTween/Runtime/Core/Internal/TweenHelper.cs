@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Entities;
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 
 namespace MagicTween.Core
 {
@@ -104,7 +105,7 @@ namespace MagicTween.Core
 
         public static bool TryComplete<TValue, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPluginBase<TValue>
         {
             var result = TryCompleteCore(ref EntityManagerRef, entity, out var delay, out var loops);
 
@@ -113,7 +114,7 @@ namespace MagicTween.Core
                 currentValue = default;
                 return false;
             }
-            
+
             var plugin = default(TPlugin);
             var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
             var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
@@ -123,20 +124,28 @@ namespace MagicTween.Core
             if (ease == Ease.Custom)
             {
                 var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ref customCurve, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref EntityManagerRef,
+                    context
+                );
             }
             else
             {
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ease, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
+                );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref EntityManagerRef,
+                    context
                 );
             }
 
@@ -183,7 +192,7 @@ namespace MagicTween.Core
 
         public static bool TryCompleteAndKill<TValue, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPluginBase<TValue>
         {
             var result = TryCompleteAndKillCore(ref EntityManagerRef, entity, out var delay, out var loops);
             if (!result)
@@ -191,7 +200,7 @@ namespace MagicTween.Core
                 currentValue = default;
                 return false;
             }
-            
+
             var plugin = default(TPlugin);
             var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
             var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
@@ -201,20 +210,28 @@ namespace MagicTween.Core
             if (ease == Ease.Custom)
             {
                 var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ref customCurve, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref EntityManagerRef,
+                    context
+                );
             }
             else
             {
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ease, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
+                );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref EntityManagerRef,
+                    context
                 );
             }
 
@@ -261,7 +278,7 @@ namespace MagicTween.Core
 
         public static bool TryRestart<TValue, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPluginBase<TValue>
         {
             var result = TryRestartCore(ref EntityManagerRef, entity, out var delay, out var loops);
             if (!result)
@@ -279,20 +296,28 @@ namespace MagicTween.Core
             if (ease == Ease.Custom)
             {
                 var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ref customCurve, loops, loopType),
                     isRelative,
                     inverted
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref EntityManagerRef,
+                    context
+                );
             }
             else
             {
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ease, loops, loopType),
                     isRelative,
                     inverted
+                );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref EntityManagerRef,
+                    context
                 );
             }
 

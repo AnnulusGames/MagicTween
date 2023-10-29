@@ -1,6 +1,7 @@
-using MagicTween.Core;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween.Diagnostics
 {

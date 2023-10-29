@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using MagicTween;
-using MagicTween.Core;
+using MagicTween.Plugins;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.Burst;

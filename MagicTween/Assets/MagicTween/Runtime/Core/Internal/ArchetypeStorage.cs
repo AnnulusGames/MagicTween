@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 
@@ -294,7 +295,7 @@ namespace MagicTween.Core
                     ComponentType.ReadWrite<TweenOptions<TOptions>>(),
                     ComponentType.ReadWrite<TweenTargetEntity>(),
                     ComponentType.ReadWrite<TweenTranslationModeData>(),
-                    ComponentType.ReadOnly<TTranslator>()
+                    ComponentType.ReadWrite<TTranslator>()
                 };
                 types.AddRange(coreComponentTypes);
                 archetype = entityManager.CreateArchetype(types.AsArray());

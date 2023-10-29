@@ -1,4 +1,5 @@
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 using Unity.Entities;
 
 namespace MagicTween.Core
@@ -59,7 +60,7 @@ namespace MagicTween.Core
 
         public static void Complete<TValue, TPlugin, TController>(in TController controller, in Entity entity)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPluginBase<TValue>
             where TController : ITweenController<TValue>
         {
             var canComplete = TweenHelper.TryComplete<TValue, TPlugin>(entity, out var currentValue);
@@ -72,7 +73,7 @@ namespace MagicTween.Core
 
         public static void CompleteAndKill<TValue, TPlugin, TController>(in TController controller, in Entity entity)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPluginBase<TValue>
             where TController : ITweenController<TValue>
         {
             var canCompleteAndKill = TweenHelper.TryCompleteAndKill<TValue, TPlugin>(entity, out var currentValue);
@@ -85,7 +86,7 @@ namespace MagicTween.Core
 
         public static void Restart<TValue, TPlugin, TController>(in TController controller, in Entity entity)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPluginBase<TValue>
             where TController : ITweenController<TValue>
         {
             if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)

@@ -1,4 +1,5 @@
 using MagicTween.Core;
+using MagicTween.Plugins;
 using UnityEngine.UIElements;
 
 namespace MagicTween

@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Collections.LowLevel.Unsafe;
 using MagicTween.Core;
 using Unity.Assertions;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {

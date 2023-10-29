@@ -3,6 +3,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.VFX;
 using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {

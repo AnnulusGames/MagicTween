@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Rendering;
 using MagicTween.Translators;
+using MagicTween.Plugins;
 
 namespace MagicTween.Translators
 {

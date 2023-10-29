@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using MagicTween.Plugins;
 
 namespace MagicTween.Core
 {
@@ -12,20 +13,6 @@ namespace MagicTween.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void RegisterControllers()
         {
-            Register<DelegateTweenController<float, FloatTweenPlugin>>();
-            Register<DelegateTweenController<float2, Float2TweenPlugin>>();
-            Register<DelegateTweenController<float3, Float3TweenPlugin>>();
-            Register<DelegateTweenController<float4, Float4TweenPlugin>>();
-            Register<DelegateTweenController<double, DoubleTweenPlugin>>();
-            Register<DelegateTweenController<double2, Double2TweenPlugin>>();
-            Register<DelegateTweenController<double3, Double3TweenPlugin>>();
-            Register<DelegateTweenController<double4, Double4TweenPlugin>>();
-            Register<DelegateTweenController<int, IntTweenPlugin>>();
-            Register<DelegateTweenController<int2, Int2TweenPlugin>>();
-            Register<DelegateTweenController<int3, Int3TweenPlugin>>();
-            Register<DelegateTweenController<int4, Int4TweenPlugin>>();
-            Register<DelegateTweenController<long, LongTweenPlugin>>();
-            Register<DelegateTweenController<quaternion, QuaternionTweenPlugin>>();
             Register<DelegateTweenController<float, PunchTweenPlugin>>();
             Register<DelegateTweenController<float2, Punch2TweenPlugin>>();
             Register<DelegateTweenController<float3, Punch3TweenPlugin>>();
@@ -34,20 +21,6 @@ namespace MagicTween.Core
             Register<DelegateTweenController<float3, Shake3TweenPlugin>>();
             Register<DelegateTweenController<float3, PathTweenPlugin>>();
 
-            Register<NoAllocDelegateTweenController<float, FloatTweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float2, Float2TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float3, Float3TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float4, Float4TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<double, DoubleTweenPlugin>>();
-            Register<NoAllocDelegateTweenController<double2, Double2TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<double3, Double3TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<double4, Double4TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<int, IntTweenPlugin>>();
-            Register<NoAllocDelegateTweenController<int2, Int2TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<int3, Int3TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<int4, Int4TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<long, LongTweenPlugin>>();
-            Register<NoAllocDelegateTweenController<quaternion, QuaternionTweenPlugin>>();
             Register<NoAllocDelegateTweenController<float, PunchTweenPlugin>>();
             Register<NoAllocDelegateTweenController<float2, Punch2TweenPlugin>>();
             Register<NoAllocDelegateTweenController<float3, Punch3TweenPlugin>>();

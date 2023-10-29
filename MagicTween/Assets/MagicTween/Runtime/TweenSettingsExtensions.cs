@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.Assertions;
 using MagicTween.Core;
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 using MagicTween.Diagnostics;
 
 namespace MagicTween

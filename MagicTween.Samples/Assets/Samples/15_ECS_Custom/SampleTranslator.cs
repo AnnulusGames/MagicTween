@@ -1,6 +1,5 @@
-using Unity.Entities;
 using MagicTween;
-using MagicTween.Core;
+using MagicTween.Plugins;
 
 // To animate your own ComponentData values, you need to propagate the tween values through a component called 'Translator'.
 // Define an unmanaged struct that inherits from ITweenTranslator.

@@ -1,8 +1,8 @@
-using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
 using MagicTween.Core;
+using MagicTween.Plugins;
 using MagicTween.Translators;
 
 namespace MagicTween.Translators

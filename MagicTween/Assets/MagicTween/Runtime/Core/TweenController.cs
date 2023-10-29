@@ -1,5 +1,6 @@
 using MagicTween.Core;
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
@@ -8,7 +9,7 @@ namespace MagicTween
 {
     public sealed class EntityTweenController<TValue, TPlugin, TComponent, TTranslator> : ITweenController<TValue>
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPlugin<TValue>
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
         where TComponent : unmanaged, IComponentData
         where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
     {
@@ -31,9 +32,9 @@ namespace MagicTween
 
     public sealed class ManagedTweenController<TValue, TPlugin, TObject, TTranslator> : ITweenController<TValue>
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPlugin<TValue>
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
         where TObject : class
-        where TTranslator : class, ITweenTranslatorManaged<TValue, TObject>, new()
+        where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
     {
         static readonly TTranslator translator = new();
 
@@ -54,7 +55,7 @@ namespace MagicTween
 
     public sealed class DelegateTweenController<TValue, TPlugin> : ITweenController<TValue>
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPlugin<TValue>
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
     {
         public void Complete(in Entity entity) => TweenControllerHelper.Complete<TValue, TPlugin, DelegateTweenController<TValue, TPlugin>>(this, entity);
         public void CompleteAndKill(in Entity entity) => TweenControllerHelper.CompleteAndKill<TValue, TPlugin, DelegateTweenController<TValue, TPlugin>>(this, entity);
@@ -73,7 +74,7 @@ namespace MagicTween
 
     public sealed class NoAllocDelegateTweenController<TValue, TPlugin> : ITweenController<TValue>
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPlugin<TValue>
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
     {
         public void Complete(in Entity entity) => TweenControllerHelper.Complete<TValue, TPlugin, NoAllocDelegateTweenController<TValue, TPlugin>>(this, entity);
         public void CompleteAndKill(in Entity entity) => TweenControllerHelper.CompleteAndKill<TValue, TPlugin, NoAllocDelegateTweenController<TValue, TPlugin>>(this, entity);

@@ -1,0 +1,277 @@
+using Unity.Burst;
+using Unity.Mathematics;
+using MagicTween;
+using MagicTween.Plugins;
+
+[assembly: RegisterTweenType(typeof(double), typeof(NoOptions), typeof(DoubleTweenPlugin))]
+[assembly: RegisterTweenType(typeof(double2), typeof(NoOptions), typeof(Double2TweenPlugin))]
+[assembly: RegisterTweenType(typeof(double3), typeof(NoOptions), typeof(Double3TweenPlugin))]
+[assembly: RegisterTweenType(typeof(double4), typeof(NoOptions), typeof(Double4TweenPlugin))]
+[assembly: RegisterTweenType(typeof(float), typeof(NoOptions), typeof(FloatTweenPlugin))]
+[assembly: RegisterTweenType(typeof(float2), typeof(NoOptions), typeof(Float2TweenPlugin))]
+[assembly: RegisterTweenType(typeof(float3), typeof(NoOptions), typeof(Float3TweenPlugin))]
+[assembly: RegisterTweenType(typeof(float4), typeof(NoOptions), typeof(Float4TweenPlugin))]
+[assembly: RegisterTweenType(typeof(int), typeof(IntegerTweenOptions), typeof(IntTweenPlugin))]
+[assembly: RegisterTweenType(typeof(int2), typeof(IntegerTweenOptions), typeof(Int2TweenPlugin))]
+[assembly: RegisterTweenType(typeof(int3), typeof(IntegerTweenOptions), typeof(Int3TweenPlugin))]
+[assembly: RegisterTweenType(typeof(int4), typeof(IntegerTweenOptions), typeof(Int4TweenPlugin))]
+[assembly: RegisterTweenType(typeof(long), typeof(IntegerTweenOptions), typeof(LongTweenPlugin))]
+[assembly: RegisterTweenType(typeof(quaternion), typeof(NoOptions), typeof(QuaternionTweenPlugin))]
+
+namespace MagicTween.Plugins
+{
+    public struct IntegerTweenOptions : ITweenOptions
+    {
+        public RoundingMode roundingMode;
+    }
+
+    [BurstCompile]
+    public readonly struct DoubleTweenPlugin : ITweenPlugin<double, NoOptions>
+    {
+        [BurstCompile]
+        public double Evaluate(in double startValue, in double endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Double2TweenPlugin : ITweenPlugin<double2, NoOptions>
+    {
+        [BurstCompile]
+        public double2 Evaluate(in double2 startValue, in double2 endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Double3TweenPlugin : ITweenPlugin<double3, NoOptions>
+    {
+        [BurstCompile]
+        public double3 Evaluate(in double3 startValue, in double3 endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Double4TweenPlugin : ITweenPlugin<double4, NoOptions>
+    {
+        [BurstCompile]
+        public double4 Evaluate(in double4 startValue, in double4 endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct FloatTweenPlugin : ITweenPlugin<float, NoOptions>
+    {
+        [BurstCompile]
+        public float Evaluate(in float startValue, in float endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Float2TweenPlugin : ITweenPlugin<float2, NoOptions>
+    {
+        [BurstCompile]
+        public float2 Evaluate(in float2 startValue, in float2 endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Float3TweenPlugin : ITweenPlugin<float3, NoOptions>
+    {
+        [BurstCompile]
+        public float3 Evaluate(in float3 startValue, in float3 endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Float4TweenPlugin : ITweenPlugin<float4, NoOptions>
+    {
+        [BurstCompile]
+        public float4 Evaluate(in float4 startValue, in float4 endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+            if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+            else return math.lerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct IntTweenPlugin : ITweenPlugin<int, IntegerTweenOptions>
+    {
+        [BurstCompile]
+        public int Evaluate(in int startValue, in int endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+            float value;
+            if (context.IsInverted) value = math.lerp(resolvedEndValue, startValue, context.Progress);
+            else value = math.lerp(startValue, resolvedEndValue, context.Progress);
+
+            return options.roundingMode switch
+            {
+                RoundingMode.AwayFromZero => value >= 0f ? (int)math.ceil(value) : (int)math.floor(value),
+                RoundingMode.ToZero => (int)math.trunc(value),
+                RoundingMode.ToPositiveInfinity => (int)math.ceil(value),
+                RoundingMode.ToNegativeInfinity => (int)math.floor(value),
+                _ => (int)math.round(value),
+            };
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Int2TweenPlugin : ITweenPlugin<int2, IntegerTweenOptions>
+    {
+        [BurstCompile]
+        public int2 Evaluate(in int2 startValue, in int2 endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+            float2 value;
+            if (context.IsInverted) value = math.lerp(resolvedEndValue, startValue, context.Progress);
+            else value = math.lerp(startValue, resolvedEndValue, context.Progress);
+
+            switch (options.roundingMode)
+            {
+                default:
+                case RoundingMode.ToEven:
+                    return (int2)math.round(value);
+                case RoundingMode.AwayFromZero:
+                    var x = value.x >= 0f ? (int)math.ceil(value.x) : (int)math.floor(value.x);
+                    var y = value.y >= 0f ? (int)math.ceil(value.y) : (int)math.floor(value.y);
+                    return new int2(x, y);
+                case RoundingMode.ToZero:
+                    return (int2)math.trunc(value);
+                case RoundingMode.ToPositiveInfinity:
+                    return (int2)math.ceil(value);
+                case RoundingMode.ToNegativeInfinity:
+                    return (int2)math.floor(value);
+            }
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Int3TweenPlugin : ITweenPlugin<int3, IntegerTweenOptions>
+    {
+        [BurstCompile]
+        public int3 Evaluate(in int3 startValue, in int3 endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+            float3 value;
+            if (context.IsInverted) value = math.lerp(resolvedEndValue, startValue, context.Progress);
+            else value = math.lerp(startValue, resolvedEndValue, context.Progress);
+
+            switch (options.roundingMode)
+            {
+                default:
+                case RoundingMode.ToEven:
+                    return (int3)math.round(value);
+                case RoundingMode.AwayFromZero:
+                    var x = value.x >= 0f ? (int)math.ceil(value.x) : (int)math.floor(value.x);
+                    var y = value.y >= 0f ? (int)math.ceil(value.y) : (int)math.floor(value.y);
+                    var z = value.z >= 0f ? (int)math.ceil(value.z) : (int)math.floor(value.z);
+                    return new int3(x, y, z);
+                case RoundingMode.ToZero:
+                    return (int3)math.trunc(value);
+                case RoundingMode.ToPositiveInfinity:
+                    return (int3)math.ceil(value);
+                case RoundingMode.ToNegativeInfinity:
+                    return (int3)math.floor(value);
+            }
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct Int4TweenPlugin : ITweenPlugin<int4, IntegerTweenOptions>
+    {
+        [BurstCompile]
+        public int4 Evaluate(in int4 startValue, in int4 endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+            float4 value;
+            if (context.IsInverted) value = math.lerp(resolvedEndValue, startValue, context.Progress);
+            else value = math.lerp(startValue, resolvedEndValue, context.Progress);
+
+            switch (options.roundingMode)
+            {
+                default:
+                case RoundingMode.ToEven:
+                    return (int4)math.round(value);
+                case RoundingMode.AwayFromZero:
+                    var x = value.x >= 0f ? (int)math.ceil(value.x) : (int)math.floor(value.x);
+                    var y = value.y >= 0f ? (int)math.ceil(value.y) : (int)math.floor(value.y);
+                    var z = value.z >= 0f ? (int)math.ceil(value.z) : (int)math.floor(value.z);
+                    var w = value.w >= 0f ? (int)math.ceil(value.w) : (int)math.floor(value.w);
+                    return new int4(x, y, z, w);
+                case RoundingMode.ToZero:
+                    return (int4)math.trunc(value);
+                case RoundingMode.ToPositiveInfinity:
+                    return (int4)math.ceil(value);
+                case RoundingMode.ToNegativeInfinity:
+                    return (int4)math.floor(value);
+            }
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct LongTweenPlugin : ITweenPlugin<long, IntegerTweenOptions>
+    {
+        [BurstCompile]
+        public long Evaluate(in long startValue, in long endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+            float value;
+            if (context.IsInverted) value = math.lerp(resolvedEndValue, startValue, context.Progress);
+            else value = math.lerp(startValue, resolvedEndValue, context.Progress);
+
+            return options.roundingMode switch
+            {
+                RoundingMode.AwayFromZero => value >= 0f ? (long)math.ceil(value) : (long)math.floor(value),
+                RoundingMode.ToZero => (long)math.trunc(value),
+                RoundingMode.ToPositiveInfinity => (long)math.ceil(value),
+                RoundingMode.ToNegativeInfinity => (long)math.floor(value),
+                _ => (long)math.round(value),
+            };
+        }
+    }
+
+    [BurstCompile]
+    public readonly struct QuaternionTweenPlugin : ITweenPlugin<quaternion, NoOptions>
+    {
+        [BurstCompile]
+        public quaternion Evaluate(in quaternion startValue, in quaternion endValue, in NoOptions options, in TweenEvaluationContext context)
+        {
+            var resolvedEndValue = context.IsRelative ? math.mul(startValue, endValue) : endValue;
+            if (context.IsInverted) return math.slerp(resolvedEndValue, startValue, context.Progress);
+            else return math.slerp(startValue, resolvedEndValue, context.Progress);
+        }
+    }
+}

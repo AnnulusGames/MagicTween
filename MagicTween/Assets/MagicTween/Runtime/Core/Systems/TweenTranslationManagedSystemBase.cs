@@ -2,6 +2,7 @@ using System;
 using MagicTween.Core;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
+using MagicTween.Plugins;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
@@ -13,21 +14,19 @@ namespace MagicTween
     [RequireMatchingQueriesForUpdate]
     public abstract partial class TweenTranslationManagedSystemBase<TValue, TPlugin, TObject, TTranslator> : SystemBase
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPlugin<TValue>
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
         where TObject : class
-        where TTranslator : class, ITweenTranslatorManaged<TValue, TObject>, new()
+        where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
     {
-        static readonly TTranslator translator = new();
-
         EntityQuery query;
 
         protected override void OnCreate()
         {
             TweenControllerContainer.Register<ManagedTweenController<TValue, TPlugin, TObject, TTranslator>>();
-            query = SystemAPI.QueryBuilder()
+            query = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<TweenStartValue<TValue>, TweenValue<TValue>>()
-                .WithAll<TweenTranslationModeData, TweenAccessorFlags, TweenTargetObject>()
-                .Build();
+                .WithAll<TweenTranslationModeData, TweenAccessorFlags, TweenTargetObject, TTranslator>()
+                .Build(this);
         }
 
         [BurstCompile]
@@ -65,6 +64,7 @@ namespace MagicTween
                 for (int i = 0; i < chunk.Count; i++)
                 {
                     var target = (TObject)targetAccessor[i].target;
+                    var translator = default(TTranslator);
 
                     if ((optionsArrayPtr + i)->value == TweenTranslationMode.To &&
                         ((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter)

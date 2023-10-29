@@ -6,14 +6,17 @@ using Unity.Collections;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
-    public abstract partial class TweenDelegateTranslationSystemBase<TValue> : SystemBase
+    public abstract partial class TweenDelegateTranslationSystemBase<TValue, TOptions, TPlugin> : SystemBase
         where TValue : unmanaged
+        where TOptions : unmanaged, ITweenOptions
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
     {
         EntityQuery query1;
         EntityQuery query2;
@@ -24,16 +27,18 @@ namespace MagicTween
         ComponentTypeHandle<TweenDelegates<TValue>> delegatesTypeHandle;
         ComponentTypeHandle<TweenDelegatesNoAlloc<TValue>> unsafedelegatesTypeHandle;
 
-        [BurstCompile]
         protected override void OnCreate()
         {
+            TweenControllerContainer.Register<DelegateTweenController<TValue, TPlugin>>();
+            TweenControllerContainer.Register<NoAllocDelegateTweenController<TValue, TPlugin>>();
+
             query1 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegates<TValue>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegates<TValue>, TweenOptions<TOptions>>()
                 .Build();
             query2 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegatesNoAlloc<TValue>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegatesNoAlloc<TValue>, TweenOptions<TOptions>>()
                 .Build();
 
             accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
@@ -42,6 +47,7 @@ namespace MagicTween
             delegatesTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenDelegates<TValue>>(true);
             unsafedelegatesTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenDelegatesNoAlloc<TValue>>(true);
         }
+
 
         [BurstCompile]
         protected override void OnUpdate()

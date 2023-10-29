@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections.LowLevel.Unsafe;
 using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {

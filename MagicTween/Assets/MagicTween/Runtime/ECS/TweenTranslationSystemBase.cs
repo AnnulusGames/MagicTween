@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Collections;
 using MagicTween.Core;
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {
@@ -11,7 +12,7 @@ namespace MagicTween
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
     public abstract partial class TweenTranslationSystemBase<TValue, TPlugin, TComponent, TTranslator> : SystemBase
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPlugin<TValue>
+        where TPlugin : unmanaged, ITweenPluginBase<TValue>
         where TComponent : unmanaged, IComponentData
         where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
     {
@@ -39,13 +40,9 @@ namespace MagicTween
             entityTypeHandle = GetEntityTypeHandle();
             entityLookup = GetEntityStorageInfoLookup();
 
-            query = EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<TweenTargetEntity>(),
-                ComponentType.ReadWrite<TweenStartValue<TValue>>(),
-                ComponentType.ReadOnly<TweenAccessorFlags>(),
-                ComponentType.ReadWrite<TweenTranslationModeData>(),
-                ComponentType.ReadWrite<TTranslator>()
-            );
+            query = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<TweenTargetEntity, TweenStartValue<TValue>, TweenAccessorFlags, TweenTranslationModeData, TTranslator>()
+                .Build(this);
         }
 
         protected override void OnUpdate()
