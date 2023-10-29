@@ -17,6 +17,7 @@ namespace MagicTween.Core
         readonly struct DelegateVibrationTweenTypeKey<TValue, TOptions> { }
         readonly struct DelegateVibrationNoAllocTweenTypeKey<TValue, TOptions> { }
         readonly struct EntityTweenTypeKey<TValue, TOptions, TTranslator> { }
+        readonly struct ObjectTweenTypeKey<TValue, TOptions, TTranslator> { }
         readonly struct UnitTweenTypeKey { }
         readonly struct SequenceTypeKey { }
 
@@ -294,6 +295,33 @@ namespace MagicTween.Core
                     ComponentType.ReadWrite<TweenEndValue<TValue>>(),
                     ComponentType.ReadWrite<TweenOptions<TOptions>>(),
                     ComponentType.ReadWrite<TweenTargetEntity>(),
+                    ComponentType.ReadWrite<TweenTranslationModeData>(),
+                    ComponentType.ReadWrite<TTranslator>()
+                };
+                types.AddRange(coreComponentTypes);
+                archetype = entityManager.CreateArchetype(types.AsArray());
+                cache.Add(index, archetype);
+            }
+            return archetype;
+        }
+
+        [BurstCompile]
+        public EntityArchetype GetObjectTweenArchetype<TValue, TOptions, TObject, TTranslator>(ref EntityManager entityManager)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+            where TObject : class
+            where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
+        {
+            var index = SharedTypeIndex<ObjectTweenTypeKey<TValue, TOptions, TTranslator>>.Data;
+            if (!cache.TryGetValue(index, out var archetype))
+            {
+                using var types = new NativeList<ComponentType>(0, Allocator.Temp)
+                {
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenEndValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<TOptions>>(),
+                    ComponentType.ReadWrite<TweenTargetObject>(),
                     ComponentType.ReadWrite<TweenTranslationModeData>(),
                     ComponentType.ReadWrite<TTranslator>()
                 };

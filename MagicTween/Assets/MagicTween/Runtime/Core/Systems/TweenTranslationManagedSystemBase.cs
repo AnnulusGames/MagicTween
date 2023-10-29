@@ -21,7 +21,7 @@ namespace MagicTween
 
         protected override void OnCreate()
         {
-            TweenControllerContainer.Register<ManagedTweenController<TValue, TPlugin, TObject, TTranslator>>();
+            TweenControllerContainer.Register<ObjectTweenController<TValue, TPlugin, TObject, TTranslator>>();
             query = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<TweenStartValue<TValue>, TweenValue<TValue>>()
                 .WithAll<TweenTranslationModeData, TweenAccessorFlags, TweenTargetObject, TTranslator>()
@@ -36,7 +36,7 @@ namespace MagicTween
                 startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<TValue>>(),
                 valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<TValue>>(true),
                 targetObjectTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenTargetObject>(),
-                optionsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenTranslationModeData>(true),
+                translationModeTypeHandle = SystemAPI.GetComponentTypeHandle<TweenTranslationModeData>(true),
                 accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true),
                 entityManager = EntityManager
             };
@@ -48,25 +48,26 @@ namespace MagicTween
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
             public ComponentTypeHandle<TweenTargetObject> targetObjectTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenTranslationModeData> optionsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenTranslationModeData> translationModeTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public EntityManager entityManager;
+
+            readonly TTranslator translator;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 var startValueArrayPtr = chunk.GetComponentDataPtrRW(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRO(ref valueTypeHandle);
-                var optionsArrayPtr = chunk.GetComponentDataPtrRO(ref optionsTypeHandle);
+                var translationModeArrayPtr = chunk.GetComponentDataPtrRO(ref translationModeTypeHandle);
                 var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var targetAccessor = chunk.GetManagedComponentAccessor(ref targetObjectTypeHandle, entityManager);
 
                 for (int i = 0; i < chunk.Count; i++)
                 {
                     var target = (TObject)targetAccessor[i].target;
-                    var translator = default(TTranslator);
 
-                    if ((optionsArrayPtr + i)->value == TweenTranslationMode.To &&
-                        ((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
+                    if (((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter &&
+                        (translationModeArrayPtr + i)->value == TweenTranslationMode.To)
                     {
                         try
                         {

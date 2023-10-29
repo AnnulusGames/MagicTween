@@ -30,7 +30,7 @@ namespace MagicTween
         }
     }
 
-    public sealed class ManagedTweenController<TValue, TPlugin, TObject, TTranslator> : ITweenController<TValue>
+    public sealed class ObjectTweenController<TValue, TPlugin, TObject, TTranslator> : ITweenController<TValue>
         where TValue : unmanaged
         where TPlugin : unmanaged, ITweenPluginBase<TValue>
         where TObject : class
@@ -38,12 +38,12 @@ namespace MagicTween
     {
         static readonly TTranslator translator = new();
 
-        public void Complete(in Entity entity) => TweenControllerHelper.Complete<TValue, TPlugin, ManagedTweenController<TValue, TPlugin, TObject, TTranslator>>(this, entity);
-        public void CompleteAndKill(in Entity entity) => TweenControllerHelper.CompleteAndKill<TValue, TPlugin, ManagedTweenController<TValue, TPlugin, TObject, TTranslator>>(this, entity);
+        public void Complete(in Entity entity) => TweenControllerHelper.Complete<TValue, TPlugin, ObjectTweenController<TValue, TPlugin, TObject, TTranslator>>(this, entity);
+        public void CompleteAndKill(in Entity entity) => TweenControllerHelper.CompleteAndKill<TValue, TPlugin, ObjectTweenController<TValue, TPlugin, TObject, TTranslator>>(this, entity);
         public void Kill(in Entity entity) => TweenControllerHelper.Kill(entity);
-        public void Pause(in Entity entity)  => TweenControllerHelper.Pause(entity);
+        public void Pause(in Entity entity) => TweenControllerHelper.Pause(entity);
         public void Play(in Entity entity) => TweenControllerHelper.Play(entity);
-        public void Restart(in Entity entity) => TweenControllerHelper.Restart<TValue, TPlugin, ManagedTweenController<TValue, TPlugin, TObject, TTranslator>>(this, entity);
+        public void Restart(in Entity entity) => TweenControllerHelper.Restart<TValue, TPlugin, ObjectTweenController<TValue, TPlugin, TObject, TTranslator>>(this, entity);
 
         public void SetValue(TValue value, in Entity entity)
         {
