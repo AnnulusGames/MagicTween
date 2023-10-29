@@ -18,7 +18,7 @@ namespace MagicTween
         ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
         ComponentTypeHandle<TweenTargetEntity> targetEntityTypeHandle;
-        ComponentTypeHandle<TweenTranslationMode> optionsTypeHandle;
+        ComponentTypeHandle<TweenTranslationModeData> optionsTypeHandle;
         ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentLookup<TComponent> targetComponentLookup;
         EntityTypeHandle entityTypeHandle;
@@ -33,19 +33,18 @@ namespace MagicTween
             startValueTypeHandle = GetComponentTypeHandle<TweenStartValue<TValue>>();
             valueTypeHandle = GetComponentTypeHandle<TweenValue<TValue>>(true);
             targetEntityTypeHandle = GetComponentTypeHandle<TweenTargetEntity>();
-            optionsTypeHandle = GetComponentTypeHandle<TweenTranslationMode>(true);
+            optionsTypeHandle = GetComponentTypeHandle<TweenTranslationModeData>(true);
             accessorFlagsTypeHandle = GetComponentTypeHandle<TweenAccessorFlags>(true);
             targetComponentLookup = GetComponentLookup<TComponent>();
             entityTypeHandle = GetEntityTypeHandle();
             entityLookup = GetEntityStorageInfoLookup();
 
-            query = GetEntityQuery(
-                typeof(TweenTargetEntity),
-                typeof(TweenStartValue<TValue>),
-                typeof(TweenValue<TValue>),
-                typeof(TweenAccessorFlags),
-                typeof(TweenTranslationMode),
-                typeof(TTranslator)
+            query = EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<TweenTargetEntity>(),
+                ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                ComponentType.ReadOnly<TweenAccessorFlags>(),
+                ComponentType.ReadWrite<TweenTranslationModeData>(),
+                ComponentType.ReadWrite<TTranslator>()
             );
         }
 
@@ -82,7 +81,7 @@ namespace MagicTween
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
             public ComponentTypeHandle<TweenTargetEntity> targetEntityTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenTranslationMode> optionsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenTranslationModeData> optionsTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             [NativeDisableParallelForRestriction] public ComponentLookup<TComponent> targetComponentLookup;
             [ReadOnly] public EntityTypeHandle entityTypeHandle;
@@ -106,7 +105,7 @@ namespace MagicTween
 
                     ref var target = ref targetComponentLookup.GetRefRW(targetEntity).ValueRW;
 
-                    if ((optionsArrayPtr + i)->value == TweenTranslationOptions.To &&
+                    if ((optionsArrayPtr + i)->value == TweenTranslationMode.To &&
                         ((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                     {
                         (startValueArrayPtr + i)->value = translator.GetValue(ref target);

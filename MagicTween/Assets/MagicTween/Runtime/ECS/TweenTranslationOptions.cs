@@ -2,14 +2,15 @@ using Unity.Entities;
 
 namespace MagicTween.Core
 {
-    public readonly struct TweenTranslationMode : IComponentData
+    public readonly struct TweenTranslationModeData : IComponentData
     {
-        public TweenTranslationMode(TweenTranslationOptions value) => this.value = value;
-        public readonly TweenTranslationOptions value;
+        public TweenTranslationModeData(TweenTranslationMode value) => this.value = value;
+        public readonly TweenTranslationMode value;
     }
 
-    public enum TweenTranslationOptions : byte
+    public enum TweenTranslationMode : byte
     {
+        None,
         FromTo,
         To
     }

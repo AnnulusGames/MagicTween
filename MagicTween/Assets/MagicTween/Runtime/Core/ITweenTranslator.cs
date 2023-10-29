@@ -1,4 +1,3 @@
-using MagicTween.Core;
 using Unity.Entities;
 
 namespace MagicTween

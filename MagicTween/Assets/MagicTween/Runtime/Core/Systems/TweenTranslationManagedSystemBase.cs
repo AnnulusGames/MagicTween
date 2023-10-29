@@ -26,7 +26,7 @@ namespace MagicTween
             TweenControllerContainer.Register<ManagedTweenController<TValue, TPlugin, TObject, TTranslator>>();
             query = SystemAPI.QueryBuilder()
                 .WithAll<TweenStartValue<TValue>, TweenValue<TValue>>()
-                .WithAll<TweenTranslationMode, TweenAccessorFlags, TweenTargetObject>()
+                .WithAll<TweenTranslationModeData, TweenAccessorFlags, TweenTargetObject>()
                 .Build();
         }
 
@@ -38,7 +38,7 @@ namespace MagicTween
                 startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<TValue>>(),
                 valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<TValue>>(true),
                 targetObjectTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenTargetObject>(),
-                optionsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenTranslationMode>(true),
+                optionsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenTranslationModeData>(true),
                 accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true),
                 entityManager = EntityManager
             };
@@ -50,7 +50,7 @@ namespace MagicTween
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
             public ComponentTypeHandle<TweenTargetObject> targetObjectTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenTranslationMode> optionsTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenTranslationModeData> optionsTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public EntityManager entityManager;
 
@@ -66,7 +66,7 @@ namespace MagicTween
                 {
                     var target = (TObject)targetAccessor[i].target;
 
-                    if ((optionsArrayPtr + i)->value == TweenTranslationOptions.To &&
+                    if ((optionsArrayPtr + i)->value == TweenTranslationMode.To &&
                         ((accessorFlagsArrayPtr + i)->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
                     {
                         try

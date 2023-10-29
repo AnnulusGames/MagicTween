@@ -86,8 +86,7 @@ namespace MagicTween.Core
                 ComponentType.ReadWrite<TweenAccessorFlags>(),
 
                 ComponentType.ReadWrite<TweenControllerReference>(),
-                ComponentType.ReadWrite<TweenRootFlag>(),
-                ComponentType.ReadWrite<TweenTranslationMode>()
+                ComponentType.ReadWrite<TweenRootFlag>()
             };
 
             archetypeStorage.coreComponentTypes = list.AsArray();
@@ -294,6 +293,7 @@ namespace MagicTween.Core
                     ComponentType.ReadWrite<TweenEndValue<TValue>>(),
                     ComponentType.ReadWrite<TweenOptions<TOptions>>(),
                     ComponentType.ReadWrite<TweenTargetEntity>(),
+                    ComponentType.ReadWrite<TweenTranslationModeData>(),
                     ComponentType.ReadOnly<TTranslator>()
                 };
                 types.AddRange(coreComponentTypes);
