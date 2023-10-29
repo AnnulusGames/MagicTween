@@ -130,7 +130,7 @@ namespace MagicTween.Benchmark
         [Test, Performance]
         public void MagicTween()
         {
-            Core.TweenPropertyAccessorNoAllocPool<float>.Prewarm(WarmupCount + MeasurementCount + 100);
+            Core.TweenDelegatesNoAllocPool<float>.Prewarm(WarmupCount + MeasurementCount + 100);
 
             // In Unity ECS, managed components are managed as a huge array, but the process of expanding this array may affect GC Allocation measurement.
             // To avoid this, add a Dummy managed component and adjust the array size in advance.

@@ -6,8 +6,8 @@ using MagicTween.Core.Components;
 [assembly: RegisterGenericComponentType(typeof(TweenValue<float4>))]
 [assembly: RegisterGenericComponentType(typeof(TweenStartValue<float4>))]
 [assembly: RegisterGenericComponentType(typeof(TweenEndValue<float4>))]
-[assembly: RegisterGenericComponentType(typeof(TweenPropertyAccessor<float4>))]
-[assembly: RegisterGenericComponentType(typeof(TweenPropertyAccessorNoAlloc<float4>))]
+[assembly: RegisterGenericComponentType(typeof(TweenDelegates<float4>))]
+[assembly: RegisterGenericComponentType(typeof(TweenDelegatesNoAlloc<float4>))]
 
 namespace MagicTween.Core
 {
@@ -80,6 +80,5 @@ namespace MagicTween.Core
         }
     }
 
-    [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
-    public sealed partial class LambdaFloat4TweenTranslationSystem : LambdaTweenTranslationSystemBase<float4> { }
+    public sealed partial class Float4TweenDelegateTranslationSystem : TweenDelegateTranslationSystemBase<float4> { }
 }

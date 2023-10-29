@@ -5,12 +5,14 @@ using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
+using MagicTween.Core;
 
-namespace MagicTween.Core
+namespace MagicTween
 {
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
-    public abstract partial class LambdaTweenTranslationSystemBase<TValue> : SystemBase
+    [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
+    public abstract partial class TweenDelegateTranslationSystemBase<TValue> : SystemBase
         where TValue : unmanaged
     {
         EntityQuery query1;
@@ -19,26 +21,26 @@ namespace MagicTween.Core
         ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
-        ComponentTypeHandle<TweenPropertyAccessor<TValue>> accessorTypeHandle;
-        ComponentTypeHandle<TweenPropertyAccessorNoAlloc<TValue>> unsafeAccessorTypeHandle;
+        ComponentTypeHandle<TweenDelegates<TValue>> delegatesTypeHandle;
+        ComponentTypeHandle<TweenDelegatesNoAlloc<TValue>> unsafedelegatesTypeHandle;
 
         [BurstCompile]
         protected override void OnCreate()
         {
             query1 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPropertyAccessor<TValue>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegates<TValue>>()
                 .Build();
             query2 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPropertyAccessorNoAlloc<TValue>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegatesNoAlloc<TValue>>()
                 .Build();
 
             accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<TValue>>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<TValue>>();
-            accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<TValue>>(true);
-            unsafeAccessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessorNoAlloc<TValue>>(true);
+            delegatesTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenDelegates<TValue>>(true);
+            unsafedelegatesTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenDelegatesNoAlloc<TValue>>(true);
         }
 
         [BurstCompile]
@@ -48,8 +50,8 @@ namespace MagicTween.Core
             accessorFlagsTypeHandle.Update(this);
             startValueTypeHandle.Update(this);
             valueTypeHandle.Update(this);
-            accessorTypeHandle.Update(this);
-            unsafeAccessorTypeHandle.Update(this);
+            delegatesTypeHandle.Update(this);
+            unsafedelegatesTypeHandle.Update(this);
 
             var job1 = new SystemJob1()
             {
@@ -57,7 +59,7 @@ namespace MagicTween.Core
                 accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 startValueTypeHandle = startValueTypeHandle,
                 valueTypeHandle = valueTypeHandle,
-                accessorTypeHandle = accessorTypeHandle
+                delegatesTypeHandle = delegatesTypeHandle
             };
             Unity.Entities.Internal.InternalCompilerInterface.JobChunkInterface.RunByRefWithoutJobs(ref job1, query1);
 
@@ -67,7 +69,7 @@ namespace MagicTween.Core
                 accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 startValueTypeHandle = startValueTypeHandle,
                 valueTypeHandle = valueTypeHandle,
-                unsafeAccessorTypeHandle = unsafeAccessorTypeHandle
+                unsafedelegatesTypeHandle = unsafedelegatesTypeHandle
             };
             Unity.Entities.Internal.InternalCompilerInterface.JobChunkInterface.RunByRefWithoutJobs(ref job2, query2);
         }
@@ -78,19 +80,19 @@ namespace MagicTween.Core
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessor<TValue>> accessorTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenDelegates<TValue>> delegatesTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var startValueArrayPtr = chunk.GetComponentDataPtrRO(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
-                var accessors = chunk.GetManagedComponentAccessor(ref accessorTypeHandle, entityManager);
+                var delegatess = chunk.GetManagedComponentAccessor(ref delegatesTypeHandle, entityManager);
 
                 for (int i = 0; i < chunk.Count; i++)
                 {
-                    var accessor = accessors[i];
-                    if (accessor == null) continue;
+                    var delegates = delegatess[i];
+                    if (delegates == null) continue;
 
                     var accessorFlagsPtr = accessorFlagsArrayPtr + i;
 
@@ -98,7 +100,7 @@ namespace MagicTween.Core
                     {
                         try
                         {
-                            if (accessor.getter != null) (startValueArrayPtr + i)->value = accessor.getter();
+                            if (delegates.getter != null) (startValueArrayPtr + i)->value = delegates.getter();
                         }
                         catch (Exception ex)
                         {
@@ -109,7 +111,7 @@ namespace MagicTween.Core
                     {
                         try
                         {
-                            accessor.setter?.Invoke((valueArrayPtr + i)->value);
+                            delegates.setter?.Invoke((valueArrayPtr + i)->value);
                         }
                         catch (Exception ex)
                         {
@@ -126,19 +128,19 @@ namespace MagicTween.Core
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessorNoAlloc<TValue>> unsafeAccessorTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenDelegatesNoAlloc<TValue>> unsafedelegatesTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var startValueArrayPtr = chunk.GetComponentDataPtrRO(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
-                var accessors = chunk.GetManagedComponentAccessor(ref unsafeAccessorTypeHandle, entityManager);
+                var delegatess = chunk.GetManagedComponentAccessor(ref unsafedelegatesTypeHandle, entityManager);
 
                 for (int i = 0; i < chunk.Count; i++)
                 {
-                    var accessor = accessors[i];
-                    if (accessor == null) continue;
+                    var delegates = delegatess[i];
+                    if (delegates == null) continue;
 
                     var accessorFlagsPtr = accessorFlagsArrayPtr + i;
 
@@ -146,7 +148,7 @@ namespace MagicTween.Core
                     {
                         try
                         {
-                            if (accessor.getter != null) (startValueArrayPtr + i)->value = accessor.getter(accessor.target);
+                            if (delegates.getter != null) (startValueArrayPtr + i)->value = delegates.getter(delegates.target);
                         }
                         catch (Exception ex)
                         {
@@ -157,7 +159,7 @@ namespace MagicTween.Core
                     {
                         try
                         {
-                            accessor.setter?.Invoke(accessor.target, (valueArrayPtr + i)->value);
+                            delegates.setter?.Invoke(delegates.target, (valueArrayPtr + i)->value);
                         }
                         catch (Exception ex)
                         {

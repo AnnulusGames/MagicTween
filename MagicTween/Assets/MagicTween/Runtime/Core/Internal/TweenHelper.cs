@@ -113,9 +113,7 @@ namespace MagicTween.Core
                 currentValue = default;
                 return false;
             }
-
-            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
-
+            
             var plugin = default(TPlugin);
             var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
             var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;

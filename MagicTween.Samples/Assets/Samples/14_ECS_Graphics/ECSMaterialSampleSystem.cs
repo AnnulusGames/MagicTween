@@ -12,7 +12,7 @@ public partial struct ECSMaterialSampleSystem : ISystem
         foreach (var (baseColor, targetInfo, entity) in SystemAPI.Query<RefRW<URPMaterialPropertyBaseColor>, RefRO<TweenMaterialTarget>>().WithEntityAccess())
         {
             // Tween the 'BaseColor' property of the URP's Material.
-            Tween.Entity.To<URPBaseColorTranslator>(entity, targetInfo.ValueRO.toColor, targetInfo.ValueRO.duration)
+            Tween.Entity.To<URPMaterialPropertyBaseColor, URPBaseColorTranslator>(entity, targetInfo.ValueRO.toColor, targetInfo.ValueRO.duration)
                 .SetEase(Ease.OutQuad);
         }
 

@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace MagicTween.Core
+namespace MagicTween
 {
     public interface ITweenPlugin<TValue>
         where TValue : unmanaged

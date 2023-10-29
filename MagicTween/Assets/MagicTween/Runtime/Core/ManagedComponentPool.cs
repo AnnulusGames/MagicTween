@@ -4,12 +4,12 @@ using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
-    public static class TweenPropertyAccessorPool<T>
+    public static class TweenDelegatesPool<T>
     {
-        readonly static Stack<TweenPropertyAccessor<T>> stack;
+        readonly static Stack<TweenDelegates<T>> stack;
         const int InitialSize = 256;
 
-        static TweenPropertyAccessorPool()
+        static TweenDelegatesPool()
         {
             stack = new(InitialSize);
             Prewarm(InitialSize);
@@ -24,7 +24,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenPropertyAccessor<T> Rent()
+        public static TweenDelegates<T> Rent()
         {
             if (!stack.TryPop(out var result))
             {
@@ -35,7 +35,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenPropertyAccessor<T> Rent(TweenGetter<T> getter, TweenSetter<T> setter)
+        public static TweenDelegates<T> Rent(TweenGetter<T> getter, TweenSetter<T> setter)
         {
             if (!stack.TryPop(out var result))
             {
@@ -49,7 +49,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Return(TweenPropertyAccessor<T> instance)
+        public static void Return(TweenDelegates<T> instance)
         {
             if (instance.getter != null)
             {
@@ -60,12 +60,12 @@ namespace MagicTween.Core
         }
     }
 
-    public static class TweenPropertyAccessorNoAllocPool<T>
+    public static class TweenDelegatesNoAllocPool<T>
     {
-        readonly static Stack<TweenPropertyAccessorNoAlloc<T>> stack;
+        readonly static Stack<TweenDelegatesNoAlloc<T>> stack;
         const int InitialSize = 256;
 
-        static TweenPropertyAccessorNoAllocPool()
+        static TweenDelegatesNoAllocPool()
         {
             stack = new(InitialSize);
             Prewarm(InitialSize);
@@ -80,7 +80,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenPropertyAccessorNoAlloc<T> Rent()
+        public static TweenDelegatesNoAlloc<T> Rent()
         {
             if (!stack.TryPop(out var result))
             {
@@ -91,7 +91,7 @@ namespace MagicTween.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenPropertyAccessorNoAlloc<T> Rent(object target, TweenGetter<object, T> getter, TweenSetter<object, T> setter)
+        public static TweenDelegatesNoAlloc<T> Rent(object target, TweenGetter<object, T> getter, TweenSetter<object, T> setter)
         {
             if (!stack.TryPop(out var result))
             {
@@ -107,7 +107,7 @@ namespace MagicTween.Core
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Return(TweenPropertyAccessorNoAlloc<T> instance)
+        public static void Return(TweenDelegatesNoAlloc<T> instance)
         {
             if (instance.target != null)
             {
@@ -214,4 +214,46 @@ namespace MagicTween.Core
             }
         }
     }
+
+    public static class TweenTargetObjectPool
+    {
+        readonly static Stack<TweenTargetObject> stack;
+        const int InitialSize = 256;
+
+        static TweenTargetObjectPool()
+        {
+            stack = new(InitialSize);
+            Prewarm(InitialSize);
+        }
+
+        public static void Prewarm(int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                stack.Push(new());
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TweenTargetObject Rent()
+        {
+            if (!stack.TryPop(out var result))
+            {
+                result = new();
+            }
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Return(TweenTargetObject instance)
+        {
+            if (instance.target != null)
+            {
+                instance.target = null;
+                stack.Push(instance);
+            }
+        }
+    }
+
 }

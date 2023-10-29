@@ -2,9 +2,9 @@ using Unity.Entities;
 
 namespace MagicTween.Core
 {
-    public readonly struct TweenTranslationOptionsData : IComponentData
+    public readonly struct TweenTranslationMode : IComponentData
     {
-        public TweenTranslationOptionsData(TweenTranslationOptions value) => this.value = value;
+        public TweenTranslationMode(TweenTranslationOptions value) => this.value = value;
         public readonly TweenTranslationOptions value;
     }
 

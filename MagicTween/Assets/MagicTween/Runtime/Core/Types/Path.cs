@@ -135,32 +135,30 @@ namespace MagicTween.Core
     }
 
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
-    public partial class LambdaPathTweenTranslationSystem : SystemBase
+    [BurstCompile]
+    public partial class PathTweenTranslationSystem : SystemBase
     {
         EntityQuery query1;
-        EntityQuery query2;
         ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         BufferTypeHandle<PathPoint> pointsTypeHandle;
         ComponentTypeHandle<TweenValue<float3>> valueTypeHandle;
-        ComponentTypeHandle<TweenPropertyAccessor<float3>> accessorTypeHandle;
+        ComponentTypeHandle<TweenDelegates<float3>> accessorTypeHandle;
 
         protected override void OnCreate()
         {
+            TweenControllerContainer.Register<DelegateTweenController<float3, PathTweenPlugin>>();
             query1 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
                 .WithAspect<PathTweenAspect>()
-                .WithAll<TweenPropertyAccessor<float3>>()
-                .Build();
-            query2 = SystemAPI.QueryBuilder()
-                .WithAspect<TweenAspect>()
-                .WithAspect<PathTweenAspect>()
+                .WithAll<TweenDelegates<float3>>()
                 .Build();
             accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             pointsTypeHandle = SystemAPI.GetBufferTypeHandle<PathPoint>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<float3>>();
-            accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<float3>>(true);
+            accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenDelegates<float3>>(true);
         }
 
+        [BurstCompile]
         protected override void OnUpdate()
         {
             CompleteDependency();
@@ -185,7 +183,7 @@ namespace MagicTween.Core
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public BufferTypeHandle<PathPoint> pointsTypeHandle;
             public ComponentTypeHandle<TweenValue<float3>> valueTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessor<float3>> accessorTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenDelegates<float3>> accessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {

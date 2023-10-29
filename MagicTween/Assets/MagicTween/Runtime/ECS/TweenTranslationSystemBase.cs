@@ -7,43 +7,46 @@ using MagicTween.Core.Components;
 
 namespace MagicTween
 {
+    [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
-    public abstract partial class TweenTranslationSystemBase<TValue, TComponent, TTranslator> : SystemBase
+    public abstract partial class TweenTranslationSystemBase<TValue, TPlugin, TComponent, TTranslator> : SystemBase
         where TValue : unmanaged
+        where TPlugin : unmanaged, ITweenPlugin<TValue>
         where TComponent : unmanaged, IComponentData
         where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
     {
         ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
-        ComponentTypeHandle<TTranslator> translatorTypeHandle;
-        ComponentTypeHandle<TweenTranslationOptionsData> optionsTypeHandle;
+        ComponentTypeHandle<TweenTargetEntity> targetEntityTypeHandle;
+        ComponentTypeHandle<TweenTranslationMode> optionsTypeHandle;
         ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentLookup<TComponent> targetComponentLookup;
         EntityTypeHandle entityTypeHandle;
         EntityStorageInfoLookup entityLookup;
 
         EntityQuery query;
-        EndSimulationEntityCommandBufferSystem commandBufferSystem;
 
         protected override void OnCreate()
         {
+            TweenControllerContainer.Register<EntityTweenController<TValue, TPlugin, TComponent, TTranslator>>();
+
             startValueTypeHandle = GetComponentTypeHandle<TweenStartValue<TValue>>();
             valueTypeHandle = GetComponentTypeHandle<TweenValue<TValue>>(true);
-            translatorTypeHandle = GetComponentTypeHandle<TTranslator>();
-            optionsTypeHandle = GetComponentTypeHandle<TweenTranslationOptionsData>(true);
+            targetEntityTypeHandle = GetComponentTypeHandle<TweenTargetEntity>();
+            optionsTypeHandle = GetComponentTypeHandle<TweenTranslationMode>(true);
             accessorFlagsTypeHandle = GetComponentTypeHandle<TweenAccessorFlags>(true);
             targetComponentLookup = GetComponentLookup<TComponent>();
             entityTypeHandle = GetEntityTypeHandle();
             entityLookup = GetEntityStorageInfoLookup();
 
             query = GetEntityQuery(
-                typeof(TTranslator),
+                typeof(TweenTargetEntity),
                 typeof(TweenStartValue<TValue>),
                 typeof(TweenValue<TValue>),
                 typeof(TweenAccessorFlags),
-                typeof(TweenTranslationOptionsData)
+                typeof(TweenTranslationMode),
+                typeof(TTranslator)
             );
-            commandBufferSystem = World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
@@ -52,7 +55,7 @@ namespace MagicTween
 
             startValueTypeHandle.Update(this);
             valueTypeHandle.Update(this);
-            translatorTypeHandle.Update(this);
+            targetEntityTypeHandle.Update(this);
             optionsTypeHandle.Update(this);
             accessorFlagsTypeHandle.Update(this);
             targetComponentLookup.Update(this);
@@ -63,16 +66,14 @@ namespace MagicTween
             {
                 startValueTypeHandle = startValueTypeHandle,
                 valueTypeHandle = valueTypeHandle,
-                translatorTypeHandle = translatorTypeHandle,
+                targetEntityTypeHandle = targetEntityTypeHandle,
                 optionsTypeHandle = optionsTypeHandle,
                 accessorFlagsTypeHandle = accessorFlagsTypeHandle,
                 targetComponentLookup = targetComponentLookup,
                 entityTypeHandle = entityTypeHandle,
                 entityLookup = entityLookup,
-                parallelWriter = commandBufferSystem.CreateCommandBuffer().AsParallelWriter()
             };
             Dependency = job.ScheduleParallel(query, Dependency);
-            commandBufferSystem.AddJobHandleForProducer(Dependency);
         }
 
         [BurstCompile]
@@ -80,27 +81,26 @@ namespace MagicTween
         {
             public ComponentTypeHandle<TweenStartValue<TValue>> startValueTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenValue<TValue>> valueTypeHandle;
-            public ComponentTypeHandle<TTranslator> translatorTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenTranslationOptionsData> optionsTypeHandle;
+            public ComponentTypeHandle<TweenTargetEntity> targetEntityTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenTranslationMode> optionsTypeHandle;
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             [NativeDisableParallelForRestriction] public ComponentLookup<TComponent> targetComponentLookup;
             [ReadOnly] public EntityTypeHandle entityTypeHandle;
             [ReadOnly] public EntityStorageInfoLookup entityLookup;
-            public EntityCommandBuffer.ParallelWriter parallelWriter;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
                 var startValueArrayPtr = chunk.GetComponentDataPtrRW(ref startValueTypeHandle);
                 var valueArrayPtr = chunk.GetComponentDataPtrRO(ref valueTypeHandle);
-                var commandComponentPtr = chunk.GetComponentDataPtrRW(ref translatorTypeHandle);
+                var targetEntityArrayPtr = chunk.GetComponentDataPtrRW(ref targetEntityTypeHandle);
                 var optionsArrayPtr = chunk.GetComponentDataPtrRO(ref optionsTypeHandle);
                 var accessorFlagsArrayPtr = chunk.GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var entitiesPtr = chunk.GetEntityDataPtrRO(entityTypeHandle);
 
                 for (int i = 0; i < chunk.Count; i++)
                 {
-                    var translator = *(commandComponentPtr + i);
-                    var targetEntity = translator.TargetEntity;
+                    var translator = default(TTranslator);
+                    var targetEntity = (targetEntityArrayPtr + i)->target;
                     if (!entityLookup.Exists(targetEntity)) continue;
                     if (!targetComponentLookup.HasComponent(targetEntity)) continue;
 

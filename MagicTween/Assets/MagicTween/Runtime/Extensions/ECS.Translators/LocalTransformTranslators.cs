@@ -10,8 +10,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct PositionTranslator : ITweenTranslator<float3, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-        
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float3 value) => component.Position = value;
 
@@ -22,8 +20,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct PositionXTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile] public void Apply(ref LocalTransform component, in float value)
             => component.Position = new float3(value, component.Position.y, component.Position.z);
         [BurstCompile] public float GetValue(ref LocalTransform component) => component.Position.x;
@@ -32,8 +28,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct PositionYTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float value)
             => component.Position = new float3(component.Position.x, value, component.Position.z);
@@ -43,8 +37,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct PositionZTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float value)
             => component.Position = new float3(component.Position.x, component.Position.y, value);
@@ -54,8 +46,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct RotationTranslator : ITweenTranslator<quaternion, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in quaternion value) => component.Rotation = value;
 
@@ -66,8 +56,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct EulerAnglesTranslator : ITweenTranslator<float3, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float3 value) => component.Rotation = MathUtils.ToQuaternion(value);
 
@@ -78,8 +66,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct EulerAnglesXTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float value)
         {
@@ -98,8 +84,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct EulerAnglesYTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float value)
         {
@@ -118,8 +102,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct EulerAnglesZTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float value)
         {
@@ -138,8 +120,6 @@ namespace MagicTween.Translators
     [BurstCompile]
     public struct ScaleTranslator : ITweenTranslator<float, LocalTransform>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref LocalTransform component, in float value) => component.Scale = value;
 
@@ -151,32 +131,32 @@ namespace MagicTween.Translators
 namespace MagicTween.Core
 {
     [BurstCompile]
-    public sealed partial class PositionTranslationSystem : TweenTranslationSystemBase<float3, LocalTransform, PositionTranslator> { }
+    public sealed partial class PositionTranslationSystem : TweenTranslationSystemBase<float3, Float3TweenPlugin, LocalTransform, PositionTranslator> { }
 
     [BurstCompile]
-    public sealed partial class PositionXTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, PositionXTranslator> { }
+    public sealed partial class PositionXTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, PositionXTranslator> { }
 
     [BurstCompile]
-    public sealed partial class PositionYTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, PositionYTranslator> { }
+    public sealed partial class PositionYTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, PositionYTranslator> { }
 
     [BurstCompile]
-    public sealed partial class PositionZTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, PositionZTranslator> { }
+    public sealed partial class PositionZTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, PositionZTranslator> { }
 
     [BurstCompile]
-    public sealed partial class RotationTranslationSystem : TweenTranslationSystemBase<quaternion, LocalTransform, RotationTranslator> { }
+    public sealed partial class RotationTranslationSystem : TweenTranslationSystemBase<quaternion, QuaternionTweenPlugin, LocalTransform, RotationTranslator> { }
 
     [BurstCompile]
-    public sealed partial class EulerAnglesTranslationSystem : TweenTranslationSystemBase<float3, LocalTransform, EulerAnglesTranslator> { }
+    public sealed partial class EulerAnglesTranslationSystem : TweenTranslationSystemBase<float3, Float3TweenPlugin, LocalTransform, EulerAnglesTranslator> { }
 
     [BurstCompile]
-    public sealed partial class EulerAnglesXTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, EulerAnglesXTranslator> { }
+    public sealed partial class EulerAnglesXTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, EulerAnglesXTranslator> { }
 
     [BurstCompile]
-    public sealed partial class EulerAnglesYTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, EulerAnglesYTranslator> { }
+    public sealed partial class EulerAnglesYTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, EulerAnglesYTranslator> { }
 
     [BurstCompile]
-    public sealed partial class EulerAnglesZTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, EulerAnglesZTranslator> { }
+    public sealed partial class EulerAnglesZTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, EulerAnglesZTranslator> { }
 
     [BurstCompile]
-    public sealed partial class ScaleTranslationSystem : TweenTranslationSystemBase<float, LocalTransform, ScaleTranslator> { }
+    public sealed partial class ScaleTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, LocalTransform, ScaleTranslator> { }
 }

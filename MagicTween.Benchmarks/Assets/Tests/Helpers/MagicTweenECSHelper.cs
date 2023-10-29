@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using MagicTween;
+using MagicTween.Core;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.Burst;
@@ -10,8 +11,6 @@ namespace MagicTween.Benchmark
     [BurstCompile]
     public struct TestTweenTranslator : ITweenTranslator<float, TestData>
     {
-        public Entity TargetEntity { get; set; }
-
         [BurstCompile]
         public void Apply(ref TestData component, in float value)
         {
@@ -25,7 +24,7 @@ namespace MagicTween.Benchmark
         }
     }
 
-    public partial class TestTweenTranslationSystem : TweenTranslationSystemBase<float, TestData, TestTweenTranslator> { }
+    public partial class TestTweenTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, TestData, TestTweenTranslator> { }
 
     public static class MagicTweenECSHelper
     {
@@ -50,7 +49,7 @@ namespace MagicTween.Benchmark
         {
             for (int i = 0; i < entities.Length; i++)
             {
-                Tween.Entity.FromTo<TestTweenTranslator>(entities[i], 0f, 10f, duration);
+                Tween.Entity.FromTo<TestData, TestTweenTranslator >(entities[i], 0f, 10f, duration);
             }
         }
     }

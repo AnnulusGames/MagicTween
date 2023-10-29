@@ -11,7 +11,7 @@ using MagicTween.Diagnostics;
 [assembly: RegisterGenericComponentType(typeof(TweenStartValue<UnsafeText>))]
 [assembly: RegisterGenericComponentType(typeof(TweenEndValue<UnsafeText>))]
 [assembly: RegisterGenericComponentType(typeof(TweenOptions<StringTweenOptions>))]
-[assembly: RegisterGenericComponentType(typeof(TweenPropertyAccessor<string>))]
+[assembly: RegisterGenericComponentType(typeof(TweenDelegates<string>))]
 
 namespace MagicTween.Core
 {
@@ -123,25 +123,25 @@ namespace MagicTween.Core
 
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
     [RequireMatchingQueriesForUpdate]
-    public partial class LambdaStringTweenTranslationSystem : SystemBase
+    public partial class StringDeletaTweenTranslationSystem : SystemBase
     {
         EntityQuery query1;
         ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
         ComponentTypeHandle<TweenStartValue<UnsafeText>> startValueTypeHandle;
         ComponentTypeHandle<TweenValue<UnsafeText>> valueTypeHandle;
-        ComponentTypeHandle<TweenPropertyAccessor<string>> accessorTypeHandle;
+        ComponentTypeHandle<TweenDelegates<string>> accessorTypeHandle;
 
         protected override void OnCreate()
         {
             query1 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
                 .WithAspect<StringTweenAspect>()
-                .WithAll<TweenPropertyAccessor<string>>()
+                .WithAll<TweenDelegates<string>>()
                 .Build();
             accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
             startValueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<UnsafeText>>();
             valueTypeHandle = SystemAPI.GetComponentTypeHandle<TweenValue<UnsafeText>>();
-            accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenPropertyAccessor<string>>(true);
+            accessorTypeHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenDelegates<string>>(true);
         }
 
         protected override void OnUpdate()
@@ -168,7 +168,7 @@ namespace MagicTween.Core
             [ReadOnly] public ComponentTypeHandle<TweenAccessorFlags> accessorFlagsTypeHandle;
             public ComponentTypeHandle<TweenStartValue<UnsafeText>> startValueTypeHandle;
             public ComponentTypeHandle<TweenValue<UnsafeText>> valueTypeHandle;
-            [ReadOnly] public ComponentTypeHandle<TweenPropertyAccessor<string>> accessorTypeHandle;
+            [ReadOnly] public ComponentTypeHandle<TweenDelegates<string>> accessorTypeHandle;
 
             public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
             {
@@ -177,35 +177,42 @@ namespace MagicTween.Core
                 var valueArrayPtr = chunk.GetComponentDataPtrRW(ref valueTypeHandle);
                 var accessors = chunk.GetManagedComponentAccessor(ref accessorTypeHandle, entityManager);
 
-                try
+                for (int i = 0; i < chunk.Count; i++)
                 {
-                    for (int i = 0; i < chunk.Count; i++)
-                    {
-                        var accessor = accessors[i];
-                        if (accessor == null) continue;
+                    var accessor = accessors[i];
+                    if (accessor == null) continue;
 
-                        var flagsPtr = callbackFlagsArrayPtr + i;
-                        if ((flagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
+                    var flagsPtr = callbackFlagsArrayPtr + i;
+                    if ((flagsPtr->flags & AccessorFlags.Getter) == AccessorFlags.Getter)
+                    {
+                        if (accessor.getter != null)
                         {
-                            if (accessor.getter != null)
+                            try
                             {
                                 var ptr = startValueArrayPtr + i;
                                 if (ptr->value.IsCreated) ptr->value.CopyFrom(accessor.getter());
                             }
+                            catch (System.Exception ex)
+                            {
+                                Debugger.LogExceptionInsideTween(ex);
+                            }
                         }
-                        if ((flagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                    }
+                    if ((flagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                    {
+                        if (accessor.setter != null)
                         {
-                            if (accessor.setter != null)
+                            try
                             {
                                 var ptr = valueArrayPtr + i;
                                 if (ptr->value.IsCreated) accessor.setter(ptr->value.ConvertToString());
                             }
+                            catch (System.Exception ex)
+                            {
+                                Debugger.LogExceptionInsideTween(ex);
+                            }
                         }
                     }
-                }
-                catch (System.Exception ex)
-                {
-                    Debugger.LogExceptionInsideTween(ex);
                 }
             }
         }
