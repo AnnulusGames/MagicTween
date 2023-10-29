@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Unity.Collections;
+using Unity.Burst;
 
 namespace MagicTween.Core
 {
@@ -8,23 +9,26 @@ namespace MagicTween.Core
         public static void Initialize()
         {
             _world = World.DefaultGameObjectInjectionWorld;
-            _entityManager = _world.EntityManager;
+            _entityManager.Data = _world.EntityManager;
             _cleanupSystem = _world.GetExistingSystemManaged<TweenCleanupSystem>();
             _callbackSystem = _world.GetExistingSystemManaged<TweenCallbackSystem>();
-            ArchetypeStorage.Create(Allocator.Persistent, out _archetypeStorage);
+            ArchetypeStorage.Create(Allocator.Persistent, out _archetypeStorage.Data);
         }
 
         static World _world;
-        static EntityManager _entityManager;
+        static readonly SharedStatic<EntityManager> _entityManager = SharedStatic<EntityManager>.GetOrCreate<SharedStaticEntityManagerTag>();
         static TweenCleanupSystem _cleanupSystem;
         static TweenCallbackSystem _callbackSystem;
-        static ArchetypeStorage _archetypeStorage;
+        static readonly SharedStatic<ArchetypeStorage> _archetypeStorage = SharedStatic<ArchetypeStorage>.GetOrCreate<SharedStaticArchetypeStorageTag>();
+
+        readonly struct SharedStaticEntityManagerTag { }
+        readonly struct SharedStaticArchetypeStorageTag { }
 
         public static World World => _world;
-        public static EntityManager EntityManager => _entityManager;
-        public static ref EntityManager EntityManagerRef => ref _entityManager;
+        public static EntityManager EntityManager => _entityManager.Data;
+        public static ref EntityManager EntityManagerRef => ref _entityManager.Data;
         public static TweenCleanupSystem CleanupSystem => _cleanupSystem;
         public static TweenCallbackSystem CallbackSystem => _callbackSystem;
-        internal static ref ArchetypeStorage ArchetypeStorageRef => ref _archetypeStorage;
+        internal static ref ArchetypeStorage ArchetypeStorageRef => ref _archetypeStorage.Data;
     }
 }
