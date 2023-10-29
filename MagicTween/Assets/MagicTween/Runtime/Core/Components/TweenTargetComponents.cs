@@ -1,9 +1,7 @@
 using System;
-using MagicTween.Core;
 using Unity.Entities;
-using UnityEngine;
 
-namespace MagicTween
+namespace MagicTween.Core.Components
 {
     public struct TweenTargetEntity : IComponentData
     {

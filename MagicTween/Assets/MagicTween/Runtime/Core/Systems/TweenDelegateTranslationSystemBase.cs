@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using MagicTween.Core.Components;
+using MagicTween.Core.Controllers;
 using MagicTween.Diagnostics;
 
 namespace MagicTween.Core.Systems

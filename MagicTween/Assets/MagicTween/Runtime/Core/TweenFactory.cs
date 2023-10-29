@@ -3,6 +3,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using MagicTween.Core.Components;
+using MagicTween.Core.Controllers;
 using MagicTween.Plugins;
 using Unity.Burst;
 using System.Runtime.CompilerServices;
@@ -377,7 +378,7 @@ namespace MagicTween.Core
         static void CreateSequenceCore(ref EntityManager entityManager, ref ArchetypeStorage archetypeStorage, out Sequence sequence)
         {
             var archetype = archetypeStorage.GetSequenceArchetype(ref entityManager);
-            var controllerId = TweenControllerContainer.GetId<SequenceTweenController>();
+            var controllerId = TweenControllerContainer.GetId<SequenceController>();
 
             CreateEntity(ref entityManager, archetype, 0f, controllerId, out var entity);
             sequence = new Sequence(entity);

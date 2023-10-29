@@ -1,11 +1,12 @@
 using System;
-using MagicTween.Core;
-using MagicTween.Core.Components;
-using MagicTween.Diagnostics;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
+using MagicTween.Core;
+using MagicTween.Core.Components;
+using MagicTween.Core.Controllers;
+using MagicTween.Diagnostics;
 
 namespace MagicTween
 {

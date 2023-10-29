@@ -4,10 +4,11 @@ using Unity.Mathematics;
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
-using MagicTween.Plugins;
-using MagicTween.Core.Components;
-using MagicTween.Diagnostics;
 using MagicTween.Core.Aspects;
+using MagicTween.Core.Components;
+using MagicTween.Core.Controllers;
+using MagicTween.Plugins;
+using MagicTween.Diagnostics;
 
 namespace MagicTween.Core.Systems
 {

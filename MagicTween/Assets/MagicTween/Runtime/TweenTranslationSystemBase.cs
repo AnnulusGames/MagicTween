@@ -5,6 +5,7 @@ using Unity.Collections;
 using MagicTween.Core;
 using MagicTween.Core.Components;
 using MagicTween.Core.Systems;
+using MagicTween.Core.Controllers;
 
 namespace MagicTween
 {
