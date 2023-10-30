@@ -412,6 +412,7 @@ namespace MagicTween.Core
             return tween;
         }
 
+        [BurstCompile]
         static void CreateUnitTweenCore(ref EntityManager entityManager, ref ArchetypeStorage archetypeStorage, float duration, out Tween tween)
         {
             var archetype = archetypeStorage.GetUnitTweenArchetype(ref entityManager);
@@ -428,6 +429,7 @@ namespace MagicTween.Core
             return sequence;
         }
 
+        [BurstCompile]
         static void CreateSequenceCore(ref EntityManager entityManager, ref ArchetypeStorage archetypeStorage, out Sequence sequence)
         {
             var archetype = archetypeStorage.GetSequenceArchetype(ref entityManager);
