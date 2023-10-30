@@ -4,6 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using MagicTween.Core.Components;
+using MagicTween.Core.Transforms;
 using MagicTween.Plugins;
 
 namespace MagicTween.Core
@@ -17,6 +18,7 @@ namespace MagicTween.Core
         readonly struct DelegateVibrationNoAllocTweenTypeKey<TValue, TOptions> { }
         readonly struct EntityTweenTypeKey<TValue, TOptions, TTranslator> { }
         readonly struct ObjectTweenTypeKey<TValue, TOptions, TTranslator> { }
+        readonly struct TransformTweenTypeKey<TTag> { }
         readonly struct UnitTweenTypeKey { }
         readonly struct SequenceTypeKey { }
 
@@ -238,6 +240,31 @@ namespace MagicTween.Core
                 storage.AddCoreComponentTypes(ref types);
                 archetype = entityManager.CreateArchetype(types.AsArray());
                 storage.Register<ObjectTweenTypeKey<TValue, TOptions, TTranslator>>(ref archetype);
+            }
+            return archetype;
+        }
+
+        [BurstCompile]
+        public static EntityArchetype GetTransformTweenArchetype<TValue, TOptions, TTranslator>(ref this ArchetypeStorage storage, ref EntityManager entityManager)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+            where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+        {
+            if (!storage.TryGet<TransformTweenTypeKey<TTranslator>>(out var archetype))
+            {
+                var types = new NativeList<ComponentType>(32, Allocator.Temp)
+                {
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenEndValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<TOptions>>(),
+                    ComponentType.ReadWrite<TweenTargetTransform>(),
+                    ComponentType.ReadWrite<TweenTranslationModeData>(),
+                    ComponentType.ReadWrite<TTranslator>()
+                };
+                storage.AddCoreComponentTypes(ref types);
+                archetype = entityManager.CreateArchetype(types.AsArray());
+                storage.Register<TransformTweenTypeKey<TTranslator>>(ref archetype);
             }
             return archetype;
         }

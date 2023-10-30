@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using MagicTween.Core;
 using MagicTween.Plugins;
+using MagicTween.Core.Transforms;
 
 namespace MagicTween
 {
@@ -53,10 +54,6 @@ namespace MagicTween
             p.z = z;
             self.localPosition = p;
         };
-        static readonly TweenGetter<Transform, quaternion> rotationGetter = self => self.rotation;
-        static readonly TweenSetter<Transform, quaternion> rotationSetter = (self, x) => self.rotation = x;
-        static readonly TweenGetter<Transform, quaternion> localRotationGetter = self => self.localRotation;
-        static readonly TweenSetter<Transform, quaternion> localRotationSetter = (self, x) => self.localRotation = x;
         static readonly TweenGetter<Transform, float3> eulerAnglesGetter = self => self.eulerAngles;
         static readonly TweenSetter<Transform, float3> eulerAnglesSetter = (self, x) => self.eulerAngles = x;
         static readonly TweenGetter<Transform, float> eulerAnglesXGetter = self => self.eulerAngles.x;
@@ -129,197 +126,197 @@ namespace MagicTween
 
         public static Tween<float3, NoOptions> TweenPosition(this Transform self, Vector3 endValue, float duration)
         {
-            return Tween.To(self, positionGetter, positionSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float3, NoOptions, Float3TweenPlugin, TransformPositionTranslator>(self, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenPosition(this Transform self, Vector3 startValue, Vector3 endValue, float duration)
         {
-            return Tween.FromTo(self, positionSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float3, NoOptions, Float3TweenPlugin, TransformPositionTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenPositionX(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, positionXGetter, positionXSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformPositionXTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenPositionX(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, positionXSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformPositionXTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenPositionY(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, positionYGetter, positionYSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformPositionYTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenPositionY(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, positionYSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformPositionYTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenPositionZ(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, positionZGetter, positionZSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformPositionZTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenPositionZ(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, positionZSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformPositionZTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalPosition(this Transform self, Vector3 endValue, float duration)
         {
-            return Tween.To(self, localPositionGetter, localPositionSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float3, NoOptions, Float3TweenPlugin, TransformLocalPositionTranslator>(self, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalPosition(this Transform self, Vector3 startValue, Vector3 endValue, float duration)
         {
-            return Tween.FromTo(self, localPositionSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float3, NoOptions, Float3TweenPlugin, TransformLocalPositionTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalPositionX(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localPositionXGetter, localPositionXSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalPositionXTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalPositionX(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localPositionXSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalPositionXTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalPositionY(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localPositionYGetter, localPositionYSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalPositionYTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalPositionY(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localPositionYSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalPositionYTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalPositionZ(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localPositionZGetter, localPositionZSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalPositionZTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalPositionZ(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localPositionZSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalPositionZTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<quaternion, NoOptions> TweenRotation(this Transform self, Quaternion endValue, float duration)
         {
-            return Tween.To(self, rotationGetter, rotationSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<quaternion, NoOptions, QuaternionTweenPlugin, TransformRotationTranslator>(self, endValue, duration);
         }
 
         public static Tween<quaternion, NoOptions> TweenRotation(this Transform self, Quaternion startValue, Quaternion endValue, float duration)
         {
-            return Tween.FromTo(self, rotationSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<quaternion, NoOptions, QuaternionTweenPlugin, TransformRotationTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<quaternion, NoOptions> TweenLocalRotation(this Transform self, Quaternion endValue, float duration)
         {
-            return Tween.To(self, localRotationGetter, localRotationSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<quaternion, NoOptions, QuaternionTweenPlugin, TransformLocalRotationTranslator>(self, endValue, duration);
         }
 
         public static Tween<quaternion, NoOptions> TweenLocalRotation(this Transform self, Quaternion startValue, Quaternion endValue, float duration)
         {
-            return Tween.FromTo(self, localRotationSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<quaternion, NoOptions, QuaternionTweenPlugin, TransformLocalRotationTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenEulerAngles(this Transform self, Vector3 endValue, float duration)
         {
-            return Tween.To(self, eulerAnglesGetter, eulerAnglesSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float3, NoOptions, Float3TweenPlugin, TransformEulerAnglesTranslator>(self, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenEulerAngles(this Transform self, Vector3 startValue, Vector3 endValue, float duration)
         {
-            return Tween.FromTo(self, eulerAnglesSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float3, NoOptions, Float3TweenPlugin, TransformEulerAnglesTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenEulerAnglesX(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, eulerAnglesXGetter, eulerAnglesXSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesXTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenEulerAnglesX(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, eulerAnglesXSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesXTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenEulerAnglesY(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, eulerAnglesYGetter, eulerAnglesYSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesYTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenEulerAnglesY(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, eulerAnglesYSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesYTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenEulerAnglesZ(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, eulerAnglesZGetter, eulerAnglesZSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesZTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenEulerAnglesZ(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, eulerAnglesZSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesYTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalEulerAngles(this Transform self, Vector3 endValue, float duration)
         {
-            return Tween.To(self, localEulerAnglesGetter, localEulerAnglesSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float3, NoOptions, Float3TweenPlugin, TransformLocalEulerAnglesTranslator>(self, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalEulerAngles(this Transform self, Vector3 startValue, Vector3 endValue, float duration)
         {
-            return Tween.FromTo(self, localEulerAnglesSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float3, NoOptions, Float3TweenPlugin, TransformLocalEulerAnglesTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalEulerAnglesX(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localEulerAnglesXGetter, localEulerAnglesXSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesXTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalEulerAnglesX(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localEulerAnglesXSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesXTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalEulerAnglesY(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localEulerAnglesYGetter, localEulerAnglesYSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesYTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalEulerAnglesY(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localEulerAnglesYSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesYTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalEulerAnglesZ(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localEulerAnglesZGetter, localEulerAnglesZSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesZTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalEulerAnglesZ(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localEulerAnglesZSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesZTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalScale(this Transform self, Vector3 endValue, float duration)
         {
-            return Tween.To(self, localScaleGetter, localScaleSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float3, NoOptions, Float3TweenPlugin, TransformLocalScaleTranslator>(self, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalScale(this Transform self, Vector3 startValue, Vector3 endValue, float duration)
         {
-            return Tween.FromTo(self, localScaleSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float3, NoOptions, Float3TweenPlugin, TransformLocalScaleTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalScaleX(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localScaleXGetter, localScaleXSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalScaleXTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalScaleX(this Transform self, float startValue, float endValue, float duration)
@@ -329,22 +326,22 @@ namespace MagicTween
 
         public static Tween<float, NoOptions> TweenLocalScaleY(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localScaleYGetter, localScaleYSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalScaleYTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalScaleY(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localScaleYSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalScaleYTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalScaleZ(this Transform self, float endValue, float duration)
         {
-            return Tween.To(self, localScaleZGetter, localScaleZSetter, endValue, duration);
+            return TweenFactory.Transforms.CreateTo<float, NoOptions, FloatTweenPlugin, TransformLocalScaleZTranslator>(self, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalScaleZ(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localScaleZSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalScaleZTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float3, PunchTweenOptions> PunchPosition(this Transform self, Vector3 strength, float duration)

@@ -255,5 +255,4 @@ namespace MagicTween.Core
             }
         }
     }
-
 }

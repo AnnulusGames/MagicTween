@@ -1,12 +1,15 @@
+using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Burst;
+using UnityEngine;
+using MagicTween.Core.Transforms;
 using MagicTween.Core.Components;
 using MagicTween.Core.Controllers;
 using MagicTween.Plugins;
-using Unity.Burst;
-using System.Runtime.CompilerServices;
+using Unity.Assertions;
 
 namespace MagicTween.Core
 {
@@ -352,6 +355,56 @@ namespace MagicTween.Core
             }
         }
 
+        [BurstCompile]
+        public static class Transforms
+        {
+            public static Tween<TValue, TOptions> CreateTo<TValue, TOptions, TPlugin, TTranslator>(Transform target, TValue endValue, float duration)
+                where TValue : unmanaged
+                where TOptions : unmanaged, ITweenOptions
+                where TPlugin : unmanaged, ITweenPluginBase<TValue>
+                where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+            {
+                Assert.IsNotNull(target);
+                var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, TPlugin, TTranslator>>();
+                var archetype = ArchetypeStorageRef.GetTransformTweenArchetype<TValue, TOptions, TTranslator>(ref EntityManagerRef);
+
+                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                AddStartAndEndValue(entity, default(TTranslator).GetValueManaged(target), endValue);
+                AddTranslationMode(entity, TweenTranslationMode.To);
+                AddTarget(entity, target);
+
+                return new Tween<TValue, TOptions>(entity);
+            }
+
+            public static Tween<TValue, TOptions> CreateFromTo<TValue, TOptions, TPlugin, TTranslator>(Transform target, TValue startValue, TValue endValue, float duration)
+                where TValue : unmanaged
+                where TOptions : unmanaged, ITweenOptions
+                where TPlugin : unmanaged, ITweenPluginBase<TValue>
+                where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+            {
+                Assert.IsNotNull(target);
+                var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, TPlugin, TTranslator>>();
+                var archetype = ArchetypeStorageRef.GetTransformTweenArchetype<TValue, TOptions, TTranslator>(ref EntityManagerRef);
+
+                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                AddStartAndEndValue(entity, startValue, endValue);
+                AddTranslationMode(entity, TweenTranslationMode.FromTo);
+                AddTarget(entity, target);
+
+                return new Tween<TValue, TOptions>(entity);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            static void AddTarget(Entity entity, Transform target)
+            {
+                var instance = TweenTargetTransformPool.Rent();
+                instance.target = target;
+                instance.instanceId = target.GetInstanceID();
+                TransformManager.Register(instance);
+                EntityManager.SetComponentData(entity, instance);
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Tween CreateUnitTween(float duration)
         {
@@ -406,6 +459,12 @@ namespace MagicTween.Core
         {
             EntityManagerRef.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
             EntityManagerRef.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+        }
+
+        [BurstCompile]
+        static void AddTranslationMode(in Entity entity, TweenTranslationMode mode)
+        {
+            EntityManagerRef.SetComponentData(entity, new TweenTranslationModeData(mode));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

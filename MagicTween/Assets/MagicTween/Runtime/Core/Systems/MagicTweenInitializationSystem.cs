@@ -1,5 +1,6 @@
 using System;
 using Unity.Entities;
+using MagicTween.Core.Transforms;
 
 namespace MagicTween.Core.Systems
 {
@@ -13,6 +14,7 @@ namespace MagicTween.Core.Systems
 
             TweenWorld.Initialize();
             MagicTweenSettings.Initialize();
+            TransformManager.Initialize();
             SharedRandom.InitState((uint)DateTime.Now.Ticks);
         }
 
@@ -22,6 +24,7 @@ namespace MagicTween.Core.Systems
         {
             if (TweenWorld.World != World) return;
             if (TweenWorld.ArchetypeStorageRef.IsCreated) TweenWorld.ArchetypeStorageRef.Dispose();
+            TransformManager.Dispose();
         }
     }
 }

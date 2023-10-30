@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using MagicTween.Plugins;
 using MagicTween.Core.Controllers;
+using MagicTween.Core.Transforms;
 
 namespace MagicTween.Core
 {
@@ -31,6 +32,7 @@ namespace MagicTween.Core
             Register<NoAllocDelegateTweenController<float3, PathTweenPlugin>>();
 
             Register<StringDelegateTweenController>();
+
             Register<SequenceController>();
             Register<UnitTweenController>();
         }
