@@ -12,7 +12,7 @@ namespace MagicTween.Core.Transforms
 
         public void Dispose()
         {
-            if (isRegistered) TransformManager.Unregister(this);
+            TransformManager.Unregister(this);
             TweenTargetTransformPool.Return(this);
         }
     }

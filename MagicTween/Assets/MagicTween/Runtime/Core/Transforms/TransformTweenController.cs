@@ -19,7 +19,7 @@ namespace MagicTween.Core.Transforms
         {
             TweenWorld.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = currentValue });
             var target = TweenWorld.EntityManager.GetComponentData<TweenTargetTransform>(entity);
-            if (target.isRegistered) TransformManager.Unregister(target);
+            TransformManager.Unregister(target);
             default(TTranslator).ApplyManaged(target.target, currentValue);
         }
     }

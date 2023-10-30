@@ -31,6 +31,7 @@ namespace MagicTween.Core.Transforms
         public static void Register(TweenTargetTransform target)
         {
             if (!IsCreated) return;
+            if (target.isRegistered) return;
             target.isRegistered = true;
             var instanceId = target.instanceId;
             if (!instanceIdToArrayIndex.ContainsKey(instanceId))
@@ -45,6 +46,7 @@ namespace MagicTween.Core.Transforms
         public static void Unregister(TweenTargetTransform target)
         {
             if (!IsCreated) return;
+            if (!target.isRegistered) return;
             target.isRegistered = false;
             if (instanceIdToArrayIndex.TryGetValue(target.instanceId, out var index))
             {
