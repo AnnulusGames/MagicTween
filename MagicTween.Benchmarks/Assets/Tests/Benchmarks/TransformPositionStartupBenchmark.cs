@@ -1,33 +1,35 @@
 using System;
 using NUnit.Framework;
 using Unity.PerformanceTesting;
-using Unity.Collections;
-using Unity.Entities;
+using UnityEngine;
 
 namespace MagicTween.Benchmark
 {
-    public sealed class StartupBenchmark
+    public sealed class TransformPositionStartupBenchmark
     {
-        TestClass[] array;
-        NativeArray<Entity> entities;
-
+        Transform[] transforms;
         const int WarmupCount = 0;
         const int MeasurementCount = 1;
-        const int TweenCount = 64000;
+        const int TweenCount = 25000;
 
         [SetUp]
-        public void Init()
+        public void Setup()
         {
-            array = new TestClass[TweenCount];
-            for (int i = 0; i < array.Length; i++) array[i] = new();
-            entities = MagicTweenECSHelper.CreateEntities(TweenCount, Allocator.Persistent);
+            transforms = new Transform[TweenCount];
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                transforms[i] = new GameObject().transform;
+            }
         }
 
         [TearDown]
         public void TearDown()
         {
-            array = null;
-            entities.Dispose();
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                GameObject.Destroy(transforms[i].gameObject);
+            }
+            transforms = null;
             GC.Collect();
         }
 
@@ -38,7 +40,7 @@ namespace MagicTween.Benchmark
 
             Measure.Method(() =>
             {
-                AnimeTaskHelper.CreateFloatTweens(array, 10f);
+                AnimeTaskHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -54,7 +56,7 @@ namespace MagicTween.Benchmark
 
             Measure.Method(() =>
             {
-                AnimeRxHelper.CreateFloatTweens(array, 10f);
+                AnimeRxHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -70,7 +72,7 @@ namespace MagicTween.Benchmark
 
             Measure.Method(() =>
             {
-                UnityTweensHelper.CreateFloatTweens(array, 10f);
+                UnityTweensHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -84,13 +86,13 @@ namespace MagicTween.Benchmark
         {
             Measure.Method(() =>
             {
-                GoKitHelper.CreateFloatTweens(array, 10f);
+                GoKitHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
             .Run();
 
-            GoKitHelper.CleanUp(array);
+            GoKitHelper.CleanUp(transforms);
         }
 
         [Test, Performance]
@@ -98,7 +100,7 @@ namespace MagicTween.Benchmark
         {
             Measure.Method(() =>
             {
-                ZestKitHelper.CreateFloatTweens(array, 10f);
+                ZestKitHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -111,11 +113,11 @@ namespace MagicTween.Benchmark
         [Test, Performance]
         public void LeanTween()
         {
-            LeanTweenHelper.Init(array.Length);
+            LeanTweenHelper.Init(transforms.Length);
 
             Measure.Method(() =>
             {
-                LeanTweenHelper.CreateFloatTweens(array, 10f);
+                LeanTweenHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -127,11 +129,11 @@ namespace MagicTween.Benchmark
         [Test, Performance]
         public void PrimeTween()
         {
-            PrimeTweenHelper.Init(array.Length);
+            PrimeTweenHelper.Init(transforms.Length);
 
             Measure.Method(() =>
             {
-                PrimeTweenHelper.CreateFloatTweens(array, 10f);
+                PrimeTweenHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -143,11 +145,11 @@ namespace MagicTween.Benchmark
         [Test, Performance]
         public void DOTween()
         {
-            DOTweenHelper.Init(array.Length + 1, 0);
+            DOTweenHelper.Init(transforms.Length + 1, 0);
 
             Measure.Method(() =>
             {
-                DOTweenHelper.CreateFloatTweens(array, 10f);
+                DOTweenHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
@@ -161,27 +163,13 @@ namespace MagicTween.Benchmark
         {
             Measure.Method(() =>
             {
-                MagicTweenHelper.CreateFloatTweens(array, 10f);
+                MagicTweenHelper.CreatePositionTweens(transforms, 10f);
             })
             .WarmupCount(WarmupCount)
             .MeasurementCount(MeasurementCount)
             .Run();
 
             MagicTweenHelper.CleanUp();
-        }
-
-        [Test, Performance]
-        public void MagicTweenECS()
-        {
-            Measure.Method(() =>
-            {
-                MagicTweenECSHelper.CreateFloatTweens(entities, 10f);
-            })
-            .WarmupCount(WarmupCount)
-            .MeasurementCount(MeasurementCount)
-            .Run();
-
-            MagicTweenECSHelper.CleanUp();
         }
     }
 }
