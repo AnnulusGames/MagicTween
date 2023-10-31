@@ -20,4 +20,4 @@ public struct SampleTranslator : ITweenTranslator<float, SampleComponentData>
 
 // In addition, define a System class to operate the defined Translator.
 // Define it as a partial class that inherits TweenTranslationSystemBase, and leave it empty without writing any processing.
-public partial class SampleTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, SampleComponentData, SampleTranslator> { }
+public partial class SampleTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, SampleComponentData, SampleTranslator> { }

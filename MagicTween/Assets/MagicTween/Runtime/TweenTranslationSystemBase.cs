@@ -11,9 +11,10 @@ namespace MagicTween
 {
     [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
-    public abstract partial class TweenTranslationSystemBase<TValue, TPlugin, TComponent, TTranslator> : SystemBase
+    public abstract partial class TweenTranslationSystemBase<TValue, TOptions, TPlugin, TComponent, TTranslator> : SystemBase
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPluginBase<TValue>
+        where TOptions : unmanaged, ITweenOptions
+        where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         where TComponent : unmanaged, IComponentData
         where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
     {
@@ -30,7 +31,7 @@ namespace MagicTween
 
         protected override void OnCreate()
         {
-            TweenControllerContainer.Register<EntityTweenController<TValue, TPlugin, TComponent, TTranslator>>();
+            TweenControllerContainer.Register<EntityTweenController<TValue, TOptions, TPlugin, TComponent, TTranslator>>();
 
             startValueTypeHandle = GetComponentTypeHandle<TweenStartValue<TValue>>();
             valueTypeHandle = GetComponentTypeHandle<TweenValue<TValue>>(true);

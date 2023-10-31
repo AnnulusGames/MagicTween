@@ -13,7 +13,7 @@ namespace MagicTween.Core.Systems
     public abstract partial class StandardTweenSystemBase<TValue, TOptions, TPlugin> : SystemBase
         where TValue : unmanaged
         where TOptions : unmanaged, ITweenOptions
-        where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+        where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
     {
         EntityQuery query;
 
@@ -22,7 +22,7 @@ namespace MagicTween.Core.Systems
         {
             query = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenEndValue<TValue>, TweenOptions<TOptions>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenEndValue<TValue>, TweenOptions<TOptions>, TweenPluginTag<TPlugin>>()
                 .Build();
         }
 

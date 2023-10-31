@@ -13,7 +13,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct PunchTweenPlugin : ITweenPluginBase<float>
+    public readonly struct PunchTweenPlugin : ITweenPlugin<float, PunchTweenOptions>
     {
         [BurstCompile]
         public float Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
@@ -27,7 +27,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Punch2TweenPlugin : ITweenPluginBase<float2>
+    public readonly struct Punch2TweenPlugin : ITweenPlugin<float2, PunchTweenOptions>
     {
         [BurstCompile]
         public float2 Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
@@ -41,7 +41,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Punch3TweenPlugin : ITweenPluginBase<float3>
+    public readonly struct Punch3TweenPlugin : ITweenPlugin<float3, PunchTweenOptions>
     {
         [BurstCompile]
         public float3 Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)

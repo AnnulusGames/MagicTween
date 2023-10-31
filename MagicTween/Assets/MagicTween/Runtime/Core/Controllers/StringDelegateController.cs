@@ -8,8 +8,8 @@ namespace MagicTween.Core.Controllers
 {
     public sealed class StringDelegateTweenController : ITweenController<UnsafeText>
     {
-        public void Complete(in Entity entity) => TweenControllerHelper.Complete<UnsafeText, StringTweenPlugin, StringDelegateTweenController>(this, entity);
-        public void CompleteAndKill(in Entity entity) => TweenControllerHelper.CompleteAndKill<UnsafeText, StringTweenPlugin, StringDelegateTweenController>(this, entity);
+        public void Complete(in Entity entity) => TweenControllerHelper.Complete<UnsafeText, StringTweenOptions, StringTweenPlugin, StringDelegateTweenController>(this, entity);
+        public void CompleteAndKill(in Entity entity) => TweenControllerHelper.CompleteAndKill<UnsafeText, StringTweenOptions, StringTweenPlugin, StringDelegateTweenController>(this, entity);
         public void Kill(in Entity entity) => TweenControllerHelper.Kill(entity);
         public void Pause(in Entity entity) => TweenControllerHelper.Pause(entity);
         public void Play(in Entity entity) => TweenControllerHelper.Play(entity);

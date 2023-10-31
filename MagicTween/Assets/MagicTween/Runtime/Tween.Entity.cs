@@ -111,7 +111,7 @@ namespace MagicTween
             public static Tween<TValue, TOptions> To<TValue, TOptions, TPlugin, TComponent, TTranslator>(in UnityEntity entity, TValue endValue, float duration)
                 where TValue : unmanaged
                 where TOptions : unmanaged, ITweenOptions
-                where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+                where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
                 where TComponent : unmanaged, IComponentData
                 where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
             {
@@ -219,7 +219,7 @@ namespace MagicTween
             public static Tween<TValue, TOptions> FromTo<TValue, TOptions, TPlugin, TComponent, TTranslator>(in UnityEntity entity, TValue startValue, TValue endValue, float duration)
                 where TValue : unmanaged
                 where TOptions : unmanaged, ITweenOptions
-                where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+                where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
                 where TComponent : unmanaged, IComponentData
                 where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
             {

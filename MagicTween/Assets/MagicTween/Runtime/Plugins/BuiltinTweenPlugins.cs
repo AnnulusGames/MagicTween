@@ -26,7 +26,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct DoubleTweenPlugin : ITweenPlugin<double, NoOptions>
+    public readonly struct DoubleTweenPlugin : ICustomTweenPlugin<double, NoOptions>
     {
         [BurstCompile]
         public double Evaluate(in double startValue, in double endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -38,7 +38,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Double2TweenPlugin : ITweenPlugin<double2, NoOptions>
+    public readonly struct Double2TweenPlugin : ICustomTweenPlugin<double2, NoOptions>
     {
         [BurstCompile]
         public double2 Evaluate(in double2 startValue, in double2 endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -50,7 +50,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Double3TweenPlugin : ITweenPlugin<double3, NoOptions>
+    public readonly struct Double3TweenPlugin : ICustomTweenPlugin<double3, NoOptions>
     {
         [BurstCompile]
         public double3 Evaluate(in double3 startValue, in double3 endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -62,7 +62,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Double4TweenPlugin : ITweenPlugin<double4, NoOptions>
+    public readonly struct Double4TweenPlugin : ICustomTweenPlugin<double4, NoOptions>
     {
         [BurstCompile]
         public double4 Evaluate(in double4 startValue, in double4 endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -74,7 +74,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct FloatTweenPlugin : ITweenPlugin<float, NoOptions>
+    public readonly struct FloatTweenPlugin : ICustomTweenPlugin<float, NoOptions>
     {
         [BurstCompile]
         public float Evaluate(in float startValue, in float endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -86,7 +86,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Float2TweenPlugin : ITweenPlugin<float2, NoOptions>
+    public readonly struct Float2TweenPlugin : ICustomTweenPlugin<float2, NoOptions>
     {
         [BurstCompile]
         public float2 Evaluate(in float2 startValue, in float2 endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -98,7 +98,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Float3TweenPlugin : ITweenPlugin<float3, NoOptions>
+    public readonly struct Float3TweenPlugin : ICustomTweenPlugin<float3, NoOptions>
     {
         [BurstCompile]
         public float3 Evaluate(in float3 startValue, in float3 endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -110,7 +110,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Float4TweenPlugin : ITweenPlugin<float4, NoOptions>
+    public readonly struct Float4TweenPlugin : ICustomTweenPlugin<float4, NoOptions>
     {
         [BurstCompile]
         public float4 Evaluate(in float4 startValue, in float4 endValue, in NoOptions options, in TweenEvaluationContext context)
@@ -122,7 +122,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct IntTweenPlugin : ITweenPlugin<int, IntegerTweenOptions>
+    public readonly struct IntTweenPlugin : ICustomTweenPlugin<int, IntegerTweenOptions>
     {
         [BurstCompile]
         public int Evaluate(in int startValue, in int endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
@@ -145,7 +145,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Int2TweenPlugin : ITweenPlugin<int2, IntegerTweenOptions>
+    public readonly struct Int2TweenPlugin : ICustomTweenPlugin<int2, IntegerTweenOptions>
     {
         [BurstCompile]
         public int2 Evaluate(in int2 startValue, in int2 endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
@@ -176,7 +176,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Int3TweenPlugin : ITweenPlugin<int3, IntegerTweenOptions>
+    public readonly struct Int3TweenPlugin : ICustomTweenPlugin<int3, IntegerTweenOptions>
     {
         [BurstCompile]
         public int3 Evaluate(in int3 startValue, in int3 endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
@@ -208,7 +208,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Int4TweenPlugin : ITweenPlugin<int4, IntegerTweenOptions>
+    public readonly struct Int4TweenPlugin : ICustomTweenPlugin<int4, IntegerTweenOptions>
     {
         [BurstCompile]
         public int4 Evaluate(in int4 startValue, in int4 endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
@@ -241,7 +241,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct LongTweenPlugin : ITweenPlugin<long, IntegerTweenOptions>
+    public readonly struct LongTweenPlugin : ICustomTweenPlugin<long, IntegerTweenOptions>
     {
         [BurstCompile]
         public long Evaluate(in long startValue, in long endValue, in IntegerTweenOptions options, in TweenEvaluationContext context)
@@ -264,7 +264,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct QuaternionTweenPlugin : ITweenPlugin<quaternion, NoOptions>
+    public readonly struct QuaternionTweenPlugin : ICustomTweenPlugin<quaternion, NoOptions>
     {
         [BurstCompile]
         public quaternion Evaluate(in quaternion startValue, in quaternion endValue, in NoOptions options, in TweenEvaluationContext context)

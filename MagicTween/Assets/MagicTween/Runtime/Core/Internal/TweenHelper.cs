@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Entities;
 using MagicTween.Core.Components;
-using MagicTween.Plugins;
 
 namespace MagicTween.Core
 {
@@ -103,9 +102,10 @@ namespace MagicTween.Core
             return TryCompleteCore(ref EntityManagerRef, entity, out var delay, out var loops);
         }
 
-        public static bool TryComplete<TValue, TPlugin>(in Entity entity, out TValue currentValue)
+        public static bool TryComplete<TValue, TOptions, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPluginBase<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
             var result = TryCompleteCore(ref EntityManagerRef, entity, out var delay, out var loops);
 
@@ -190,9 +190,10 @@ namespace MagicTween.Core
             return result;
         }
 
-        public static bool TryCompleteAndKill<TValue, TPlugin>(in Entity entity, out TValue currentValue)
+        public static bool TryCompleteAndKill<TValue, TOptions, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPluginBase<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
             var result = TryCompleteAndKillCore(ref EntityManagerRef, entity, out var delay, out var loops);
             if (!result)
@@ -276,9 +277,10 @@ namespace MagicTween.Core
             return TryRestartCore(ref EntityManagerRef, entity, out var delay, out var loops);
         }
 
-        public static bool TryRestart<TValue, TPlugin>(in Entity entity, out TValue currentValue)
+        public static bool TryRestart<TValue, TOptions, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPluginBase<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
             var result = TryRestartCore(ref EntityManagerRef, entity, out var delay, out var loops);
             if (!result)

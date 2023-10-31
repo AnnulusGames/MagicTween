@@ -58,12 +58,13 @@ namespace MagicTween.Core
             if (!canRestart) return;
         }
 
-        public static void Complete<TValue, TPlugin, TController>(in TController controller, in Entity entity)
+        public static void Complete<TValue, TOptions, TPlugin, TController>(in TController controller, in Entity entity)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPluginBase<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
             where TController : ITweenController<TValue>
         {
-            var canComplete = TweenHelper.TryComplete<TValue, TPlugin>(entity, out var currentValue);
+            var canComplete = TweenHelper.TryComplete<TValue, TOptions, TPlugin>(entity, out var currentValue);
             if (!canComplete) return;
 
             controller.SetValue(currentValue, entity);
@@ -71,12 +72,13 @@ namespace MagicTween.Core
             TweenHelper.TryCallOnComplete(entity);
         }
 
-        public static void CompleteAndKill<TValue, TPlugin, TController>(in TController controller, in Entity entity)
+        public static void CompleteAndKill<TValue, TOptions, TPlugin, TController>(in TController controller, in Entity entity)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPluginBase<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
             where TController : ITweenController<TValue>
         {
-            var canCompleteAndKill = TweenHelper.TryCompleteAndKill<TValue, TPlugin>(entity, out var currentValue);
+            var canCompleteAndKill = TweenHelper.TryCompleteAndKill<TValue, TOptions, TPlugin>(entity, out var currentValue);
             if (!canCompleteAndKill) return;
 
             controller.SetValue(currentValue, entity);
@@ -84,9 +86,10 @@ namespace MagicTween.Core
             TweenHelper.TryCallOnCompleteAndOnKill(entity);
         }
 
-        public static void Restart<TValue, TPlugin, TController>(in TController controller, in Entity entity)
+        public static void Restart<TValue, TOptions, TPlugin, TController>(in TController controller, in Entity entity)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPluginBase<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
             where TController : ITweenController<TValue>
         {
             if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
@@ -95,7 +98,7 @@ namespace MagicTween.Core
                 return;
             }
 
-            var canRestart = TweenHelper.TryRestart<TValue, TPlugin>(entity, out var currentValue);
+            var canRestart = TweenHelper.TryRestart<TValue, TOptions, TPlugin>(entity, out var currentValue);
             if (!canRestart) return;
 
             controller.SetValue(currentValue, entity);

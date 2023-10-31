@@ -12,6 +12,9 @@ namespace MagicTween.Core.Aspects
         readonly RefRW<TweenValue<UnsafeText>> currentRefRW;
         readonly RefRO<TweenOptions<StringTweenOptions>> optionsRefRO;
         readonly RefRW<StringTweenCustomScrambleChars> customScrambleCharsRefRW;
+#pragma warning disable CS0414
+        readonly RefRO<TweenPluginTag<StringTweenPlugin>> pluginTagRefRO;
+#pragma warning restore CS0414
 
         public ref UnsafeText StartValue => ref startRefRW.ValueRW.value;
         public ref UnsafeText EndValue => ref endRefRW.ValueRW.value;

@@ -15,21 +15,21 @@ namespace MagicTween.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void RegisterControllers()
         {
-            Register<DelegateTweenController<float, PunchTweenPlugin>>();
-            Register<DelegateTweenController<float2, Punch2TweenPlugin>>();
-            Register<DelegateTweenController<float3, Punch3TweenPlugin>>();
-            Register<DelegateTweenController<float, ShakeTweenPlugin>>();
-            Register<DelegateTweenController<float2, Shake2TweenPlugin>>();
-            Register<DelegateTweenController<float3, Shake3TweenPlugin>>();
-            Register<DelegateTweenController<float3, PathTweenPlugin>>();
+            Register<DelegateTweenController<float, PunchTweenOptions, PunchTweenPlugin>>();
+            Register<DelegateTweenController<float2, PunchTweenOptions, Punch2TweenPlugin>>();
+            Register<DelegateTweenController<float3, PunchTweenOptions, Punch3TweenPlugin>>();
+            Register<DelegateTweenController<float, ShakeTweenOptions, ShakeTweenPlugin>>();
+            Register<DelegateTweenController<float2, ShakeTweenOptions, Shake2TweenPlugin>>();
+            Register<DelegateTweenController<float3, ShakeTweenOptions, Shake3TweenPlugin>>();
+            Register<DelegateTweenController<float3, PathTweenOptions, PathTweenPlugin>>();
 
-            Register<NoAllocDelegateTweenController<float, PunchTweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float2, Punch2TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float3, Punch3TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float, ShakeTweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float2, Shake2TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float3, Shake3TweenPlugin>>();
-            Register<NoAllocDelegateTweenController<float3, PathTweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float, PunchTweenOptions, PunchTweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float2, PunchTweenOptions, Punch2TweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float3, PunchTweenOptions, Punch3TweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float, ShakeTweenOptions, ShakeTweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float2, ShakeTweenOptions, Shake2TweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float3, ShakeTweenOptions, Shake3TweenPlugin>>();
+            Register<NoAllocDelegateTweenController<float3, PathTweenOptions, PathTweenPlugin>>();
 
             Register<StringDelegateTweenController>();
 

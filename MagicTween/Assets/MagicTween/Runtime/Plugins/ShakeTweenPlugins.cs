@@ -14,7 +14,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct ShakeTweenPlugin : ITweenPluginBase<float>
+    public readonly struct ShakeTweenPlugin : ITweenPlugin<float, ShakeTweenOptions>
     {
         [BurstCompile]
         public float Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
@@ -48,7 +48,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Shake2TweenPlugin : ITweenPluginBase<float2>
+    public readonly struct Shake2TweenPlugin : ITweenPlugin<float2, ShakeTweenOptions>
     {
         [BurstCompile]
         public float2 Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
@@ -82,7 +82,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct Shake3TweenPlugin : ITweenPluginBase<float3>
+    public readonly struct Shake3TweenPlugin : ITweenPlugin<float3, ShakeTweenOptions>
     {
         [BurstCompile]
         public float3 Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)

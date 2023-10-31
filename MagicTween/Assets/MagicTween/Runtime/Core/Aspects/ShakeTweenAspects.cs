@@ -12,6 +12,9 @@ namespace MagicTween.Core
         readonly RefRO<VibrationStrength<float>> strengthRef;
         readonly RefRO<TweenOptions<ShakeTweenOptions>> optionsRef;
         readonly RefRW<ShakeRandomState> randomRef;
+#pragma warning disable CS0414
+        readonly RefRO<TweenPluginTag<ShakeTweenPlugin>> pluginRef;
+#pragma warning restore CS0414
 
         public float StartValue => start.ValueRO.value;
         public float CurrentValue
@@ -32,6 +35,9 @@ namespace MagicTween.Core
         readonly RefRO<VibrationStrength<float2>> strengthRef;
         readonly RefRO<TweenOptions<ShakeTweenOptions>> optionsRef;
         readonly RefRW<ShakeRandomState> randomRef;
+#pragma warning disable CS0414
+        readonly RefRO<TweenPluginTag<Shake2TweenPlugin>> pluginRef;
+#pragma warning restore CS0414
 
         public float2 StartValue => start.ValueRO.value;
         public float2 CurrentValue
@@ -53,6 +59,9 @@ namespace MagicTween.Core
         readonly RefRO<VibrationStrength<float3>> strengthRef;
         readonly RefRO<TweenOptions<ShakeTweenOptions>> optionsRef;
         readonly RefRW<ShakeRandomState> randomRef;
+#pragma warning disable CS0414
+        readonly RefRO<TweenPluginTag<Shake3TweenPlugin>> pluginRef;
+#pragma warning restore CS0414
 
         public float3 StartValue => start.ValueRO.value;
         public float3 CurrentValue

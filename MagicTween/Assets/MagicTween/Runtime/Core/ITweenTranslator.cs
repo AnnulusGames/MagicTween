@@ -10,7 +10,7 @@ namespace MagicTween
         void Apply(ref TComponent component, in TValue value);
     }
 
-    public interface ITweenTranslatorManaged<TValue, TObject> : IComponentData
+    internal interface ITweenTranslatorManaged<TValue, TObject> : IComponentData
         where TObject : class
     {
         TValue GetValue(TObject target);

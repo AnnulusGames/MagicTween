@@ -1,92 +1,21 @@
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
-using MagicTween.Plugins;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Jobs;
 
-namespace MagicTween.Core.Transforms
+namespace MagicTween.Core.Transforms.Systems
 {
-    static class RegisterTransformControllersEntryPoint
-    {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Init()
-        {
-            TweenControllerContainer.Register<TransformTweenController<float3, Float3TweenPlugin, TransformPositionTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformPositionXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformPositionYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformPositionZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Float3TweenPlugin, TransformLocalPositionTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalPositionXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalPositionYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalPositionZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Float3TweenPlugin, TransformEulerAnglesTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformEulerAnglesXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformEulerAnglesYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformEulerAnglesZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Float3TweenPlugin, TransformLocalEulerAnglesTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalEulerAnglesXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalEulerAnglesYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalEulerAnglesZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Float3TweenPlugin, TransformLocalScaleTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalScaleXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalScaleYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, FloatTweenPlugin, TransformLocalScaleZTranslator>>();
-
-            TweenControllerContainer.Register<TransformTweenController<float3, Punch3TweenPlugin, TransformPositionTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformPositionXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformPositionYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformPositionZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Punch3TweenPlugin, TransformLocalPositionTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalPositionXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalPositionYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalPositionZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Punch3TweenPlugin, TransformEulerAnglesTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformEulerAnglesXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformEulerAnglesYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformEulerAnglesZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Punch3TweenPlugin, TransformLocalEulerAnglesTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalEulerAnglesXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalEulerAnglesYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalEulerAnglesZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Punch3TweenPlugin, TransformLocalScaleTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalScaleXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalScaleYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, PunchTweenPlugin, TransformLocalScaleZTranslator>>();
-
-            TweenControllerContainer.Register<TransformTweenController<float3, Shake3TweenPlugin, TransformPositionTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformPositionXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformPositionYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformPositionZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Shake3TweenPlugin, TransformLocalPositionTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalPositionXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalPositionYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalPositionZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Shake3TweenPlugin, TransformEulerAnglesTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformEulerAnglesXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformEulerAnglesYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformEulerAnglesZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Shake3TweenPlugin, TransformLocalEulerAnglesTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalEulerAnglesXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalEulerAnglesYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalEulerAnglesZTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float3, Shake3TweenPlugin, TransformLocalScaleTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalScaleXTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalScaleYTranslator>>();
-            TweenControllerContainer.Register<TransformTweenController<float, ShakeTweenPlugin, TransformLocalScaleZTranslator>>();
-        }
-    }    
-
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
     [UpdateInGroup(typeof(TweenTransformTranslationSystemGroup))]
-    public unsafe abstract partial class TweenTransformTranslationSystemBase<TValue, TPlugin, TTranslator> : SystemBase
+    public unsafe abstract partial class TweenTransformTranslationSystemBase<TValue, TOptions, TPlugin, TTranslator> : SystemBase
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPluginBase<TValue>
+        where TOptions : unmanaged, ITweenOptions
+        where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
     {
         EntityQuery query;
@@ -101,8 +30,10 @@ namespace MagicTween.Core.Transforms
 
         protected override void OnCreate()
         {
+            TweenControllerContainer.Register<TransformTweenController<TValue, TOptions, TPlugin, TTranslator>>();
+
             query = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPluginTag<TPlugin>>()
                 .WithAll<TweenAccessorFlags, TweenTargetTransform, TTranslator>()
                 .Build(this);
         }

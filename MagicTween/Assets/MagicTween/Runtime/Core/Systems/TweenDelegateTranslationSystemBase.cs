@@ -15,7 +15,7 @@ namespace MagicTween.Core.Systems
     public abstract partial class TweenDelegateTranslationSystemBase<TValue, TOptions, TPlugin> : SystemBase
         where TValue : unmanaged
         where TOptions : unmanaged, ITweenOptions
-        where TPlugin : unmanaged, ITweenPluginBase<TValue>
+        where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
     {
         EntityQuery query1;
         EntityQuery query2;
@@ -28,16 +28,16 @@ namespace MagicTween.Core.Systems
 
         protected override void OnCreate()
         {
-            TweenControllerContainer.Register<DelegateTweenController<TValue, TPlugin>>();
-            TweenControllerContainer.Register<NoAllocDelegateTweenController<TValue, TPlugin>>();
+            TweenControllerContainer.Register<DelegateTweenController<TValue, TOptions, TPlugin>>();
+            TweenControllerContainer.Register<NoAllocDelegateTweenController<TValue, TOptions, TPlugin>>();
 
             query1 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegates<TValue>, TweenOptions<TOptions>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegates<TValue>, TweenOptions<TOptions>, TweenPluginTag<TPlugin>>()
                 .Build();
             query2 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
-                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegatesNoAlloc<TValue>, TweenOptions<TOptions>>()
+                .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenDelegatesNoAlloc<TValue>, TweenOptions<TOptions>, TweenPluginTag<TPlugin>>()
                 .Build();
 
             accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);

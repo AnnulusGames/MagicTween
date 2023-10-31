@@ -47,7 +47,7 @@ namespace MagicTween.Core.Systems
 
         protected override void OnCreate()
         {
-            TweenControllerContainer.Register<DelegateTweenController<float3, PathTweenPlugin>>();
+            TweenControllerContainer.Register<DelegateTweenController<float3, PathTweenOptions, PathTweenPlugin>>();
             query1 = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
                 .WithAspect<PathTweenAspect>()

@@ -14,9 +14,9 @@ namespace MagicTween.Plugins
         public ScrambleMode scrambleMode;
         public bool richTextEnabled;
     }
-    
+
     [BurstCompile]
-    public readonly struct StringTweenPlugin : ITweenPluginBase<UnsafeText>
+    public readonly struct StringTweenPlugin : ITweenPlugin<UnsafeText, StringTweenOptions>
     {
         // Evaluate() returns new NaviteText(Allocator.Temp)
         public UnsafeText Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)

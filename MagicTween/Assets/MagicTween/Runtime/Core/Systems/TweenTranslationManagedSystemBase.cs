@@ -12,9 +12,10 @@ namespace MagicTween
 {
     [BurstCompile]
     [RequireMatchingQueriesForUpdate]
-    public abstract partial class TweenTranslationManagedSystemBase<TValue, TPlugin, TObject, TTranslator> : SystemBase
+    internal abstract partial class TweenTranslationManagedSystemBase<TValue, TOptions, TPlugin, TObject, TTranslator> : SystemBase
         where TValue : unmanaged
-        where TPlugin : unmanaged, ITweenPluginBase<TValue>
+        where TOptions : unmanaged, ITweenOptions
+        where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         where TObject : class
         where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
     {
@@ -22,9 +23,9 @@ namespace MagicTween
 
         protected override void OnCreate()
         {
-            TweenControllerContainer.Register<ObjectTweenController<TValue, TPlugin, TObject, TTranslator>>();
+            TweenControllerContainer.Register<ObjectTweenController<TValue, TOptions, TPlugin, TObject, TTranslator>>();
             query = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<TweenStartValue<TValue>, TweenValue<TValue>>()
+                .WithAll<TweenStartValue<TValue>, TweenValue<TValue>, TweenPluginTag<TPlugin>>()
                 .WithAll<TweenTranslationModeData, TweenAccessorFlags, TweenTargetObject, TTranslator>()
                 .Build(this);
         }

@@ -91,28 +91,28 @@ namespace MagicTween.Translators
 namespace MagicTween.Core
 {
     [BurstCompile]
-    public sealed partial class URPBaseColorTranslationSystem : TweenTranslationSystemBase<float4, Float4TweenPlugin, URPMaterialPropertyBaseColor, URPBaseColorTranslator> { }
+    public sealed partial class URPBaseColorTranslationSystem : TweenTranslationSystemBase<float4, NoOptions, Float4TweenPlugin, URPMaterialPropertyBaseColor, URPBaseColorTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPBumpScaleTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, URPMaterialPropertyBumpScale, URPBumpScaleTranslator> { }
+    public sealed partial class URPBumpScaleTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, URPMaterialPropertyBumpScale, URPBumpScaleTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPCutoffTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, URPMaterialPropertyCutoff, URPCutoffTranslator> { }
+    public sealed partial class URPCutoffTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, URPMaterialPropertyCutoff, URPCutoffTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPEmissionColorTranslationSystem : TweenTranslationSystemBase<float4, Float4TweenPlugin, URPMaterialPropertyEmissionColor, URPEmissionColorTranslator> { }
+    public sealed partial class URPEmissionColorTranslationSystem : TweenTranslationSystemBase<float4, NoOptions, Float4TweenPlugin, URPMaterialPropertyEmissionColor, URPEmissionColorTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPMetallicTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, URPMaterialPropertyMetallic, URPMetallicTranslator> { }
+    public sealed partial class URPMetallicTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, URPMaterialPropertyMetallic, URPMetallicTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPOcclusionStrengthTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, URPMaterialPropertyOcclusionStrength, URPOcclusionStrengthTranslator> { }
+    public sealed partial class URPOcclusionStrengthTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, URPMaterialPropertyOcclusionStrength, URPOcclusionStrengthTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPSmoothnessTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, URPMaterialPropertySmoothness, URPSmoothnessTranslator> { }
+    public sealed partial class URPSmoothnessTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, URPMaterialPropertySmoothness, URPSmoothnessTranslator> { }
 
     [BurstCompile]
-    public sealed partial class URPSpecColorTranslationSystem : TweenTranslationSystemBase<float4, Float4TweenPlugin, URPMaterialPropertySpecColor, URPSpecColorTranslator> { }
+    public sealed partial class URPSpecColorTranslationSystem : TweenTranslationSystemBase<float4, NoOptions, Float4TweenPlugin, URPMaterialPropertySpecColor, URPSpecColorTranslator> { }
 }
 
 #endif

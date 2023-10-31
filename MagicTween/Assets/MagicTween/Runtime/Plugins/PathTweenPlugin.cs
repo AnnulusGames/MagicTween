@@ -17,7 +17,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
-    public readonly struct PathTweenPlugin : ITweenPluginBase<float3>
+    public readonly struct PathTweenPlugin : ITweenPlugin<float3, PathTweenOptions>
     {
         public float3 Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
         {

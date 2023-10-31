@@ -108,7 +108,7 @@ namespace MagicTween
         public static Tween<TValue, TOptions> To<TValue, TOptions, TPlugin, TObject>(TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, in TValue endValue, float duration)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+            where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
             where TObject : class
         {
             Assert.IsNotNull(target);
@@ -210,7 +210,7 @@ namespace MagicTween
         public static Tween<TValue, TOptions> FromTo<TValue, TOptions, TPlugin, TObject>(TObject target, TweenSetter<TObject, TValue> setter, in TValue startValue, in TValue endValue, float duration)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+            where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
             where TObject : class
         {
             Assert.IsNotNull(target);

@@ -88,7 +88,7 @@ namespace MagicTween
         public static Tween<TValue, TOptions> To<TValue, TOptions, TPlugin>(TweenGetter<TValue> getter, TweenSetter<TValue> setter, in TValue endValue, float duration)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+            where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
         {
             return TweenFactory.CreateToTween<TValue, TOptions, TPlugin>(getter, setter, endValue, duration);
         }
@@ -171,7 +171,7 @@ namespace MagicTween
         public static Tween<TValue, TOptions> FromTo<TValue, TOptions, TPlugin>(TweenSetter<TValue> setter, in TValue startValue, in TValue endValue, float duration)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+            where TPlugin : unmanaged, ICustomTweenPlugin<TValue, TOptions>
         {
             return TweenFactory.CreateFromToTween<TValue, TOptions, TPlugin>(startValue, endValue, duration, setter);
         }

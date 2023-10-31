@@ -42,6 +42,7 @@ using MagicTween;
 [assembly: RegisterGenericComponentType(typeof(TweenStartValue<global::{valueTypeFullName}>))]
 [assembly: RegisterGenericComponentType(typeof(TweenEndValue<global::{valueTypeFullName}>))]
 [assembly: RegisterGenericComponentType(typeof(TweenOptions<global::{optionsTypeFullName}>))]
+[assembly: RegisterGenericComponentType(typeof(TweenPluginTag<global::{pluginTypeFullName}>))]
 [assembly: RegisterGenericComponentType(typeof(TweenDelegates<global::{valueTypeFullName}>))]
 [assembly: RegisterGenericComponentType(typeof(TweenDelegatesNoAlloc<global::{valueTypeFullName}>))]
 

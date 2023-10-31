@@ -10,6 +10,9 @@ namespace MagicTween.Core.Aspects
         public readonly DynamicBuffer<PathPoint> points;
         readonly RefRW<TweenValue<float3>> current;
         readonly RefRO<TweenOptions<PathTweenOptions>> optionsRef;
+#pragma warning disable CS0414
+        readonly RefRO<TweenPluginTag<PathTweenPlugin>> pluginTagRef;
+#pragma warning restore CS0414
 
         public float3 CurrentValue
         {

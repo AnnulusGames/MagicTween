@@ -3,17 +3,18 @@ using Unity.Entities;
 
 namespace MagicTween
 {
-    public interface ITweenPluginBase<TValue>
+    public interface ITweenPlugin<TValue, TOptions>
         where TValue : unmanaged
+        where TOptions : unmanaged, ITweenOptions
     {
         TValue Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context);
     }
 
-    public interface ITweenPlugin<TValue, TOptions> : ITweenPluginBase<TValue>
+    public interface ICustomTweenPlugin<TValue, TOptions> : ITweenPlugin<TValue, TOptions>
         where TValue : unmanaged
         where TOptions : unmanaged, ITweenOptions
     {
-        TValue ITweenPluginBase<TValue>.Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
+        TValue ITweenPlugin<TValue, TOptions>.Evaluate(in Entity entity, ref EntityManager entityManager, in TweenEvaluationContext context)
         {
             var startValue = entityManager.GetComponentData<TweenStartValue<TValue>>(entity).value;
             var endValue = entityManager.GetComponentData<TweenEndValue<TValue>>(entity).value;
