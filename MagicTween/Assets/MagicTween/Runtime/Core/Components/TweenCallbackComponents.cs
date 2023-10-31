@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MagicTween.Core.Components
 {
-    public sealed class TweenDelegates<T> : IComponentData
+    public sealed class TweenDelegates<T> : IComponentData, IDisposable
     {
         public TweenGetter<T> getter;
         public TweenSetter<T> setter;
