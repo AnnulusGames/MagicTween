@@ -11,19 +11,17 @@ namespace MagicTween.Benchmark
         TestClass instance;
 
         const int WarmupCount = 5;
-        const int MeasurementCount = 10000;
+        const int MeasurementCount = 1000;
 
         void MeasureGCAlloc(Action action)
         {
             if (instance == null) instance = new();
 
-            for (int i = 0; i < WarmupCount; i++) action();
-            GC.Collect();
-            var prevMemory = GC.GetTotalMemory(false);
-            for (int i = 0; i < MeasurementCount; i++) action();
-            var allocation = (GC.GetTotalMemory(false) - prevMemory) / MeasurementCount;
-
-            Measure.Custom(new SampleGroup("GC Alloc", SampleUnit.Byte), allocation);
+            Measure.Method(action)
+                .WarmupCount(WarmupCount)
+                .MeasurementCount(MeasurementCount)
+                .GC()
+                .Run();
         }
 
         [Test, Performance]
