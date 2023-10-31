@@ -30,11 +30,11 @@ namespace MagicTween.Core.Transforms
 
         public static void Register(TweenTargetTransform target)
         {
-            if (!IsCreated) return;
             if (target.isRegistered) return;
             target.isRegistered = true;
+
             var instanceId = target.instanceId;
-            if (!instanceIdToArrayIndex.ContainsKey(instanceId))
+            if (IsCreated && !instanceIdToArrayIndex.ContainsKey(instanceId))
             {
                 var index = transformAccessArray.length;
                 transformAccessArray.Add(target.target);
@@ -45,28 +45,29 @@ namespace MagicTween.Core.Transforms
 
         public static void Unregister(TweenTargetTransform target)
         {
-            if (!IsCreated) return;
             if (!target.isRegistered) return;
             target.isRegistered = false;
-            if (instanceIdToArrayIndex.TryGetValue(target.instanceId, out var index))
+
+            if (IsCreated && instanceIdToArrayIndex.TryGetValue(target.instanceId, out var index))
             {
                 if (transformAccessArray.length == 1)
                 {
                     instanceIdToArrayIndex.Remove(target.instanceId);
                     arrayIndexToInstanceId.Remove(index);
                     transformAccessArray.RemoveAtSwapBack(index);
-                    return;
                 }
+                else
+                {
+                    var lastIndex = transformAccessArray.length - 1;
+                    var lastInstanceId = arrayIndexToInstanceId[lastIndex];
 
-                var lastIndex = transformAccessArray.length - 1;
-                var lastInstanceId = arrayIndexToInstanceId[lastIndex];
+                    instanceIdToArrayIndex.Remove(target.instanceId);
+                    arrayIndexToInstanceId.Remove(lastIndex);
+                    transformAccessArray.RemoveAtSwapBack(index);
 
-                instanceIdToArrayIndex.Remove(target.instanceId);
-                arrayIndexToInstanceId.Remove(lastIndex);
-                transformAccessArray.RemoveAtSwapBack(index);
-
-                instanceIdToArrayIndex[lastInstanceId] = index;
-                arrayIndexToInstanceId[index] = lastInstanceId;
+                    instanceIdToArrayIndex[lastInstanceId] = index;
+                    arrayIndexToInstanceId[index] = lastInstanceId;
+                }
             }
         }
 

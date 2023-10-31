@@ -8,122 +8,6 @@ namespace MagicTween
 {
     public static class TransformTweenExtensions
     {
-        static readonly TweenGetter<Transform, float3> positionGetter = self => self.position;
-        static readonly TweenSetter<Transform, float3> positionSetter = (self, x) => self.position = x;
-        static readonly TweenGetter<Transform, float> positionXGetter = self => self.position.x;
-        static readonly TweenGetter<Transform, float> positionYGetter = self => self.position.y;
-        static readonly TweenGetter<Transform, float> positionZGetter = self => self.position.z;
-        static readonly TweenSetter<Transform, float> positionXSetter = (self, x) =>
-        {
-            var p = self.position;
-            p.x = x;
-            self.position = p;
-        };
-        static readonly TweenSetter<Transform, float> positionYSetter = (self, y) =>
-        {
-            var p = self.position;
-            p.y = y;
-            self.position = p;
-        };
-        static readonly TweenSetter<Transform, float> positionZSetter = (self, z) =>
-        {
-            var p = self.position;
-            p.z = z;
-            self.position = p;
-        };
-        static readonly TweenGetter<Transform, float3> localPositionGetter = self => self.localPosition;
-        static readonly TweenSetter<Transform, float3> localPositionSetter = (self, x) => self.localPosition = x;
-        static readonly TweenGetter<Transform, float> localPositionXGetter = self => self.localPosition.x;
-        static readonly TweenGetter<Transform, float> localPositionYGetter = self => self.localPosition.y;
-        static readonly TweenGetter<Transform, float> localPositionZGetter = self => self.localPosition.z;
-        static readonly TweenSetter<Transform, float> localPositionXSetter = (self, x) =>
-        {
-            var p = self.localPosition;
-            p.x = x;
-            self.localPosition = p;
-        };
-        static readonly TweenSetter<Transform, float> localPositionYSetter = (self, y) =>
-        {
-            var p = self.localPosition;
-            p.y = y;
-            self.localPosition = p;
-        };
-        static readonly TweenSetter<Transform, float> localPositionZSetter = (self, z) =>
-        {
-            var p = self.localPosition;
-            p.z = z;
-            self.localPosition = p;
-        };
-        static readonly TweenGetter<Transform, float3> eulerAnglesGetter = self => self.eulerAngles;
-        static readonly TweenSetter<Transform, float3> eulerAnglesSetter = (self, x) => self.eulerAngles = x;
-        static readonly TweenGetter<Transform, float> eulerAnglesXGetter = self => self.eulerAngles.x;
-        static readonly TweenGetter<Transform, float> eulerAnglesYGetter = self => self.eulerAngles.y;
-        static readonly TweenGetter<Transform, float> eulerAnglesZGetter = self => self.eulerAngles.z;
-        static readonly TweenSetter<Transform, float> eulerAnglesXSetter = (self, x) =>
-        {
-            var p = self.eulerAngles;
-            p.x = x;
-            self.eulerAngles = p;
-        };
-        static readonly TweenSetter<Transform, float> eulerAnglesYSetter = (self, y) =>
-        {
-            var p = self.eulerAngles;
-            p.y = y;
-            self.eulerAngles = p;
-        };
-        static readonly TweenSetter<Transform, float> eulerAnglesZSetter = (self, z) =>
-        {
-            var p = self.eulerAngles;
-            p.z = z;
-            self.eulerAngles = p;
-        };
-        static readonly TweenGetter<Transform, float3> localEulerAnglesGetter = self => self.localEulerAngles;
-        static readonly TweenSetter<Transform, float3> localEulerAnglesSetter = (self, x) => self.localEulerAngles = x;
-        static readonly TweenGetter<Transform, float> localEulerAnglesXGetter = self => self.localEulerAngles.x;
-        static readonly TweenGetter<Transform, float> localEulerAnglesYGetter = self => self.localEulerAngles.y;
-        static readonly TweenGetter<Transform, float> localEulerAnglesZGetter = self => self.localEulerAngles.z;
-        static readonly TweenSetter<Transform, float> localEulerAnglesXSetter = (self, x) =>
-        {
-            var p = self.localEulerAngles;
-            p.x = x;
-            self.localEulerAngles = p;
-        };
-        static readonly TweenSetter<Transform, float> localEulerAnglesYSetter = (self, y) =>
-        {
-            var p = self.localEulerAngles;
-            p.y = y;
-            self.localEulerAngles = p;
-        };
-        static readonly TweenSetter<Transform, float> localEulerAnglesZSetter = (self, z) =>
-        {
-            var p = self.localEulerAngles;
-            p.z = z;
-            self.localEulerAngles = p;
-        };
-        static readonly TweenGetter<Transform, float3> localScaleGetter = self => self.localScale;
-        static readonly TweenSetter<Transform, float3> localScaleSetter = (self, x) => self.localScale = x;
-        static readonly TweenGetter<Transform, float> localScaleXGetter = self => self.localScale.x;
-        static readonly TweenGetter<Transform, float> localScaleYGetter = self => self.localScale.y;
-        static readonly TweenGetter<Transform, float> localScaleZGetter = self => self.localScale.z;
-        static readonly TweenSetter<Transform, float> localScaleXSetter = (self, x) =>
-        {
-            var p = self.localScale;
-            p.x = x;
-            self.localScale = p;
-        };
-        static readonly TweenSetter<Transform, float> localScaleYSetter = (self, y) =>
-        {
-            var p = self.localScale;
-            p.y = y;
-            self.localScale = p;
-        };
-        static readonly TweenSetter<Transform, float> localScaleZSetter = (self, z) =>
-        {
-            var p = self.localScale;
-            p.z = z;
-            self.localScale = p;
-        };
-
         public static Tween<float3, NoOptions> TweenPosition(this Transform self, Vector3 endValue, float duration)
         {
             return TweenFactory.Transforms.CreateTo<float3, NoOptions, Float3TweenPlugin, TransformPositionTranslator>(self, endValue, duration);
@@ -321,7 +205,7 @@ namespace MagicTween
 
         public static Tween<float, NoOptions> TweenLocalScaleX(this Transform self, float startValue, float endValue, float duration)
         {
-            return Tween.FromTo(self, localScaleXSetter, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformLocalScaleXTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float, NoOptions> TweenLocalScaleY(this Transform self, float endValue, float duration)
@@ -346,204 +230,203 @@ namespace MagicTween
 
         public static Tween<float3, PunchTweenOptions> PunchPosition(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Punch(self, positionGetter, positionSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float3, Punch3TweenPlugin, TransformPositionTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchPositionX(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, positionXGetter, positionXSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformPositionXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchPositionY(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, positionYGetter, positionYSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformPositionYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchPositionZ(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, positionZGetter, positionZSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformPositionZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, PunchTweenOptions> PunchLocalPosition(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Punch(self, localPositionGetter, localPositionSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float3, Punch3TweenPlugin, TransformLocalPositionTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalPositionX(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localPositionXGetter, localPositionXSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalPositionXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalPositionY(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localPositionYGetter, localPositionYSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalPositionYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalPositionZ(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localPositionZGetter, localPositionZSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalPositionZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, PunchTweenOptions> PunchEulerAngles(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Punch(self, eulerAnglesGetter, eulerAnglesSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float3, Punch3TweenPlugin, TransformEulerAnglesTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchEulerAnglesX(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, eulerAnglesXGetter, eulerAnglesXSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformEulerAnglesXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchEulerAnglesY(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, eulerAnglesYGetter, eulerAnglesYSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformEulerAnglesYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchEulerAnglesZ(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, eulerAnglesZGetter, eulerAnglesZSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformEulerAnglesZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, PunchTweenOptions> PunchLocalEulerAngles(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Punch(self, localEulerAnglesGetter, localEulerAnglesSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float3, Punch3TweenPlugin, TransformLocalEulerAnglesTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalEulerAnglesX(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localEulerAnglesXGetter, localEulerAnglesXSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalEulerAnglesXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalEulerAnglesY(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localEulerAnglesYGetter, localEulerAnglesYSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalEulerAnglesYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalEulerAnglesZ(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localEulerAnglesZGetter, localEulerAnglesZSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalEulerAnglesZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, PunchTweenOptions> PunchLocalScale(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Punch(self, localScaleGetter, localScaleSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float3, Punch3TweenPlugin, TransformLocalScaleTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalScaleX(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localScaleXGetter, localScaleXSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalScaleXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalScaleY(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localScaleYGetter, localScaleYSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalScaleYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, PunchTweenOptions> PunchLocalScaleZ(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localScaleZGetter, localScaleZSetter, strength, duration);
+            return TweenFactory.Transforms.CreatePunch<float, PunchTweenPlugin, TransformLocalScaleZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, ShakeTweenOptions> ShakePosition(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Shake(self, positionGetter, positionSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float3, Shake3TweenPlugin, TransformPositionTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakePositionX(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, positionXGetter, positionXSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformPositionXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakePositionY(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, positionYGetter, positionYSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformPositionYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakePositionZ(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, positionZGetter, positionZSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformPositionZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, ShakeTweenOptions> ShakeLocalPosition(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Shake(self, localPositionGetter, localPositionSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float3, Shake3TweenPlugin, TransformLocalPositionTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalPositionX(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localPositionXGetter, localPositionXSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalPositionXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalPositionY(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localPositionYGetter, localPositionYSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalPositionYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalPositionZ(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localPositionZGetter, localPositionZSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalPositionZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, ShakeTweenOptions> ShakeEulerAngles(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Shake(self, eulerAnglesGetter, eulerAnglesSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float3, Shake3TweenPlugin, TransformEulerAnglesTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeEulerAnglesX(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, eulerAnglesXGetter, eulerAnglesXSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformEulerAnglesXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeEulerAnglesY(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, eulerAnglesYGetter, eulerAnglesYSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformEulerAnglesYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeEulerAnglesZ(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, eulerAnglesZGetter, eulerAnglesZSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformEulerAnglesZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, ShakeTweenOptions> ShakeLocalEulerAngles(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Shake(self, localEulerAnglesGetter, localEulerAnglesSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float3, Shake3TweenPlugin, TransformLocalEulerAnglesTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalEulerAnglesX(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localEulerAnglesXGetter, localEulerAnglesXSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalEulerAnglesXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalEulerAnglesY(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localEulerAnglesYGetter, localEulerAnglesYSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalEulerAnglesYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalEulerAnglesZ(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localEulerAnglesZGetter, localEulerAnglesZSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalEulerAnglesZTranslator>(self, strength, duration);
         }
 
         public static Tween<float3, ShakeTweenOptions> ShakeLocalScale(this Transform self, Vector3 strength, float duration)
         {
-            return Tween.Shake(self, localScaleGetter, localScaleSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float3, Shake3TweenPlugin, TransformLocalScaleTranslator>(self, strength, duration);
         }
 
-        public static Tween<float, PunchTweenOptions> ShakeLocalScaleX(this Transform self, float strength, float duration)
+        public static Tween<float, ShakeTweenOptions> ShakeLocalScaleX(this Transform self, float strength, float duration)
         {
-            return Tween.Punch(self, localScaleXGetter, localScaleXSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalScaleXTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalScaleY(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localScaleYGetter, localScaleYSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalScaleYTranslator>(self, strength, duration);
         }
 
         public static Tween<float, ShakeTweenOptions> ShakeLocalScaleZ(this Transform self, float strength, float duration)
         {
-            return Tween.Shake(self, localScaleZGetter, localScaleZSetter, strength, duration);
+            return TweenFactory.Transforms.CreateShake<float, ShakeTweenPlugin, TransformLocalScaleZTranslator>(self, strength, duration);
         }
-
 
         public static Tween<float3, PathTweenOptions> TweenPath(this Transform self, float3[] points, float duration)
         {

@@ -66,4 +66,7 @@ namespace MagicTween.Core.Transforms
 
     [BurstCompile]
     internal sealed partial class TweenTransformLocalScaleZTranslationSystem : TweenTransformTranslationSystemBase<float, FloatTweenPlugin, TransformLocalScaleZTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformPunchPositionTranslationSystem : TweenTransformTranslationSystemBase<float3, Punch3TweenPlugin, TransformPositionTranslator> { }
 }

@@ -19,6 +19,8 @@ namespace MagicTween.Core
         readonly struct EntityTweenTypeKey<TValue, TOptions, TTranslator> { }
         readonly struct ObjectTweenTypeKey<TValue, TOptions, TTranslator> { }
         readonly struct TransformTweenTypeKey<TTag> { }
+        readonly struct TransformShakeTweenTypeKey<TTag> { }
+        readonly struct TransformPunchTweenTypeKey<TTag> { }
         readonly struct UnitTweenTypeKey { }
         readonly struct SequenceTypeKey { }
 
@@ -268,6 +270,56 @@ namespace MagicTween.Core
             }
             return archetype;
         }
+
+        [BurstCompile]
+        public static EntityArchetype GetTransformPunchTweenArchetype<TValue, TTranslator>(ref this ArchetypeStorage storage, ref EntityManager entityManager)
+            where TValue : unmanaged
+            where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+        {
+            if (!storage.TryGet<TransformPunchTweenTypeKey<TTranslator>>(out var archetype))
+            {
+                var types = new NativeList<ComponentType>(32, Allocator.Temp)
+                {
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<PunchTweenOptions>>(),
+                    ComponentType.ReadWrite<VibrationStrength<TValue>>(),
+                    ComponentType.ReadWrite<TweenTargetTransform>(),
+                    ComponentType.ReadWrite<TweenTranslationModeData>(),
+                    ComponentType.ReadWrite<TTranslator>()
+                };
+                storage.AddCoreComponentTypes(ref types);
+                archetype = entityManager.CreateArchetype(types.AsArray());
+                storage.Register<TransformPunchTweenTypeKey<TTranslator>>(ref archetype);
+            }
+            return archetype;
+        }
+
+        [BurstCompile]
+        public static EntityArchetype GetTransformShakeTweenArchetype<TValue, TTranslator>(ref this ArchetypeStorage storage, ref EntityManager entityManager)
+            where TValue : unmanaged
+            where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+        {
+            if (!storage.TryGet<TransformShakeTweenTypeKey<TTranslator>>(out var archetype))
+            {
+                var types = new NativeList<ComponentType>(32, Allocator.Temp)
+                {
+                    ComponentType.ReadWrite<TweenValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
+                    ComponentType.ReadWrite<TweenOptions<ShakeTweenOptions>>(),
+                    ComponentType.ReadWrite<VibrationStrength<TValue>>(),
+                    ComponentType.ReadWrite<ShakeRandomState>(),
+                    ComponentType.ReadWrite<TweenTargetTransform>(),
+                    ComponentType.ReadWrite<TweenTranslationModeData>(),
+                    ComponentType.ReadWrite<TTranslator>()
+                };
+                storage.AddCoreComponentTypes(ref types);
+                archetype = entityManager.CreateArchetype(types.AsArray());
+                storage.Register<TransformShakeTweenTypeKey<TTranslator>>(ref archetype);
+            }
+            return archetype;
+        }
+
 
         [BurstCompile]
         public static EntityArchetype GetUnitTweenArchetype(ref this ArchetypeStorage storage, ref EntityManager entityManager)

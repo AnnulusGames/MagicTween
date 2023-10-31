@@ -88,17 +88,8 @@ namespace MagicTween.Core
             var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, TPlugin>>();
 
             CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            AddPunchComponents(entity, getter(), strength);
 
-            EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
-            {
-                value = new PunchTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
             EntityManager.SetComponentData(entity, TweenDelegatesPool<TValue>.Rent(getter, setter));
 
             return new Tween<TValue, PunchTweenOptions>(entity);
@@ -114,17 +105,8 @@ namespace MagicTween.Core
             var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, TPlugin>>();
 
             CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            AddPunchComponents(entity, getter(target), strength);
 
-            EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
-            {
-                value = new PunchTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
             EntityManager.SetComponentData(entity, TweenDelegatesNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
@@ -143,18 +125,8 @@ namespace MagicTween.Core
             var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, TPlugin>>();
 
             CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            AddShakeComponents(entity, getter(), strength);
 
-            EntityManager.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
-            {
-                value = new ShakeTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f,
-                    randomSeed = 0
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
             EntityManager.SetComponentData(entity, TweenDelegatesPool<TValue>.Rent(getter, setter));
 
             return new Tween<TValue, ShakeTweenOptions>(entity);
@@ -170,18 +142,7 @@ namespace MagicTween.Core
             var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, TPlugin>>();
 
             CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-
-            EntityManagerRef.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
-            {
-                value = new ShakeTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f,
-                    randomSeed = 0
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
+            AddShakeComponents(entity, getter(target), strength);
 
             EntityManager.SetComponentData(entity, TweenDelegatesNoAllocPool<TValue>.Rent(
                 target,
@@ -394,6 +355,40 @@ namespace MagicTween.Core
                 return new Tween<TValue, TOptions>(entity);
             }
 
+            public static Tween<TValue, PunchTweenOptions> CreatePunch<TValue, TPlugin, TTranslator>(Transform target, TValue strength, float duration)
+                where TValue : unmanaged
+                where TPlugin : unmanaged, ITweenPluginBase<TValue>
+                where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+            {
+                Assert.IsNotNull(target);
+                var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, TPlugin, TTranslator>>();
+                var archetype = ArchetypeStorageRef.GetTransformPunchTweenArchetype<TValue, TTranslator>(ref EntityManagerRef);
+
+                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                AddPunchComponents(entity, default(TTranslator).GetValueManaged(target), strength);
+                AddTranslationMode(entity, TweenTranslationMode.FromTo);
+                AddTarget(entity, target);
+
+                return new Tween<TValue, PunchTweenOptions>(entity);
+            }
+
+            public static Tween<TValue, ShakeTweenOptions> CreateShake<TValue, TPlugin, TTranslator>(Transform target, TValue strength, float duration)
+                where TValue : unmanaged
+                where TPlugin : unmanaged, ITweenPluginBase<TValue>
+                where TTranslator : unmanaged, ITransformTweenTranslator<TValue>
+            {
+                Assert.IsNotNull(target);
+                var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, TPlugin, TTranslator>>();
+                var archetype = ArchetypeStorageRef.GetTransformShakeTweenArchetype<TValue, TTranslator>(ref EntityManagerRef);
+
+                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                AddShakeComponents(entity, default(TTranslator).GetValueManaged(target), strength);
+                AddTranslationMode(entity, TweenTranslationMode.FromTo);
+                AddTarget(entity, target);
+
+                return new Tween<TValue, ShakeTweenOptions>(entity);
+            }
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             static void AddTarget(Entity entity, Transform target)
             {
@@ -453,6 +448,39 @@ namespace MagicTween.Core
             if (MagicTweenSettings.defaultEase != Ease.Linear) entityManager.SetComponentData(entity, new TweenParameterEase(MagicTweenSettings.defaultEase));
             if (MagicTweenSettings.defaultLoopType != LoopType.Restart) entityManager.SetComponentData(entity, new TweenParameterLoopType(MagicTweenSettings.defaultLoopType));
             entityManager.SetComponentData(entity, new TweenControllerReference(controllerId));
+        }
+
+        [BurstCompile]
+        static void AddPunchComponents<TValue>(in Entity entity, in TValue startValue, in TValue strength)
+            where TValue : unmanaged
+        {
+            EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
+            {
+                value = new PunchTweenOptions()
+                {
+                    frequency = 10,
+                    dampingRatio = 1f
+                }
+            });
+            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
+            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
+        }
+
+        [BurstCompile]
+        static void AddShakeComponents<TValue>(in Entity entity, in TValue startValue, in TValue strength)
+            where TValue : unmanaged
+        {
+            EntityManagerRef.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
+            {
+                value = new ShakeTweenOptions()
+                {
+                    frequency = 10,
+                    dampingRatio = 1f,
+                    randomSeed = 0
+                }
+            });
+            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
+            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
         }
 
         [BurstCompile]
