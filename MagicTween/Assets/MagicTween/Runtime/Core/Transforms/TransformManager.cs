@@ -1,3 +1,4 @@
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
 using System.Collections.Generic;
 using UnityEngine.Jobs;
 
@@ -76,5 +77,5 @@ namespace MagicTween.Core.Transforms
             return instanceIdToArrayIndex[instanceId];
         }
     }
-
 }
+#endif

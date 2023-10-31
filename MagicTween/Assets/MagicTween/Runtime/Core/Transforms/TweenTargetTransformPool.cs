@@ -1,3 +1,4 @@
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -44,3 +45,4 @@ namespace MagicTween.Core.Transforms
         }
     }
 }
+#endif

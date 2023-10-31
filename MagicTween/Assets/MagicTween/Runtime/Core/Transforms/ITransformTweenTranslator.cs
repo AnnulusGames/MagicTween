@@ -1,3 +1,4 @@
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Jobs;
@@ -12,3 +13,4 @@ namespace MagicTween.Core.Transforms
         void ApplyManaged(Transform transform, in TValue value);
     }
 }
+#endif

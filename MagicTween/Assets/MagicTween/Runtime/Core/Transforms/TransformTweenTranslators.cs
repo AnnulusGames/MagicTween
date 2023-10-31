@@ -1,3 +1,4 @@
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -398,3 +399,4 @@ namespace MagicTween.Core.Transforms
         }
     }
 }
+#endif

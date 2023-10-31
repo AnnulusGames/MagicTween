@@ -1,3 +1,4 @@
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
 using Unity.Burst;
 using Unity.Mathematics;
 using MagicTween.Plugins;
@@ -127,3 +128,4 @@ namespace MagicTween.Core.Transforms.Systems
     [BurstCompile]
     internal sealed partial class TweenTransformPunchLocalScaleZTranslationSystem : TweenTransformTranslationSystemBase<float, PunchTweenOptions, PunchTweenPlugin, TransformLocalScaleZTranslator> { }
 }
+#endif

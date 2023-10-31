@@ -5,7 +5,6 @@ using Unity.Mathematics;
 using UnityEngine;
 using MagicTween.Plugins;
 using MagicTween.Core.Controllers;
-using MagicTween.Core.Transforms;
 
 namespace MagicTween.Core
 {

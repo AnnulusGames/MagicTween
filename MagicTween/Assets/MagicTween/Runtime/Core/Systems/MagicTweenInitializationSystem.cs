@@ -1,6 +1,5 @@
 using System;
 using Unity.Entities;
-using MagicTween.Core.Transforms;
 
 namespace MagicTween.Core.Systems
 {
@@ -14,8 +13,11 @@ namespace MagicTween.Core.Systems
 
             TweenWorld.Initialize();
             MagicTweenSettings.Initialize();
-            TransformManager.Initialize();
             SharedRandom.InitState((uint)DateTime.Now.Ticks);
+
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+            Transforms.TransformManager.Initialize();
+#endif
         }
 
         protected override void OnUpdate() { }
@@ -24,7 +26,10 @@ namespace MagicTween.Core.Systems
         {
             if (TweenWorld.World != World) return;
             if (TweenWorld.ArchetypeStorageRef.IsCreated) TweenWorld.ArchetypeStorageRef.Dispose();
-            TransformManager.Dispose();
+            
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+            Transforms.TransformManager.Dispose();
+#endif
         }
     }
 }

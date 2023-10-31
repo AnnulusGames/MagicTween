@@ -1,3 +1,4 @@
+#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
 using Unity.Entities;
 using MagicTween.Core.Components;
 
@@ -25,3 +26,4 @@ namespace MagicTween.Core.Transforms
         }
     }
 }
+#endif
