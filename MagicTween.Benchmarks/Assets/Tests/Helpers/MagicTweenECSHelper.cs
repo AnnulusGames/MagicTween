@@ -24,7 +24,7 @@ namespace MagicTween.Benchmark
         }
     }
 
-    public partial class TestTweenTranslationSystem : TweenTranslationSystemBase<float, FloatTweenPlugin, TestData, TestTweenTranslator> { }
+    public partial class TestTweenTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugin, TestData, TestTweenTranslator> { }
 
     [BurstCompile]
     public static class MagicTweenECSHelper
