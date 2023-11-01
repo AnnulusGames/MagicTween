@@ -235,42 +235,6 @@ namespace MagicTween.Core
             return new Tween<float3, PathTweenOptions>(entity);
         }
 
-        public static Tween<TValue, TOptions> CreateObjectFromTo<TValue, TOptions, TPlugin, TObject, TTranslator>(TObject target, in TValue startValue, in TValue endValue, float duration)
-            where TValue : unmanaged
-            where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
-            where TObject : class
-            where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
-        {
-            var controllerId = TweenControllerContainer.GetId<ObjectTweenController<TValue, TOptions, TPlugin, TObject, TTranslator>>();
-            var archetype = ArchetypeStorageRef.GetObjectTweenArchetype<TValue, TOptions, TPlugin, TObject, TTranslator>(ref EntityManagerRef);
-
-            CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            AddStartAndEndValue(entity, startValue, endValue);
-            AddTargetObjectComponent(ref EntityManagerRef, entity, target);
-            EntityManagerRef.SetComponentData(entity, new TweenTranslationModeData(TweenTranslationMode.FromTo));
-
-            return new Tween<TValue, TOptions>(entity);
-        }
-
-        public static Tween<TValue, TOptions> CreateObjectTo<TValue, TOptions, TPlugin, TObject, TTranslator>(TObject target, in TValue endValue, float duration)
-            where TValue : unmanaged
-            where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
-            where TObject : class
-            where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
-        {
-            var controllerId = TweenControllerContainer.GetId<ObjectTweenController<TValue, TOptions, TPlugin, TObject, TTranslator>>();
-            var archetype = ArchetypeStorageRef.GetObjectTweenArchetype<TValue, TOptions, TPlugin, TObject, TTranslator>(ref EntityManagerRef);
-
-            CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            AddStartAndEndValue(entity, default(TTranslator).GetValue(target), endValue);
-            AddTargetObjectComponent(ref EntityManagerRef, entity, target);
-            EntityManagerRef.SetComponentData(entity, new TweenTranslationModeData(TweenTranslationMode.To));
-
-            return new Tween<TValue, TOptions>(entity);
-        }
-
         [BurstCompile]
         public static class ECS
         {

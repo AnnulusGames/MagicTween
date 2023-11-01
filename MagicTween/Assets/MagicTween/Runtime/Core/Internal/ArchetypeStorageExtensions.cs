@@ -231,35 +231,7 @@ namespace MagicTween.Core
             }
             return archetype;
         }
-
-        [BurstCompile]
-        public static EntityArchetype GetObjectTweenArchetype<TValue, TOptions, TPlugin, TObject, TTranslator>(ref this ArchetypeStorage storage, ref EntityManager entityManager)
-            where TValue : unmanaged
-            where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
-            where TObject : class
-            where TTranslator : unmanaged, ITweenTranslatorManaged<TValue, TObject>
-        {
-            if (!storage.TryGet<ObjectTweenTypeKey<TValue, TOptions, TPlugin, TTranslator>>(out var archetype))
-            {
-                var types = new NativeList<ComponentType>(32, Allocator.Temp)
-                {
-                    ComponentType.ReadWrite<TweenValue<TValue>>(),
-                    ComponentType.ReadWrite<TweenStartValue<TValue>>(),
-                    ComponentType.ReadWrite<TweenEndValue<TValue>>(),
-                    ComponentType.ReadWrite<TweenOptions<TOptions>>(),
-                    ComponentType.ReadWrite<TweenPluginTag<TPlugin>>(),
-                    ComponentType.ReadWrite<TweenTargetObject>(),
-                    ComponentType.ReadWrite<TweenTranslationModeData>(),
-                    ComponentType.ReadWrite<TTranslator>()
-                };
-                storage.AddCoreComponentTypes(ref types);
-                archetype = entityManager.CreateArchetype(types.AsArray());
-                storage.Register<ObjectTweenTypeKey<TValue, TOptions, TPlugin, TTranslator>>(ref archetype);
-            }
-            return archetype;
-        }
-
+        
         [BurstCompile]
         public static EntityArchetype GetUnitTweenArchetype(ref this ArchetypeStorage storage, ref EntityManager entityManager)
         {
