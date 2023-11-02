@@ -127,5 +127,65 @@ namespace MagicTween.Core.Transforms.Systems
 
     [BurstCompile]
     internal sealed partial class TweenTransformPunchLocalScaleZTranslationSystem : TweenTransformTranslationSystemBase<float, PunchTweenOptions, PunchTweenPlugin, TransformLocalScaleZTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakePositionTranslationSystem : TweenTransformTranslationSystemBase<float3, ShakeTweenOptions, Shake3TweenPlugin, TransformPositionTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakePositionXTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformPositionXTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakePositionYTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformPositionYTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakePositionZTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformPositionZTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalPositionTranslationSystem : TweenTransformTranslationSystemBase<float3, ShakeTweenOptions, Shake3TweenPlugin, TransformLocalPositionTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalPositionXTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalPositionXTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalPositionYTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalPositionYTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalPositionZTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalPositionZTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeEulerAnglesTranslationSystem : TweenTransformTranslationSystemBase<float3, ShakeTweenOptions, Shake3TweenPlugin, TransformEulerAnglesTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeEulerAnglesXTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformEulerAnglesXTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeEulerAnglesYTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformEulerAnglesYTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeEulerAnglesZTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformEulerAnglesZTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalEulerAnglesTranslationSystem : TweenTransformTranslationSystemBase<float3, ShakeTweenOptions, Shake3TweenPlugin, TransformLocalEulerAnglesTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalEulerAnglesXTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalEulerAnglesXTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalEulerAnglesYTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalEulerAnglesYTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalEulerAnglesZTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalEulerAnglesZTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalScaleTranslationSystem : TweenTransformTranslationSystemBase<float3, ShakeTweenOptions, Shake3TweenPlugin, TransformLocalScaleTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalScaleXTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalScaleXTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalScaleYTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalScaleYTranslator> { }
+
+    [BurstCompile]
+    internal sealed partial class TweenTransformShakeLocalScaleZTranslationSystem : TweenTransformTranslationSystemBase<float, ShakeTweenOptions, ShakeTweenPlugin, TransformLocalScaleZTranslator> { }
 }
 #endif
