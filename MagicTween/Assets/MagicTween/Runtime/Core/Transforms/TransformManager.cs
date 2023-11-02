@@ -26,7 +26,7 @@ namespace MagicTween.Core.Transforms
 
         public static void Dispose()
         {
-            transformAccessArray.Dispose();
+            if (IsCreated) transformAccessArray.Dispose();
         }
 
         public static void Register(TweenTargetTransform target)
