@@ -19,11 +19,11 @@ namespace MagicTween.Core.Controllers
 
         public void SetValue(TValue currentValue, in Entity entity)
         {
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = currentValue });
-            var targetEntity = TweenWorld.EntityManager.GetComponentData<TweenTargetEntity>(entity).target;
-            var component = TweenWorld.EntityManager.GetComponentData<TComponent>(targetEntity);
+            ECSCache.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = currentValue });
+            var targetEntity = ECSCache.EntityManager.GetComponentData<TweenTargetEntity>(entity).target;
+            var component = ECSCache.EntityManager.GetComponentData<TComponent>(targetEntity);
             default(TTranslator).Apply(ref component, currentValue);
-            TweenWorld.EntityManager.SetComponentData(targetEntity, component);
+            ECSCache.EntityManager.SetComponentData(targetEntity, component);
         }
     }
 }

@@ -19,8 +19,8 @@ namespace MagicTween.Core.Transforms
 
         public void SetValue(TValue currentValue, in Entity entity)
         {
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = currentValue });
-            var target = TweenWorld.EntityManager.GetComponentData<TweenTargetTransform>(entity);
+            ECSCache.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = currentValue });
+            var target = ECSCache.EntityManager.GetComponentData<TweenTargetTransform>(entity);
             TransformManager.Unregister(target);
             default(TTranslator).ApplyManaged(target.target, currentValue);
         }

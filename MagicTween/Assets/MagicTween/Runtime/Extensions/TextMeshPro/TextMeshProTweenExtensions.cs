@@ -149,7 +149,7 @@ namespace MagicTween
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TMPTweenAnimator GetTMPTweenAnimator(this TMP_Text self)
         {
-            if (system == null) system = TweenWorld.World.GetOrCreateSystemManaged<TMPTweenAnimatorUpdateSystem>();
+            if (system == null) system = ECSCache.World.GetOrCreateSystemManaged<TMPTweenAnimatorUpdateSystem>();
             return system.GetAnimator(self);
         }
 

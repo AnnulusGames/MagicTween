@@ -10,7 +10,7 @@ namespace MagicTween
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static ITweenController GetController<T>(ref T tween) where T : struct, ITweenHandle
         {
-            var id = TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(tween.GetEntity()).controllerId;
+            var id = ECSCache.EntityManager.GetComponentData<TweenControllerReference>(tween.GetEntity()).controllerId;
             return TweenControllerContainer.FindControllerById(id);
         }
 
@@ -54,7 +54,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
 
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(self.GetEntity());
+            var status = ECSCache.EntityManager.GetComponentData<TweenStatus>(self.GetEntity());
 
             if (status.value == TweenStatusType.Paused)
             {

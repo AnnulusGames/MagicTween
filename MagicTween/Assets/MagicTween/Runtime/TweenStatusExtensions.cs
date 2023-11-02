@@ -16,8 +16,8 @@ namespace MagicTween
         {
             var entity = self.GetEntity();
             if (entity == Entity.Null) return false;
-            if (!TweenWorld.EntityManager.Exists(entity)) return false;
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            if (!ECSCache.EntityManager.Exists(entity)) return false;
+            var status = ECSCache.EntityManager.GetComponentData<TweenStatus>(entity);
             return status.value != TweenStatusType.Killed;
         }
 
@@ -25,8 +25,8 @@ namespace MagicTween
         {
             var entity = self.GetEntity();
             if (entity == Entity.Null) return false;
-            if (!TweenWorld.EntityManager.Exists(entity)) return false;
-            var status = TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity);
+            if (!ECSCache.EntityManager.Exists(entity)) return false;
+            var status = ECSCache.EntityManager.GetComponentData<TweenStatus>(entity);
             return status.value is TweenStatusType.Delayed or TweenStatusType.Playing;
         }
 
@@ -34,20 +34,20 @@ namespace MagicTween
         {
             var entity = self.GetEntity();
             if (entity == Entity.Null) return false;
-            if (!TweenWorld.EntityManager.Exists(entity)) return false;
-            return TweenWorld.EntityManager.IsComponentEnabled<TweenRootFlag>(entity);
+            if (!ECSCache.EntityManager.Exists(entity)) return false;
+            return ECSCache.EntityManager.IsComponentEnabled<TweenRootFlag>(entity);
         }
 
         public static float GetPlaybackSpeed<T>(this T self) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            return TweenWorld.EntityManager.GetComponentData<TweenParameterPlaybackSpeed>(self.GetEntity()).value;
+            return ECSCache.EntityManager.GetComponentData<TweenParameterPlaybackSpeed>(self.GetEntity()).value;
         }
 
         public static float GetDuration<T>(this T self) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            return TweenHelper.GetDuration(ref TweenWorld.EntityManagerRef, self.GetEntity());
+            return TweenHelper.GetDuration(ref ECSCache.EntityManager, self.GetEntity());
         }
 
         public static TValue GetValue<TValue, TOptions>(this Tween<TValue, TOptions> self)
@@ -55,7 +55,7 @@ namespace MagicTween
             where TOptions : unmanaged, ITweenOptions
         {
             AssertTween.IsActive(self);
-            return TweenWorld.EntityManager.GetComponentData<TweenValue<TValue>>(self.GetEntity()).value;
+            return ECSCache.EntityManager.GetComponentData<TweenValue<TValue>>(self.GetEntity()).value;
         }
     }
 }

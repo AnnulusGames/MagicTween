@@ -17,11 +17,11 @@ namespace MagicTween.Core.Controllers
 
         public void SetValue(UnsafeText currentValue, in Entity entity)
         {
-            var text = TweenWorld.EntityManager.GetComponentData<TweenValue<UnsafeText>>(entity);
+            var text = ECSCache.EntityManager.GetComponentData<TweenValue<UnsafeText>>(entity);
             text.value.CopyFrom(currentValue);
-            TweenWorld.EntityManager.SetComponentData(entity, text);
+            ECSCache.EntityManager.SetComponentData(entity, text);
 
-            TweenWorld.EntityManager.GetComponentData<TweenDelegates<string>>(entity).setter?.Invoke(currentValue.ConvertToString());
+            ECSCache.EntityManager.GetComponentData<TweenDelegates<string>>(entity).setter?.Invoke(currentValue.ConvertToString());
             currentValue.Dispose();
         }
     }

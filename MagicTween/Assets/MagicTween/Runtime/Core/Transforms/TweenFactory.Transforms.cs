@@ -9,8 +9,6 @@ using MagicTween.Plugins;
 
 namespace MagicTween.Core
 {
-    using static TweenWorld;
-
     internal static partial class TweenFactory
     {
         [BurstCompile]
@@ -24,9 +22,9 @@ namespace MagicTween.Core
             {
                 Assert.IsNotNull(target);
                 var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, TOptions, TPlugin, TTranslator>>();
-                var archetype = ArchetypeStorageRef.GetTransformTweenArchetype<TValue, TOptions, TPlugin, TTranslator>(ref EntityManagerRef);
+                var archetype = ECSCache.ArchetypeStorage.GetTransformTweenArchetype<TValue, TOptions, TPlugin, TTranslator>(ref ECSCache.EntityManager);
 
-                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
                 AddStartAndEndValue(entity, default(TTranslator).GetValueManaged(target), endValue);
                 AddTranslationMode(entity, TweenTranslationMode.To);
                 AddTarget(entity, target);
@@ -42,9 +40,9 @@ namespace MagicTween.Core
             {
                 Assert.IsNotNull(target);
                 var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, TOptions, TPlugin, TTranslator>>();
-                var archetype = ArchetypeStorageRef.GetTransformTweenArchetype<TValue, TOptions, TPlugin, TTranslator>(ref EntityManagerRef);
+                var archetype = ECSCache.ArchetypeStorage.GetTransformTweenArchetype<TValue, TOptions, TPlugin, TTranslator>(ref ECSCache.EntityManager);
 
-                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
                 AddStartAndEndValue(entity, startValue, endValue);
                 AddTranslationMode(entity, TweenTranslationMode.FromTo);
                 AddTarget(entity, target);
@@ -59,9 +57,9 @@ namespace MagicTween.Core
             {
                 Assert.IsNotNull(target);
                 var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, PunchTweenOptions, TPlugin, TTranslator>>();
-                var archetype = ArchetypeStorageRef.GetTransformPunchTweenArchetype<TValue, TPlugin, TTranslator>(ref EntityManagerRef);
+                var archetype = ECSCache.ArchetypeStorage.GetTransformPunchTweenArchetype<TValue, TPlugin, TTranslator>(ref ECSCache.EntityManager);
 
-                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
                 AddPunchComponents(entity, default(TTranslator).GetValueManaged(target), strength);
                 AddTranslationMode(entity, TweenTranslationMode.FromTo);
                 AddTarget(entity, target);
@@ -76,9 +74,9 @@ namespace MagicTween.Core
             {
                 Assert.IsNotNull(target);
                 var controllerId = TweenControllerContainer.GetId<TransformTweenController<TValue, ShakeTweenOptions, TPlugin, TTranslator>>();
-                var archetype = ArchetypeStorageRef.GetTransformShakeTweenArchetype<TValue, TPlugin, TTranslator>(ref EntityManagerRef);
+                var archetype = ECSCache.ArchetypeStorage.GetTransformShakeTweenArchetype<TValue, TPlugin, TTranslator>(ref ECSCache.EntityManager);
 
-                CreateEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+                CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
                 AddShakeComponents(entity, default(TTranslator).GetValueManaged(target), strength);
                 AddTranslationMode(entity, TweenTranslationMode.FromTo);
                 AddTarget(entity, target);
@@ -93,7 +91,7 @@ namespace MagicTween.Core
                 instance.target = target;
                 instance.instanceId = target.GetInstanceID();
                 TransformManager.Register(instance);
-                EntityManager.SetComponentData(entity, instance);
+                ECSCache.EntityManager.SetComponentData(entity, instance);
             }
         }
     }

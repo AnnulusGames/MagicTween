@@ -10,7 +10,7 @@ using MagicTween.Diagnostics;
 
 namespace MagicTween
 {
-    using static TweenWorld;
+    using static ECSCache;
 
     public static class TweenSettingsExtensions
     {

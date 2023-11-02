@@ -9,7 +9,7 @@ namespace MagicTween
     {
         static EntityQuery CreateAllTweenEntityQuery()
         {
-            return TweenWorld.EntityManager.CreateEntityQuery(
+            return ECSCache.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<TweenControllerReference>(),
                 ComponentType.ReadOnly<TweenRootFlag>(),
                 ComponentType.ReadOnly<TweenIdInt>(),
@@ -344,11 +344,11 @@ namespace MagicTween
 
         public static void Clear()
         {
-            var query = TweenWorld.EntityManager.CreateEntityQuery(
+            var query = ECSCache.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<TweenIdInt>()
             );
-            TweenWorld.EntityManager.DestroyEntity(query);
-            TweenWorld.CleanupSystem.ClearQueue();
+            ECSCache.EntityManager.DestroyEntity(query);
+            ECSCache.CleanupSystem.ClearQueue();
         }
     }
 }

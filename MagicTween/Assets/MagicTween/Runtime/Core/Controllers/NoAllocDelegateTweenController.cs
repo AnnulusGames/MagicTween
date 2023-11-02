@@ -17,8 +17,8 @@ namespace MagicTween.Core.Controllers
 
         public void SetValue(TValue value, in Entity entity)
         {
-            TweenWorld.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = value });
-            var delegates = TweenWorld.EntityManager.GetComponentData<TweenDelegatesNoAlloc<TValue>>(entity);
+            ECSCache.EntityManager.SetComponentData(entity, new TweenValue<TValue>() { value = value });
+            var delegates = ECSCache.EntityManager.GetComponentData<TweenDelegatesNoAlloc<TValue>>(entity);
             delegates.setter?.Invoke(delegates.target, value);
         }
     }

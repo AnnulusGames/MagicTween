@@ -12,13 +12,13 @@ namespace MagicTween
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static TweenStatusType GetStatus(in Entity entity)
         {
-            return TweenWorld.EntityManager.GetComponentData<TweenStatus>(entity).value;
+            return ECSCache.EntityManager.GetComponentData<TweenStatus>(entity).value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static bool Exists(in Entity entity)
         {
-            return TweenWorld.EntityManager.Exists(entity);
+            return ECSCache.EntityManager.Exists(entity);
         }
 
         public static IEnumerator WaitForPlay<T>(this T self) where T : struct, ITweenHandle
@@ -39,7 +39,7 @@ namespace MagicTween
             if (!self.IsActive()) yield break;
 
             var entity = self.GetEntity();
-            while (Exists(entity) && !TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
+            while (Exists(entity) && !ECSCache.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 yield return null;
             }
@@ -63,8 +63,8 @@ namespace MagicTween
             if (!self.IsActive()) yield break;
 
             var entity = self.GetEntity();
-            var completedLoops = TweenWorld.EntityManager.GetComponentData<TweenCompletedLoops>(entity).value;
-            while (Exists(entity) && TweenWorld.EntityManager.GetComponentData<TweenCompletedLoops>(entity).value == completedLoops)
+            var completedLoops = ECSCache.EntityManager.GetComponentData<TweenCompletedLoops>(entity).value;
+            while (Exists(entity) && ECSCache.EntityManager.GetComponentData<TweenCompletedLoops>(entity).value == completedLoops)
             {
                 yield return null;
             }

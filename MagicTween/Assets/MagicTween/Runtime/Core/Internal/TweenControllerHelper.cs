@@ -48,7 +48,7 @@ namespace MagicTween.Core
 
         public static void Restart(in Entity entity)
         {
-            if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
+            if (!ECSCache.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 Play(entity);
                 return;
@@ -92,7 +92,7 @@ namespace MagicTween.Core
             where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
             where TController : ITweenController<TValue>
         {
-            if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
+            if (!ECSCache.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 Play(entity);
                 return;

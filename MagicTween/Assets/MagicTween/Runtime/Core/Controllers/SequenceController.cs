@@ -10,11 +10,11 @@ namespace MagicTween.Core.Controllers
             var canComplete = TweenHelper.TryComplete(entity);
             if (!canComplete) return;
 
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceBuffer = ECSCache.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 var childEntity = sequenceBuffer[i].entity;
-                var controller = TweenControllerContainer.FindControllerById(TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
+                var controller = TweenControllerContainer.FindControllerById(ECSCache.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
                 controller.Complete(childEntity);
             }
 
@@ -26,11 +26,11 @@ namespace MagicTween.Core.Controllers
             var canCompleteAndKill = TweenHelper.TryCompleteAndKill(entity);
             if (!canCompleteAndKill) return;
 
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceBuffer = ECSCache.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 var childEntity = sequenceBuffer[i].entity;
-                var controller = TweenControllerContainer.FindControllerById(TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
+                var controller = TweenControllerContainer.FindControllerById(ECSCache.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
                 controller.CompleteAndKill(childEntity);
             }
 
@@ -39,7 +39,7 @@ namespace MagicTween.Core.Controllers
 
         public void Restart(in Entity entity)
         {
-            if (!TweenWorld.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
+            if (!ECSCache.EntityManager.GetComponentData<TweenStartedFlag>(entity).value)
             {
                 Play(entity);
                 return;
@@ -48,11 +48,11 @@ namespace MagicTween.Core.Controllers
             var canRestart = TweenHelper.TryRestart(entity);
             if (!canRestart) return;
 
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceBuffer = ECSCache.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 var childEntity = sequenceBuffer[i].entity;
-                var controller = TweenControllerContainer.FindControllerById(TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
+                var controller = TweenControllerContainer.FindControllerById(ECSCache.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
                 controller.Restart(childEntity);
             }
         }
@@ -62,11 +62,11 @@ namespace MagicTween.Core.Controllers
             var canPlay = TweenHelper.TryPlay(entity, out var started);
             if (!canPlay) return;
 
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceBuffer = ECSCache.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 var childEntity = sequenceBuffer[i].entity;
-                var controller = TweenControllerContainer.FindControllerById(TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
+                var controller = TweenControllerContainer.FindControllerById(ECSCache.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
                 controller.Play(childEntity);
             }
 
@@ -78,11 +78,11 @@ namespace MagicTween.Core.Controllers
             var canPause = TweenHelper.TryPause(entity);
             if (!canPause) return;
 
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceBuffer = ECSCache.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 var childEntity = sequenceBuffer[i].entity;
-                var controller = TweenControllerContainer.FindControllerById(TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
+                var controller = TweenControllerContainer.FindControllerById(ECSCache.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
                 controller.Pause(childEntity);
             }
 
@@ -94,11 +94,11 @@ namespace MagicTween.Core.Controllers
             var canKill = TweenHelper.TryKill(entity);
             if (!canKill) return;
 
-            var sequenceBuffer = TweenWorld.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
+            var sequenceBuffer = ECSCache.EntityManager.GetBuffer<SequenceEntitiesGroup>(entity);
             for (int i = 0; i < sequenceBuffer.Length; i++)
             {
                 var childEntity = sequenceBuffer[i].entity;
-                var controller = TweenControllerContainer.FindControllerById(TweenWorld.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
+                var controller = TweenControllerContainer.FindControllerById(ECSCache.EntityManager.GetComponentData<TweenControllerReference>(childEntity).controllerId);
                 controller.Kill(childEntity);
             }
 

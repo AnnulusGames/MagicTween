@@ -11,22 +11,22 @@ namespace MagicTween
     {
         internal static TweenCallbackActions GetOrAddActions(in Entity entity)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                return TweenWorld.EntityManager.GetComponentData<TweenCallbackActions>(entity);
+                return ECSCache.EntityManager.GetComponentData<TweenCallbackActions>(entity);
             }
             else
             {
                 var actions = TweenCallbackActionsPool.Rent();
-                if (TweenWorld.CallbackSystem.IsExecuting)
+                if (ECSCache.CallbackSystem.IsExecuting)
                 {
                     // Use EntityCommandBuffer to avoid structural changes
-                    var commandBuffer = TweenWorld.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+                    var commandBuffer = ECSCache.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
                     commandBuffer.AddComponent(entity, actions);
                 }
                 else
                 {
-                    TweenWorld.EntityManager.AddComponentData(entity, actions);
+                    ECSCache.EntityManager.AddComponentData(entity, actions);
                 }
                 return actions;
             }
@@ -34,22 +34,22 @@ namespace MagicTween
 
         internal static TweenCallbackActionsNoAlloc GetOrAddActionsNoAlloc(in Entity entity, object target)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActionsNoAlloc>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActionsNoAlloc>(entity))
             {
-                return TweenWorld.EntityManager.GetComponentData<TweenCallbackActionsNoAlloc>(entity);
+                return ECSCache.EntityManager.GetComponentData<TweenCallbackActionsNoAlloc>(entity);
             }
             else
             {
                 var actions = TweenCallbackActionsNoAllocPool.Rent();
-                if (TweenWorld.CallbackSystem.IsExecuting)
+                if (ECSCache.CallbackSystem.IsExecuting)
                 {
                     // Use EntityCommandBuffer to avoid structural changes
-                    var commandBuffer = TweenWorld.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+                    var commandBuffer = ECSCache.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
                     commandBuffer.AddComponent(entity, actions);
                 }
                 else
                 {
-                    TweenWorld.EntityManager.AddComponentData(entity, actions);
+                    ECSCache.EntityManager.AddComponentData(entity, actions);
                 }
                 return actions;
             }

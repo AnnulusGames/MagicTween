@@ -92,7 +92,7 @@ namespace MagicTween.Diagnostics
         {
             AssertTween.IsActive(self);
 
-            TweenWorld.EntityManager.SetName(self.GetEntity(), name);
+            ECSCache.EntityManager.SetName(self.GetEntity(), name);
             return self;
         }
     }

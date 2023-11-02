@@ -7,7 +7,7 @@ using MagicTween.Diagnostics;
 
 namespace MagicTween.Core
 {
-    using static TweenWorld;
+    using static ECSCache;
 
     [BurstCompile]
     internal unsafe static class SequenceHelper
