@@ -7,6 +7,7 @@ using MagicTween.Plugins;
 
 namespace MagicTween.Core.Transforms
 {
+    [BurstCompile]
     internal static class ArchtypeStorageTransformTweenExtensions
     {
         readonly struct TransformTweenTypeKey<TTranslator> { }
