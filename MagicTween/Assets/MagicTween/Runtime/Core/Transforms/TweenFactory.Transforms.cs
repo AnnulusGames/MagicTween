@@ -1,4 +1,4 @@
-#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+#if MAGICTWEEN_ENABLE_TRANSFORM_JOBS
 using System.Runtime.CompilerServices;
 using Unity.Assertions;
 using Unity.Entities;

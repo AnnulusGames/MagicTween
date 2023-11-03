@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Mathematics;
 using MagicTween.Core;
 using MagicTween.Plugins;
-#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+#if MAGICTWEEN_ENABLE_TRANSFORM_JOBS
 using MagicTween.Core.Transforms;
 #endif
 
@@ -10,7 +10,7 @@ namespace MagicTween
 {
     public static class TransformTweenExtensions
     {
-#if MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+#if !MAGICTWEEN_ENABLE_TRANSFORM_JOBS
         static readonly TweenGetter<Transform, float3> positionGetter = self => self.position;
         static readonly TweenSetter<Transform, float3> positionSetter = (self, x) => self.position = x;
         static readonly TweenGetter<Transform, float> positionXGetter = self => self.position.x;

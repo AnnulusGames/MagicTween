@@ -14,7 +14,7 @@ namespace MagicTween.Core
             SharedRandom.InitState((uint)DateTime.Now.Ticks);
             ECSCache.Create(world);
             MagicTweenSettings.Initialize();
-#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+#if MAGICTWEEN_ENABLE_TRANSFORM_JOBS
             Transforms.TransformManager.Initialize();
 #endif
 
@@ -24,7 +24,7 @@ namespace MagicTween.Core
         static void Cleanup()
         {
             ECSCache.Dispose();
-#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+#if MAGICTWEEN_ENABLE_TRANSFORM_JOBS
             Transforms.TransformManager.Dispose();
 #endif
         }

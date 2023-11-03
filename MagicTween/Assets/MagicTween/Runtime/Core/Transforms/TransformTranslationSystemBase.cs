@@ -1,4 +1,4 @@
-#if !MAGICTWEEN_DISABLE_TRANSFORM_JOBS
+#if MAGICTWEEN_ENABLE_TRANSFORM_JOBS
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
 using Unity.Burst;
