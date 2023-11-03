@@ -690,7 +690,7 @@ namespace MagicTween
 
         public static Tween<float, NoOptions> TweenEulerAnglesZ(this Transform self, float startValue, float endValue, float duration)
         {
-            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesYTranslator>(self, startValue, endValue, duration);
+            return TweenFactory.Transforms.CreateFromTo<float, NoOptions, FloatTweenPlugin, TransformEulerAnglesZTranslator>(self, startValue, endValue, duration);
         }
 
         public static Tween<float3, NoOptions> TweenLocalEulerAngles(this Transform self, Vector3 endValue, float duration)
