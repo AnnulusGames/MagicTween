@@ -22,6 +22,17 @@
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.cysharp.unitask",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_UNITASK"
+        },
+        {
+            "name": "com.neuecc.unirx",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_UNIRX"
+        }
+    ],
     "noEngineReferences": false
 }

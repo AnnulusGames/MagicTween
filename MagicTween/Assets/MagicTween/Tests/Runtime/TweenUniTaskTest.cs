@@ -1,3 +1,4 @@
+#if MAGICTWEEN_SUPPORT_UNITASK
 using System;
 using System.Collections;
 using System.Threading;
@@ -101,3 +102,4 @@ namespace MagicTween.Tests
         }
     }
 }
+#endif
