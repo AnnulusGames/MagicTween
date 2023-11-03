@@ -2,11 +2,14 @@
     "name": "MagicTween.Tests.Runtime",
     "rootNamespace": "MagicTween.Tests",
     "references": [
+        "MagicTween",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "MagicTween",
+        "Unity.Entities",
         "Unity.Mathematics",
-        "Unity.Collections"
+        "Unity.Collections",
+        "UniTask",
+        "UniRx"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

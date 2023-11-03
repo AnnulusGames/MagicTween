@@ -75,55 +75,132 @@ namespace MagicTween.Tests
         [UnityTest]
         public IEnumerator Test_Position_OneAxis_To()
         {
-            var (endValueX, endValueY, endValueZ) = (1f, 2f, 3f);
-            transform.TweenPositionX(endValueX, Duration);
-            transform.TweenPositionY(endValueY, Duration);
-            transform.TweenPositionZ(endValueZ, Duration);
+            var endValue = new Vector3(1f, 2f, 3f);
+            transform.TweenPositionX(endValue.x, Duration);
+            transform.TweenPositionY(endValue.y, Duration);
+            transform.TweenPositionZ(endValue.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.position.x, endValueX);
-            AssertAreEqual(transform.position.y, endValueY);
-            AssertAreEqual(transform.position.z, endValueZ);
+            AssertAreEqual(transform.position, endValue);
         }
 
         [UnityTest]
         public IEnumerator Test_Position_OneAxis_FromTo()
         {
-            var (endValueX, endValueY, endValueZ) = (1f, 2f, 3f);
-            transform.TweenPositionX(-1f, endValueX, Duration);
-            transform.TweenPositionY(-1f, endValueY, Duration);
-            transform.TweenPositionZ(-1f, endValueZ, Duration);
+            var endValue = new Vector3(1f, 2f, 3f);
+            transform.TweenPositionX(-1f, endValue.x, Duration);
+            transform.TweenPositionY(-1f, endValue.y, Duration);
+            transform.TweenPositionZ(-1f, endValue.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.position.x, endValueX);
-            AssertAreEqual(transform.position.y, endValueY);
-            AssertAreEqual(transform.position.z, endValueZ);
+            AssertAreEqual(transform.position, endValue);
         }
 
         [UnityTest]
         public IEnumerator Test_Position_OneAxis_Punch()
         {
-            var (strengthX, strengthY, strengthZ) = (1f, 2f, 3f);
-            var (startValueX, startValueY, startValueZ) = (transform.position.x, transform.position.y, transform.position.z);
-            transform.PunchPositionX(strengthX, Duration);
-            transform.PunchPositionY(strengthY, Duration);
-            transform.PunchPositionZ(strengthZ, Duration);
+            var strength = new Vector3(1f, 2f, 3f);
+            var startValue = transform.position;
+            transform.PunchPositionX(strength.x, Duration);
+            transform.PunchPositionY(strength.y, Duration);
+            transform.PunchPositionZ(strength.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.position.x, startValueX);
-            AssertAreEqual(transform.position.y, startValueY);
-            AssertAreEqual(transform.position.z, startValueZ);
+            AssertAreEqual(transform.position, startValue);
         }
 
         [UnityTest]
         public IEnumerator Test_Position_OneAxis_Shake()
         {
-            var (strengthX, strengthY, strengthZ) = (1f, 2f, 3f);
-            var (startValueX, startValueY, startValueZ) = (transform.position.x, transform.position.y, transform.position.z);
-            transform.ShakePositionX(strengthX, Duration);
-            transform.ShakePositionY(strengthY, Duration);
-            transform.ShakePositionZ(strengthZ, Duration);
+            var strength = new Vector3(1f, 2f, 3f);
+            var startValue = transform.position;
+            transform.ShakePositionX(strength.x, Duration);
+            transform.ShakePositionY(strength.y, Duration);
+            transform.ShakePositionZ(strength.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.position.x, startValueX);
-            AssertAreEqual(transform.position.y, startValueY);
-            AssertAreEqual(transform.position.z, startValueZ);
+            AssertAreEqual(transform.position, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_To()
+        {
+            var endValue = Vector3.one * 2f;
+            transform.TweenLocalPosition(endValue, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_FromTo()
+        {
+            var startValue = Vector3.one * -2f;
+            var endValue = Vector3.one * 2f;
+            transform.TweenLocalPosition(startValue, endValue, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_Punch()
+        {
+            var startValue = transform.localPosition;
+            var strength = Vector3.one * 2f;
+            transform.PunchLocalPosition(strength, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_Shake()
+        {
+            var startValue = transform.localPosition;
+            var strength = Vector3.one * 2f;
+            transform.ShakeLocalPosition(strength, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_OneAxis_To()
+        {
+            var endValue = new Vector3(1f, 2f, 3f);
+            transform.TweenLocalPositionX(endValue.x, Duration);
+            transform.TweenLocalPositionY(endValue.y, Duration);
+            transform.TweenLocalPositionZ(endValue.z, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_OneAxis_FromTo()
+        {
+            var endValue = new Vector3(1f, 2f, 3f);
+            transform.TweenLocalPositionX(-1f, endValue.x, Duration);
+            transform.TweenLocalPositionY(-1f, endValue.y, Duration);
+            transform.TweenLocalPositionZ(-1f, endValue.z, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_OneAxis_Punch()
+        {
+            var strength = new Vector3(1f, 2f, 3f);
+            var startValue = transform.localPosition;
+            transform.PunchLocalPositionX(strength.x, Duration);
+            transform.PunchLocalPositionY(strength.y, Duration);
+            transform.PunchLocalPositionZ(strength.z, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalPosition_OneAxis_Shake()
+        {
+            var strength = new Vector3(1f, 2f, 3f);
+            var startValue = transform.localPosition;
+            transform.ShakeLocalPositionX(strength.x, Duration);
+            transform.ShakeLocalPositionY(strength.y, Duration);
+            transform.ShakeLocalPositionZ(strength.z, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localPosition, startValue);
         }
 
         [UnityTest]
@@ -143,6 +220,26 @@ namespace MagicTween.Tests
             transform.TweenRotation(startValue, endValue, Duration);
             yield return waitForSeconds;
             AssertAreEqual(transform.rotation, endValue);
+        }
+
+
+        [UnityTest]
+        public IEnumerator Test_LocalRotation_To()
+        {
+            var endValue = Quaternion.Euler(45f, 45f, 45f);
+            transform.TweenLocalRotation(endValue, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localRotation, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalRotation_FromTo()
+        {
+            var startValue = Quaternion.Euler(-45f, -45f, -45f);
+            var endValue = Quaternion.Euler(45f, 45f, 45f);
+            transform.TweenLocalRotation(startValue, endValue, Duration);
+            yield return waitForSeconds;
+            AssertAreEqual(transform.localRotation, endValue);
         }
 
         [UnityTest]
@@ -232,7 +329,93 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_To()
+        public IEnumerator Test_LocalEulerAngles_To()
+        {
+            var endValue = new Vector3(90f, 90f, 90f);
+            transform.TweenLocalEulerAngles(endValue, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_FromTo()
+        {
+            var startValue = new Vector3(-90f, -90f, -90f);
+            var endValue = new Vector3(90f, 90f, 90f);
+            transform.TweenLocalEulerAngles(startValue, endValue, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_Punch()
+        {
+            var startValue = transform.localEulerAngles;
+            var strength = Vector3.one * 90f;
+            transform.PunchLocalEulerAngles(strength, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_Shake()
+        {
+            var startValue = transform.localEulerAngles;
+            var strength = Vector3.one * 90f;
+            transform.ShakeLocalEulerAngles(strength, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_OneAxis_To()
+        {
+            var endValue = new Vector3(45f, 90f, 135f);
+            transform.TweenLocalEulerAnglesX(endValue.x, Duration);
+            transform.TweenLocalEulerAnglesY(endValue.y, Duration);
+            transform.TweenLocalEulerAnglesZ(endValue.z, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_OneAxis_FromTo()
+        {
+            var startValue = new Vector3(-45f, -90f, -135f);
+            var endValue = new Vector3(45f, 90f, 135f);
+            transform.TweenLocalEulerAnglesX(startValue.x, endValue.x, Duration);
+            transform.TweenLocalEulerAnglesY(startValue.y, endValue.y, Duration);
+            transform.TweenLocalEulerAnglesZ(startValue.z, endValue.z, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, endValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_OneAxis_Punch()
+        {
+            var startValue = transform.localEulerAngles;
+            var strength = new Vector3(45f, 90f, 135f);
+            transform.PunchLocalEulerAnglesX(strength.x, Duration);
+            transform.PunchLocalEulerAnglesY(strength.y, Duration);
+            transform.PunchLocalEulerAnglesZ(strength.z, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalEulerAngles_OneAxis_Shake()
+        {
+            var startValue = transform.localEulerAngles;
+            var strength = new Vector3(45f, 90f, 135f);
+            transform.ShakeLocalEulerAnglesX(strength.x, Duration);
+            transform.ShakeLocalEulerAnglesY(strength.y, Duration);
+            transform.ShakeLocalEulerAnglesZ(strength.z, Duration);
+            yield return waitForSeconds;
+            AssertAnglesAreEqual(transform.localEulerAngles, startValue);
+        }
+
+        [UnityTest]
+        public IEnumerator Test_LocalScale_To()
         {
             var endValue = new Vector3(2f, 2f, 2f);
             transform.TweenLocalScale(endValue, Duration);
@@ -241,7 +424,7 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_FromTo()
+        public IEnumerator Test_LocalScale_FromTo()
         {
             var startValue = new Vector3(1f, 2f, 3f);
             var endValue = new Vector3(3f, 2f, 1f);
@@ -251,7 +434,7 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_Punch()
+        public IEnumerator Test_LocalScale_Punch()
         {
             var startValue = transform.localScale;
             var strength = Vector3.one * 2f;
@@ -261,7 +444,7 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_Shake()
+        public IEnumerator Test_LocalScale_Shake()
         {
             var startValue = transform.localScale;
             var strength = Vector3.one * 2f;
@@ -271,7 +454,7 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_OneAxis_To()
+        public IEnumerator Test_LocalScale_OneAxis_To()
         {
             var (endValueX, endValueY, endValueZ) = (1f, 2f, 3f);
             transform.TweenLocalScaleX(endValueX, Duration);
@@ -284,45 +467,39 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_OneAxis_FromTo()
+        public IEnumerator Test_LocalScale_OneAxis_FromTo()
         {
-            var (startValueX, startValueY, startValueZ) = (0f, 1f, 2f);
-            var (endValueX, endValueY, endValueZ) = (1f, 2f, 3f);
-            transform.TweenLocalScaleX(startValueX, endValueX, Duration);
-            transform.TweenLocalScaleY(startValueY, endValueY, Duration);
-            transform.TweenLocalScaleZ(startValueZ, endValueZ, Duration);
+            var startValue = new Vector3(0f, 1f, 2f);
+            var endValue = new Vector3(1f, 2f, 3f);
+            transform.TweenLocalScaleX(startValue.x, endValue.x, Duration);
+            transform.TweenLocalScaleY(startValue.y, endValue.y, Duration);
+            transform.TweenLocalScaleZ(startValue.z, endValue.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.localScale.x, endValueX);
-            AssertAreEqual(transform.localScale.y, endValueY);
-            AssertAreEqual(transform.localScale.z, endValueZ);
+            AssertAreEqual(transform.localScale, endValue);
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_OneAxis_Punch()
+        public IEnumerator Test_LocalScale_OneAxis_Punch()
         {
             var startValue = transform.localScale;
-            var (endValueX, endValueY, endValueZ) = (1f, 2f, 3f);
-            transform.PunchLocalScaleX(endValueX, Duration);
-            transform.PunchLocalScaleY(endValueY, Duration);
-            transform.PunchLocalScaleZ(endValueZ, Duration);
+            var strength = new Vector3(1f, 2f, 3f);
+            transform.PunchLocalScaleX(strength.x, Duration);
+            transform.PunchLocalScaleY(strength.y, Duration);
+            transform.PunchLocalScaleZ(strength.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.localScale.x, startValue.x);
-            AssertAreEqual(transform.localScale.y, startValue.y);
-            AssertAreEqual(transform.localScale.z, startValue.z);
+            AssertAreEqual(transform.localScale, startValue);
         }
 
         [UnityTest]
-        public IEnumerator Test_Scale_OneAxis_Shake()
+        public IEnumerator Test_LocalScale_OneAxis_Shake()
         {
             var startValue = transform.localScale;
-            var (endValueX, endValueY, endValueZ) = (1f, 2f, 3f);
-            transform.ShakeLocalScaleX(endValueX, Duration);
-            transform.ShakeLocalScaleY(endValueY, Duration);
-            transform.ShakeLocalScaleZ(endValueZ, Duration);
+            var strength = new Vector3(1f, 2f, 3f);
+            transform.ShakeLocalScaleX(strength.x, Duration);
+            transform.ShakeLocalScaleY(strength.y, Duration);
+            transform.ShakeLocalScaleZ(strength.z, Duration);
             yield return waitForSeconds;
-            AssertAreEqual(transform.localScale.x, startValue.x);
-            AssertAreEqual(transform.localScale.y, startValue.y);
-            AssertAreEqual(transform.localScale.z, startValue.z);
+            AssertAreEqual(transform.localScale, startValue);
         }
 
         static void AssertAreEqual(float a, float b)
