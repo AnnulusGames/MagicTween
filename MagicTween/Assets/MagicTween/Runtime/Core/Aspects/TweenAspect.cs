@@ -135,7 +135,11 @@ namespace MagicTween.Core
                 case TweenStatusType.Killed:
                     return;
                 case TweenStatusType.WaitingForStart:
-                    if (!aspect.autoPlay || currentPosition <= 0f) break;
+                    if (!aspect.autoPlay || currentPosition <= 0f)
+                    {
+                        aspect.accessorFlags |= AccessorFlags.Getter;
+                        break;
+                    }
 
                     aspect.callbackFlags |= CallbackFlags.OnPlay;
                     aspect.callbackFlags |= CallbackFlags.OnStartUp;
