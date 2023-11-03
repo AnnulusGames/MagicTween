@@ -21,6 +21,12 @@ namespace MagicTween.Core.Transforms.Systems
     {
         EntityQuery query;
 
+        NativeArray<ComponentPtr<TweenValue<TValue>>> valuePtrArray;
+        NativeArray<ComponentPtr<TweenStartValue<TValue>>> startValuePtrArray;
+        NativeArray<ComponentPtr<TweenAccessorFlags>> accessorFlagsPtrArray;
+        NativeArray<ComponentPtr<TweenTranslationModeData>> translationModePtrArray;
+        NativeArray<UnsafeList<int>> indexLookup;
+
         const string NULL_ERROR_MESSAGE = "The object of type 'Transform' has been destroyed but you are still trying to access it.";
 
         [BurstCompile]
@@ -37,12 +43,66 @@ namespace MagicTween.Core.Transforms.Systems
                 .WithAll<TweenValue<TValue>, TweenStartValue<TValue>, TweenPluginTag<TPlugin>>()
                 .WithAll<TweenAccessorFlags, TweenTargetTransform, TTranslator>()
                 .Build(this);
+
+            valuePtrArray = new(32, Allocator.Persistent);
+            startValuePtrArray = new(32, Allocator.Persistent);
+            accessorFlagsPtrArray = new(32, Allocator.Persistent);
+            translationModePtrArray = new(32, Allocator.Persistent);
+            indexLookup = new(32, Allocator.Persistent);
         }
 
         [BurstCompile]
         static void SetPtrs<TComponent>(TComponent* srcPtr, int length, ref NativeArray<ComponentPtr<TComponent>> dst, int dstIndex) where TComponent : unmanaged
         {
             for (int i = 0; i < length; i++) ((ComponentPtr<TComponent>*)dst.GetUnsafePtr() + dstIndex + i)->Ptr = srcPtr + i;
+        }
+
+        [BurstCompile]
+        unsafe static void ClearLists(ref NativeArray<UnsafeList<int>> array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                var list = array[i];
+                if (list.IsCreated)
+                {
+                    list.Clear();
+                    array[i] = list;
+                }
+            }
+        }
+
+        [BurstCompile]
+        static void AddIndexLookup(ref NativeArray<UnsafeList<int>> indexLookup, int index, int value)
+        {
+            var indexArray = indexLookup[index];
+            if (!indexArray.IsCreated)
+            {
+                indexArray = new UnsafeList<int>(4, Allocator.Persistent)
+                {
+                    value
+                };
+            }
+            else
+            {
+                indexArray.Add(value);
+            }
+            indexLookup[index] = indexArray;
+        }
+
+        [BurstCompile]
+        static void EnsureArray<T>(ref NativeArray<T> array, int capacity, NativeArrayOptions nativeArrayOptions = NativeArrayOptions.UninitializedMemory) where T : unmanaged
+        {
+            if (array.Length < capacity)
+            {
+                NativeArray<T> nativeArray = new(capacity, Allocator.Persistent, nativeArrayOptions);
+                if (array.IsCreated)
+                {
+                    NativeArray<T>.Copy(array, nativeArray, array.Length);
+                    array.Dispose();
+                }
+
+                array = nativeArray;
+            }
         }
 
         protected override void OnUpdate()
@@ -64,11 +124,12 @@ namespace MagicTween.Core.Transforms.Systems
 
             var chunks = query.ToArchetypeChunkArray(Allocator.Temp);
 
-            var valuePtrArray = new NativeArray<ComponentPtr<TweenValue<TValue>>>(entityCount, Allocator.TempJob);
-            var startValuePtrArray = new NativeArray<ComponentPtr<TweenStartValue<TValue>>>(entityCount, Allocator.TempJob);
-            var accessorFlagsPtrArray = new NativeArray<ComponentPtr<TweenAccessorFlags>>(entityCount, Allocator.TempJob);
-            var translationModePtrArray = new NativeArray<ComponentPtr<TweenTranslationModeData>>(entityCount, Allocator.TempJob);
-            var indexLookup = new NativeHashMap<int, int>(entityCount, Allocator.TempJob);
+            EnsureArray(ref valuePtrArray, entityCount);
+            EnsureArray(ref startValuePtrArray, entityCount);
+            EnsureArray(ref accessorFlagsPtrArray, entityCount);
+            EnsureArray(ref translationModePtrArray, entityCount);
+            EnsureArray(ref indexLookup, TransformManager.Count, NativeArrayOptions.ClearMemory);
+            ClearLists(ref indexLookup);
 
             CompleteDependency();
 
@@ -81,12 +142,13 @@ namespace MagicTween.Core.Transforms.Systems
                 var startValuePtr = chunkPtr->GetComponentDataPtrRW(ref tweenStartValueHandle);
                 var accessorFlagsPtr = chunkPtr->GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
                 var translationModePtr = chunkPtr->GetComponentDataPtrRO(ref translationModeHandle);
-                var targets = chunkPtr->GetManagedComponentAccessor(ref targetTransformHandle, EntityManager);
 
                 SetPtrs(valuePtr, chunkCount, ref valuePtrArray, arrayOffset);
                 SetPtrs(startValuePtr, chunkCount, ref startValuePtrArray, arrayOffset);
                 SetPtrs(accessorFlagsPtr, chunkCount, ref accessorFlagsPtrArray, arrayOffset);
                 SetPtrs(translationModePtr, chunkCount, ref translationModePtrArray, arrayOffset);
+
+                var targets = chunkPtr->GetManagedComponentAccessor(ref targetTransformHandle, EntityManager);
 
                 for (int i = 0; i < chunkCount; i++)
                 {
@@ -95,7 +157,7 @@ namespace MagicTween.Core.Transforms.Systems
                     if (target.target == null) Debugger.LogExceptionInsideTween(new MissingReferenceException(NULL_ERROR_MESSAGE));
 #endif
                     var transformIndex = TransformManager.IndexOf(target.instanceId);
-                    indexLookup[transformIndex] = arrayOffset;
+                    AddIndexLookup(ref indexLookup, transformIndex, arrayOffset);
 
                     arrayOffset++;
                 }
@@ -110,10 +172,20 @@ namespace MagicTween.Core.Transforms.Systems
                 indexLookup = indexLookup
             }.Schedule(transformAccessArray);
             jobHandle.Complete();
+        }
 
+        protected override void OnDestroy()
+        {
             valuePtrArray.Dispose();
             startValuePtrArray.Dispose();
             accessorFlagsPtrArray.Dispose();
+            translationModePtrArray.Dispose();
+
+            for (int i = 0; i < indexLookup.Length; i++)
+            {
+                var list = indexLookup[i];
+                if (!list.IsCreated) list.Dispose();
+            }
             indexLookup.Dispose();
         }
 
@@ -126,18 +198,26 @@ namespace MagicTween.Core.Transforms.Systems
             [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenStartValue<TValue>>> startValuePtrArray;
             [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenAccessorFlags>> accessorFlagsPtrArray;
             [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenTranslationModeData>> translationModePtrArray;
-            [NativeDisableContainerSafetyRestriction] public NativeHashMap<int, int> indexLookup;
+            [NativeDisableContainerSafetyRestriction] public NativeArray<UnsafeList<int>> indexLookup;
 
             [BurstCompile]
             public void Execute(int index, TransformAccess transform)
             {
                 if (!transform.isValid) return;
-                if (!indexLookup.TryGetValue(index, out var componentIndex)) return;
+                if (indexLookup.Length <= index) return;
 
-                var flags = accessorFlagsPtrArray[componentIndex].Ptr->flags;
-                var translationMode = translationModePtrArray[componentIndex].Ptr->value;
-                if (translationMode == TweenTranslationMode.To && (flags & AccessorFlags.Getter) == AccessorFlags.Getter) startValuePtrArray[componentIndex].Ptr->value = translator.GetValue(ref transform);
-                if ((flags & AccessorFlags.Setter) == AccessorFlags.Setter) translator.Apply(ref transform, valuePtrArray[componentIndex].Ptr->value);
+                var indexArray = indexLookup[index];
+                if (!indexArray.IsCreated) return;
+
+                for (int i = 0; i < indexArray.Length; i++)
+                {
+                    var componentIndex = indexArray[i];
+
+                    var flags = accessorFlagsPtrArray[componentIndex].Ptr->flags;
+                    var translationMode = translationModePtrArray[componentIndex].Ptr->value;
+                    if (translationMode == TweenTranslationMode.To && (flags & AccessorFlags.Getter) == AccessorFlags.Getter) startValuePtrArray[componentIndex].Ptr->value = translator.GetValue(ref transform);
+                    if ((flags & AccessorFlags.Setter) == AccessorFlags.Setter) translator.Apply(ref transform, valuePtrArray[componentIndex].Ptr->value);
+                }
             }
         }
     }

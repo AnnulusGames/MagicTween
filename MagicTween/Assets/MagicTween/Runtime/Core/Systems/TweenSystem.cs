@@ -7,6 +7,7 @@ namespace MagicTween.Core.Systems
 {
     [BurstCompile]
     [UpdateInGroup(typeof(MagicTweenCoreSystemGroup))]
+    [RequireMatchingQueriesForUpdate]
     public partial class TweenSystem : SystemBase
     {
         TweenCleanupSystem cleanupSystem;

@@ -8,6 +8,7 @@ using MagicTween.Diagnostics;
 namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenCallbackSystemGroup))]
+    [RequireMatchingQueriesForUpdate]
     public sealed partial class TweenCallbackSystem : SystemBase
     {
         public bool IsExecuting => _isExecuting;

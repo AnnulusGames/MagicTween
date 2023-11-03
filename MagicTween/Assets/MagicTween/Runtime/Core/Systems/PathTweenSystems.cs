@@ -37,6 +37,7 @@ namespace MagicTween.Core.Systems
 
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
     [BurstCompile]
+    [RequireMatchingQueriesForUpdate]
     public partial class PathTweenDelegateTranslationSystem : SystemBase
     {
         EntityQuery query1;
