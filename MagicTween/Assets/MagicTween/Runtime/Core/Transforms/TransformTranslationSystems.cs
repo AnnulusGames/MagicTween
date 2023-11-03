@@ -51,6 +51,9 @@ namespace MagicTween.Core.Transforms.Systems
     internal sealed partial class TweenTransformLocalEulerAnglesTranslationSystem : TweenTransformTranslationSystemBase<float3, NoOptions, Float3TweenPlugin, TransformLocalEulerAnglesTranslator> { }
 
     [BurstCompile]
+    internal sealed partial class TweenTransformLocalEulerAnglesXTranslationSystem : TweenTransformTranslationSystemBase<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesXTranslator> { }
+
+    [BurstCompile]
     internal sealed partial class TweenTransformLocalEulerAnglesYTranslationSystem : TweenTransformTranslationSystemBase<float, NoOptions, FloatTweenPlugin, TransformLocalEulerAnglesYTranslator> { }
     
     [BurstCompile]
