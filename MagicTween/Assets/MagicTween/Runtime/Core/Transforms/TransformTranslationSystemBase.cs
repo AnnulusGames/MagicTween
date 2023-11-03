@@ -59,6 +59,7 @@ namespace MagicTween.Core.Transforms.Systems
             var tweenValueHandle = SystemAPI.GetComponentTypeHandle<TweenValue<TValue>>(true);
             var tweenStartValueHandle = SystemAPI.GetComponentTypeHandle<TweenStartValue<TValue>>();
             var accessorFlagsTypeHandle = SystemAPI.GetComponentTypeHandle<TweenAccessorFlags>(true);
+            var translationModeHandle = SystemAPI.GetComponentTypeHandle<TweenTranslationModeData>(true);
             var targetTransformHandle = SystemAPI.ManagedAPI.GetComponentTypeHandle<TweenTargetTransform>();
 
             var chunks = query.ToArchetypeChunkArray(Allocator.Temp);
@@ -66,6 +67,7 @@ namespace MagicTween.Core.Transforms.Systems
             var valuePtrArray = new NativeArray<ComponentPtr<TweenValue<TValue>>>(entityCount, Allocator.TempJob);
             var startValuePtrArray = new NativeArray<ComponentPtr<TweenStartValue<TValue>>>(entityCount, Allocator.TempJob);
             var accessorFlagsPtrArray = new NativeArray<ComponentPtr<TweenAccessorFlags>>(entityCount, Allocator.TempJob);
+            var translationModePtrArray = new NativeArray<ComponentPtr<TweenTranslationModeData>>(entityCount, Allocator.TempJob);
             var indexLookup = new NativeHashMap<int, int>(entityCount, Allocator.TempJob);
 
             CompleteDependency();
@@ -78,11 +80,13 @@ namespace MagicTween.Core.Transforms.Systems
                 var valuePtr = chunkPtr->GetComponentDataPtrRO(ref tweenValueHandle);
                 var startValuePtr = chunkPtr->GetComponentDataPtrRW(ref tweenStartValueHandle);
                 var accessorFlagsPtr = chunkPtr->GetComponentDataPtrRO(ref accessorFlagsTypeHandle);
+                var translationModePtr = chunkPtr->GetComponentDataPtrRO(ref translationModeHandle);
                 var targets = chunkPtr->GetManagedComponentAccessor(ref targetTransformHandle, EntityManager);
 
                 SetPtrs(valuePtr, chunkCount, ref valuePtrArray, arrayOffset);
                 SetPtrs(startValuePtr, chunkCount, ref startValuePtrArray, arrayOffset);
                 SetPtrs(accessorFlagsPtr, chunkCount, ref accessorFlagsPtrArray, arrayOffset);
+                SetPtrs(translationModePtr, chunkCount, ref translationModePtrArray, arrayOffset);
 
                 for (int i = 0; i < chunkCount; i++)
                 {
@@ -102,6 +106,7 @@ namespace MagicTween.Core.Transforms.Systems
                 valuePtrArray = valuePtrArray,
                 startValuePtrArray = startValuePtrArray,
                 accessorFlagsPtrArray = accessorFlagsPtrArray,
+                translationModePtrArray = translationModePtrArray,
                 indexLookup = indexLookup
             }.Schedule(transformAccessArray);
             jobHandle.Complete();
@@ -120,6 +125,7 @@ namespace MagicTween.Core.Transforms.Systems
             [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenValue<TValue>>> valuePtrArray;
             [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenStartValue<TValue>>> startValuePtrArray;
             [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenAccessorFlags>> accessorFlagsPtrArray;
+            [NativeDisableContainerSafetyRestriction] public NativeArray<ComponentPtr<TweenTranslationModeData>> translationModePtrArray;
             [NativeDisableContainerSafetyRestriction] public NativeHashMap<int, int> indexLookup;
 
             [BurstCompile]
@@ -129,7 +135,8 @@ namespace MagicTween.Core.Transforms.Systems
                 if (!indexLookup.TryGetValue(index, out var componentIndex)) return;
 
                 var flags = accessorFlagsPtrArray[componentIndex].Ptr->flags;
-                if ((flags & AccessorFlags.Getter) == AccessorFlags.Getter) startValuePtrArray[componentIndex].Ptr->value = translator.GetValue(ref transform);
+                var translationMode = translationModePtrArray[componentIndex].Ptr->value;
+                if (translationMode == TweenTranslationMode.To && (flags & AccessorFlags.Getter) == AccessorFlags.Getter) startValuePtrArray[componentIndex].Ptr->value = translator.GetValue(ref transform);
                 if ((flags & AccessorFlags.Setter) == AccessorFlags.Setter) translator.Apply(ref transform, valuePtrArray[componentIndex].Ptr->value);
             }
         }
