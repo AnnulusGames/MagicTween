@@ -15,6 +15,12 @@ namespace MagicTween.Tests
             flag = false;
         }
 
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            MagicTweenSettings.captureExceptions = false;
+        }
+
         [UnityTest]
         public IEnumerator Test_OnStart()
         {

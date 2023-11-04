@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
@@ -40,101 +39,21 @@ namespace MagicTween.Core.Components
 
     public sealed class TweenCallbackActions : IComponentData, IDisposable
     {
-        public Action onStart;
-        public Action onPlay;
-        public Action onPause;
-        public Action onUpdate;
-        public Action onStepComplete;
-        public Action onComplete;
-        public Action onKill;
+        public FastAction onStart = new();
+
+        public FastAction onPlay = new();
+        public FastAction onPause = new();
+        public FastAction onUpdate = new();
+        public FastAction onStepComplete = new();
+        public FastAction onComplete = new();
+        public FastAction onKill = new();
 
         // internal callback
-        public Action onRewind;
+        public FastAction onRewind = new();
 
         public void Dispose()
         {
             TweenCallbackActionsPool.Return(this);
-        }
-
-        internal bool HasAction()
-        {
-            if (onStart != null) return true;
-            if (onPlay != null) return true;
-            if (onPause != null) return true;
-            if (onUpdate != null) return true;
-            if (onStepComplete != null) return true;
-            if (onComplete != null) return true;
-            if (onKill != null) return true;
-            if (onRewind != null) return true;
-            return false;
-        }
-    }
-
-    public sealed class TweenCallbackActionsNoAlloc : IComponentData, IDisposable
-    {
-        public class FastAction
-        {
-            struct Item
-            {
-                public object target;
-                public Action<object> action;
-            }
-
-            Item[] _items = new Item[4];
-            int _count;
-
-            public int Count => _count;
-
-            public void Add(object target, Action<object> action)
-            {
-                if (_items.Length == _count)
-                {
-                    Array.Resize(ref _items, _count * 2);
-                }
-
-                _items[_count] = new Item()
-                {
-                    target = target,
-                    action = action
-                };
-                _count++;
-            }
-
-            public void Invoke()
-            {
-                for (int i = 0; i < _items.Length; i++)
-                {
-                    if (i == _count) return;
-                    var item = _items[i];
-                    item.action?.Invoke(item.target);
-                }
-            }
-
-            public void Clear()
-            {
-                for (int i = 0; i < _items.Length; i++)
-                {
-                    _items[i] = default;
-                }
-                _count = 0;
-            }
-        }
-
-        public readonly FastAction onStart = new();
-
-        public readonly FastAction onPlay = new();
-        public readonly FastAction onPause = new();
-        public readonly FastAction onUpdate = new();
-        public readonly FastAction onStepComplete = new();
-        public readonly FastAction onComplete = new();
-        public readonly FastAction onKill = new();
-
-        // internal callback
-        public readonly FastAction onRewind = new();
-
-        public void Dispose()
-        {
-            TweenCallbackActionsNoAllocPool.Return(this);
         }
 
         internal bool HasAction()

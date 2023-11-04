@@ -1,9 +1,10 @@
 using System;
+using Unity.Assertions;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using MagicTween.Core;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
-using Unity.Collections.LowLevel.Unsafe;
 
 namespace MagicTween
 {
@@ -32,85 +33,57 @@ namespace MagicTween
             }
         }
 
-        internal static TweenCallbackActionsNoAlloc GetOrAddActionsNoAlloc(in Entity entity, object target)
-        {
-            if (ECSCache.EntityManager.HasComponent<TweenCallbackActionsNoAlloc>(entity))
-            {
-                return ECSCache.EntityManager.GetComponentData<TweenCallbackActionsNoAlloc>(entity);
-            }
-            else
-            {
-                var actions = TweenCallbackActionsNoAllocPool.Rent();
-                if (ECSCache.CallbackSystem.IsExecuting)
-                {
-                    // Use EntityCommandBuffer to avoid structural changes
-                    var commandBuffer = ECSCache.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-                    commandBuffer.AddComponent(entity, actions);
-                }
-                else
-                {
-                    ECSCache.EntityManager.AddComponentData(entity, actions);
-                }
-                return actions;
-            }
-        }
-
         internal static TweenCallbackActions GetOrAddCallbackActions<T>(this T self) where T : struct, ITweenHandle
         {
             return GetOrAddActions(self.GetEntity());
         }
 
-        internal static TweenCallbackActionsNoAlloc GetOrAddCallbackActionsNoAlloc<T>(this T self, object target) where T : struct, ITweenHandle
-        {
-            return GetOrAddActionsNoAlloc(self.GetEntity(), target);
-        }
-
         public static T OnStart<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onStart += callback;
+            GetOrAddActions(self.GetEntity()).onStart.Add(callback);
             return self;
         }
 
         public static T OnPlay<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onPlay += callback;
+            GetOrAddActions(self.GetEntity()).onPlay.Add(callback);
             return self;
         }
 
         public static T OnUpdate<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onUpdate += callback;
+            GetOrAddActions(self.GetEntity()).onUpdate.Add(callback);
             return self;
         }
 
         public static T OnPause<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onPause += callback;
+            GetOrAddActions(self.GetEntity()).onPause.Add(callback);
             return self;
         }
 
         public static T OnStepComplete<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onStepComplete += callback;
+            GetOrAddActions(self.GetEntity()).onStepComplete.Add(callback);
             return self;
         }
 
         public static T OnComplete<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onComplete += callback;
+            GetOrAddActions(self.GetEntity()).onComplete.Add(callback);
             return self;
         }
 
         public static T OnKill<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddActions(self.GetEntity()).onKill += callback;
+            GetOrAddActions(self.GetEntity()).onKill.Add(callback);
             return self;
         }
 
@@ -118,9 +91,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onPlay
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onPlay.Add(target, callback);
             return self;
         }
 
@@ -128,9 +101,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onStart
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onStart.Add(target, callback);
             return self;
         }
 
@@ -138,9 +111,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onUpdate
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onUpdate.Add(target, callback);
             return self;
         }
 
@@ -148,9 +121,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onPause
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onPause.Add(target, callback);
             return self;
         }
 
@@ -158,9 +131,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onStepComplete
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onStepComplete.Add(target, callback);
             return self;
         }
 
@@ -168,9 +141,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onComplete
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onComplete.Add(target, callback);
             return self;
         }
 
@@ -178,9 +151,9 @@ namespace MagicTween
             where T : struct, ITweenHandle
             where TObject : class
         {
+            Assert.IsNotNull(target);
             AssertTween.IsActive(self);
-            GetOrAddActionsNoAlloc(self.GetEntity(), target).onKill
-                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            GetOrAddActions(self.GetEntity()).onKill.Add(target, callback);
             return self;
         }
     }

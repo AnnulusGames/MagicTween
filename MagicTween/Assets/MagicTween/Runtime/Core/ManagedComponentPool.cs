@@ -154,54 +154,6 @@ namespace MagicTween.Core
         {
             if (instance.HasAction())
             {
-                instance.onStart = null;
-                instance.onPlay = null;
-                instance.onPause = null;
-                instance.onUpdate = null;
-                instance.onStepComplete = null;
-                instance.onComplete = null;
-                instance.onKill = null;
-                instance.onRewind = null;
-                stack.Push(instance);
-            }
-        }
-    }
-
-    public static class TweenCallbackActionsNoAllocPool
-    {
-        readonly static Stack<TweenCallbackActionsNoAlloc> stack;
-        const int InitialSize = 256;
-
-        static TweenCallbackActionsNoAllocPool()
-        {
-            stack = new(InitialSize);
-            Prewarm(InitialSize);
-        }
-
-        public static void Prewarm(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                stack.Push(new());
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TweenCallbackActionsNoAlloc Rent()
-        {
-            if (!stack.TryPop(out var result))
-            {
-                result = new();
-            }
-
-            return result;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Return(TweenCallbackActionsNoAlloc instance)
-        {
-            if (instance.HasAction())
-            {
                 instance.onStart.Clear();
                 instance.onPlay.Clear();
                 instance.onPause.Clear();

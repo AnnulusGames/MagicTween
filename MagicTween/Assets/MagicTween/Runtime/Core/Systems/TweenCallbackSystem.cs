@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Entities;
 using MagicTween.Core.Components;
@@ -14,18 +13,13 @@ namespace MagicTween.Core.Systems
         public bool IsExecuting => _isExecuting;
 
         bool _isExecuting;
-        EntityQuery query1;
-        EntityQuery query2;
+        EntityQuery query;
 
         protected override void OnCreate()
         {
-            query1 = SystemAPI.QueryBuilder()
+            query = SystemAPI.QueryBuilder()
                 .WithAspect<TweenAspect>()
                 .WithAll<TweenCallbackActions>()
-                .Build();
-            query2 = SystemAPI.QueryBuilder()
-                .WithAspect<TweenAspect>()
-                .WithAll<TweenCallbackActionsNoAlloc>()
                 .Build();
         }
 
@@ -35,18 +29,15 @@ namespace MagicTween.Core.Systems
             try
             {
                 CompleteDependency();
-                var job1 = new SystemJob1();
-                job1.Run(query1);
-                var job2 = new SystemJob2();
-                job2.Run(query2);
+                var job = new SystemJob();
+                job.Run(query);
             }
             finally
             {
                 _isExecuting = false;
             }
         }
-
-        partial struct SystemJob1 : IJobEntity
+        partial struct SystemJob : IJobEntity
         {
             public void Execute(TweenCallbackActions actions, in TweenCallbackFlags callbackFlags)
             {
@@ -61,29 +52,7 @@ namespace MagicTween.Core.Systems
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            void TryInvoke(Action action)
-            {
-                try { action?.Invoke(); }
-                catch (Exception ex) { Debugger.LogExceptionInsideTween(ex); }
-            }
-        }
-
-        partial struct SystemJob2 : IJobEntity
-        {
-            public void Execute(TweenCallbackActionsNoAlloc actions, in TweenCallbackFlags callbackFlags)
-            {
-                if ((callbackFlags.flags & CallbackFlags.OnStart) == CallbackFlags.OnStart) TryInvoke(actions.onStart);
-                if ((callbackFlags.flags & CallbackFlags.OnPlay) == CallbackFlags.OnPlay) TryInvoke(actions.onPlay);
-                if ((callbackFlags.flags & CallbackFlags.OnPause) == CallbackFlags.OnPause) TryInvoke(actions.onPause);
-                if ((callbackFlags.flags & CallbackFlags.OnUpdate) == CallbackFlags.OnUpdate) TryInvoke(actions.onUpdate);
-                if ((callbackFlags.flags & CallbackFlags.OnRewind) == CallbackFlags.OnRewind) TryInvoke(actions.onRewind);
-                if ((callbackFlags.flags & CallbackFlags.OnStepComplete) == CallbackFlags.OnStepComplete) TryInvoke(actions.onStepComplete);
-                if ((callbackFlags.flags & CallbackFlags.OnComplete) == CallbackFlags.OnComplete) TryInvoke(actions.onComplete);
-                if ((callbackFlags.flags & CallbackFlags.OnKill) == CallbackFlags.OnKill) TryInvoke(actions.onKill);
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            void TryInvoke(TweenCallbackActionsNoAlloc.FastAction action)
+            void TryInvoke(FastAction action)
             {
                 try
                 {

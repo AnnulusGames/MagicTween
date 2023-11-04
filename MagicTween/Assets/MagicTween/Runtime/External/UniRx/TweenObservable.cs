@@ -12,27 +12,27 @@ namespace MagicTween
         public TweenObservable(Tween<TValue, TOptions> tween)
         {
             var callbacks = tween.GetOrAddCallbackActions();
-            callbacks.onUpdate += () =>
+            callbacks.onUpdate.Add(() =>
             {
                 for (int i = 0; i < observers.Count; i++)
                 {
                     observers[i].OnNext(tween.GetValue());
                 }
-            };
-            callbacks.onComplete += () =>
+            });
+            callbacks.onComplete.Add(() =>
             {
                 for (int i = 0; i < observers.Count; i++)
                 {
                     observers[i].OnNext(tween.GetValue());
                 }
-            };
-            callbacks.onKill += () =>
+            });
+            callbacks.onKill.Add(() =>
             {
                 for (int i = 0; i < observers.Count; i++)
                 {
                     observers[i].OnCompleted();
                 }
-            };
+            });
         }
 
         readonly List<IObserver<TValue>> observers = new();
