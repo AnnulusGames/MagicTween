@@ -120,7 +120,17 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             GetOrAddActionsNoAlloc(self.GetEntity(), target).onPlay
-                .Add((target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback)));
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
+            return self;
+        }
+
+        public static T OnStart<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            AssertTween.IsActive(self);
+            GetOrAddActionsNoAlloc(self.GetEntity(), target).onStart
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
             return self;
         }
 
@@ -130,7 +140,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             GetOrAddActionsNoAlloc(self.GetEntity(), target).onUpdate
-                .Add((target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback)));
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
             return self;
         }
 
@@ -140,7 +150,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             GetOrAddActionsNoAlloc(self.GetEntity(), target).onPause
-                .Add((target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback)));
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
             return self;
         }
 
@@ -150,7 +160,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             GetOrAddActionsNoAlloc(self.GetEntity(), target).onStepComplete
-                .Add((target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback)));
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
             return self;
         }
 
@@ -160,7 +170,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             GetOrAddActionsNoAlloc(self.GetEntity(), target).onComplete
-                .Add((target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback)));
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
             return self;
         }
 
@@ -170,7 +180,7 @@ namespace MagicTween
         {
             AssertTween.IsActive(self);
             GetOrAddActionsNoAlloc(self.GetEntity(), target).onKill
-                .Add((target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback)));
+                .Add(target, UnsafeUtility.As<Action<TObject>, Action<object>>(ref callback));
             return self;
         }
     }

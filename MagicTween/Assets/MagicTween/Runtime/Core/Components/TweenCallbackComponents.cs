@@ -72,16 +72,65 @@ namespace MagicTween.Core.Components
 
     public sealed class TweenCallbackActionsNoAlloc : IComponentData, IDisposable
     {
-        public readonly List<(object target, Action<object> action)> onStart = new(8);
-        public readonly List<(object target, Action<object> action)> onPlay = new(8);
-        public readonly List<(object target, Action<object> action)> onPause = new(8);
-        public readonly List<(object target, Action<object> action)> onUpdate = new(8);
-        public readonly List<(object target, Action<object> action)> onStepComplete = new(8);
-        public readonly List<(object target, Action<object> action)> onComplete = new(8);
-        public readonly List<(object target, Action<object> action)> onKill = new(8);
+        public class FastAction
+        {
+            struct Item
+            {
+                public object target;
+                public Action<object> action;
+            }
+
+            Item[] _items = new Item[4];
+            int _count;
+
+            public int Count => _count;
+
+            public void Add(object target, Action<object> action)
+            {
+                if (_items.Length == _count)
+                {
+                    Array.Resize(ref _items, _count * 2);
+                }
+
+                _items[_count] = new Item()
+                {
+                    target = target,
+                    action = action
+                };
+                _count++;
+            }
+
+            public void Invoke()
+            {
+                for (int i = 0; i < _items.Length; i++)
+                {
+                    if (i == _count) return;
+                    var item = _items[i];
+                    item.action?.Invoke(item.target);
+                }
+            }
+
+            public void Clear()
+            {
+                for (int i = 0; i < _items.Length; i++)
+                {
+                    _items[i] = default;
+                }
+                _count = 0;
+            }
+        }
+
+        public readonly FastAction onStart = new();
+
+        public readonly FastAction onPlay = new();
+        public readonly FastAction onPause = new();
+        public readonly FastAction onUpdate = new();
+        public readonly FastAction onStepComplete = new();
+        public readonly FastAction onComplete = new();
+        public readonly FastAction onKill = new();
 
         // internal callback
-        public readonly List<(object target, Action<object> action)> onRewind = new(8);
+        public readonly FastAction onRewind = new();
 
         public void Dispose()
         {

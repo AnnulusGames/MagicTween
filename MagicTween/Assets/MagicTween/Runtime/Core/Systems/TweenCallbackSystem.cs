@@ -83,15 +83,11 @@ namespace MagicTween.Core.Systems
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            void TryInvoke(List<(object, Action<object>)> actions)
+            void TryInvoke(TweenCallbackActionsNoAlloc.FastAction action)
             {
                 try
                 {
-                    for (int i = 0; i < actions.Count; i++)
-                    {
-                        var action = actions[i];
-                        action.Item2.Invoke(action.Item1);
-                    }
+                    action.Invoke();
                 }
                 catch (Exception ex) { Debugger.LogExceptionInsideTween(ex); }
             }
