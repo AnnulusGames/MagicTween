@@ -4,6 +4,7 @@ using System.Collections;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using NUnit.Framework;
+using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace MagicTween.Tests
@@ -27,8 +28,16 @@ namespace MagicTween.Tests
         [UnityTest]
         public IEnumerator Test_Await() => UniTask.ToCoroutine(async () =>
         {
-            var foo = 0f;
-            await Tween.FromTo(x => foo = x, 0f, 10f, 2f);
+            await Tween.Empty(1f);
+        });
+
+        [UnityTest]
+        public IEnumerator Test_Await_Multiple() => UniTask.ToCoroutine(async () =>
+        {
+            await Tween.Empty(0.5f);
+            await Tween.Empty(0.5f);
+            await Tween.Empty(0.5f);
+            await Tween.Empty(0.5f);
         });
 
         [UnityTest]

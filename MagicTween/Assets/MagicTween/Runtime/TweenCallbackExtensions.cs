@@ -1,6 +1,5 @@
 using System;
 using Unity.Assertions;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using MagicTween.Core;
 using MagicTween.Core.Components;
@@ -10,7 +9,7 @@ namespace MagicTween
 {
     public static class TweenCallbackExtensions
     {
-        internal static TweenCallbackActions GetOrAddActions(in Entity entity)
+        static TweenCallbackActions GetOrAddActions(in Entity entity)
         {
             if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
@@ -18,18 +17,16 @@ namespace MagicTween
             }
             else
             {
-                var actions = TweenCallbackActionsPool.Rent();
                 if (ECSCache.CallbackSystem.IsExecuting)
                 {
-                    // Use EntityCommandBuffer to avoid structural changes
-                    var commandBuffer = ECSCache.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-                    commandBuffer.AddComponent(entity, actions);
+                    return ECSCache.CallbackSystem.TryEnqueueAndGetActions(entity);
                 }
                 else
                 {
+                    var actions = TweenCallbackActionsPool.Rent();
                     ECSCache.EntityManager.AddComponentData(entity, actions);
+                    return actions;
                 }
-                return actions;
             }
         }
 

@@ -31,10 +31,10 @@ namespace MagicTween
             StepComplete
         }
 
-        public static TweenAwaiter GetAwaiter<T>(this T tween)
+        public static UniTask.Awaiter GetAwaiter<T>(this T tween)
             where T : struct, ITweenHandle
         {
-            return new TweenAwaiter(tween.AsUnitTween());
+            return AwaitForKill(tween).GetAwaiter();
         }
 
         public static UniTask WithCancellation<T>(this T tween, CancellationToken cancellationToken)
@@ -84,38 +84,6 @@ namespace MagicTween
             if (!tween.IsActive()) return UniTask.CompletedTask;
             return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour, cancellationToken, CallbackType.StepComplete, out var token), token);
         }
-
-        public struct TweenAwaiter : ICriticalNotifyCompletion
-        {
-            readonly Tween tween;
-
-            public bool IsCompleted => !tween.IsActive();
-
-            public TweenAwaiter(Tween tween)
-            {
-                this.tween = tween;
-            }
-
-            public TweenAwaiter GetAwaiter()
-            {
-                return this;
-            }
-
-            public void GetResult()
-            {
-            }
-
-            public void OnCompleted(Action continuation)
-            {
-                UnsafeOnCompleted(continuation);
-            }
-
-            public void UnsafeOnCompleted(Action continuation)
-            {
-                tween.GetOrAddCallbackActions().onKill = PooledTweenCallback.Create(continuation);
-            }
-        }
-
 
         sealed class TweenConfiguredSource : IUniTaskSource, ITaskPoolNode<TweenConfiguredSource>
         {
