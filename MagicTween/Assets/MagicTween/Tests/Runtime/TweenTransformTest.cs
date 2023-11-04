@@ -10,7 +10,7 @@ namespace MagicTween.Tests
     public sealed class TweenTransformTest
     {
         Transform transform;
-        const float Duration = 3f;
+        const float Duration = 1.5f;
         readonly WaitForSeconds waitForSeconds = new(Duration + 0.001f);
 
         [OneTimeSetUp]
