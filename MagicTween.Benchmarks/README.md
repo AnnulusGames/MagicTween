@@ -1,6 +1,6 @@
 # MagicTween.Benchmarks
 
-[日本語版READMEはこちら](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/README_JP.md)
+[日本語版READMEはこちら](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/README_JA.md)
 
 This project measures the performance of tween libraries published on Github, Asset Store, etc. using the [Performance Testing API](https://docs.unity3d.com/Packages/com.unity.test-framework.performance@3.0/manual/index.html), and includes the results and the source code used.
 

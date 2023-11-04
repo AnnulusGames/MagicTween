@@ -62,12 +62,12 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 
 ECSのコンポーネント内のfloatの値を`Tween.Entity.To()`でトゥイーンさせる場合、さらに高速な動作を実現することが可能になります。
 
-パフォーマンスの詳細については`MagicTween.Benchmarks`プロジェクトの[README](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/README_JP.md)を参照してください。
+パフォーマンスの詳細については`MagicTween.Benchmarks`プロジェクトの[README](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/README_JA.md)を参照してください。
 
 ## サンプル
 
 `MagicTween.Samples`プロジェクトには、実際にMagic Tweenを用いて実装されたサンプルがいくつも用意されています。
-詳細についてはプロジェクトの[README](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Samples/README_JP.md)を参照してください。
+詳細についてはプロジェクトの[README](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Samples/README_JA.md)を参照してください。
 
 ## セットアップ
 
