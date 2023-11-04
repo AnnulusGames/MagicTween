@@ -57,5 +57,14 @@ namespace MagicTween
             AssertTween.IsActive(self);
             return ECSCache.EntityManager.GetComponentData<TweenValue<TValue>>(self.GetEntity()).value;
         }
+
+        public static TOptions GetOptions<TValue, TOptions>(this Tween<TValue, TOptions> self)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+        {
+            AssertTween.IsActive(self);
+            return ECSCache.EntityManager.GetComponentData<TweenOptions<TOptions>>(self.GetEntity()).value;
+        }
+
     }
 }

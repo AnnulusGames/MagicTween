@@ -148,6 +148,20 @@ namespace MagicTween
             return SetLink(self, component.gameObject, linkBehaviour);
         }
 
+        public static Tween<TValue, TOptions> SetOptions<TValue, TOptions>(this Tween<TValue, TOptions> self, TOptions options)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+        {
+            AssertTween.IsActive(self);
+
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<TOptions>()
+            {
+                value = options
+            });
+
+            return self;
+        }
+
         public static Tween<TValue, IntegerTweenOptions> SetRoundingMode<TValue>(this Tween<TValue, IntegerTweenOptions> self, RoundingMode roundingMode)
             where TValue : unmanaged
         {
