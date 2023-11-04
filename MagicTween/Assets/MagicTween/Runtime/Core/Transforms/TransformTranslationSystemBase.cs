@@ -216,7 +216,7 @@ namespace MagicTween.Core.Transforms.Systems
                     var flags = accessorFlagsPtrArray[componentIndex].Ptr->flags;
                     var translationMode = translationModePtrArray[componentIndex].Ptr->value;
                     if (translationMode == TweenTranslationMode.To && (flags & AccessorFlags.Getter) == AccessorFlags.Getter) startValuePtrArray[componentIndex].Ptr->value = translator.GetValue(ref transform);
-                    if ((flags & AccessorFlags.Setter) == AccessorFlags.Setter) translator.Apply(ref transform, valuePtrArray[componentIndex].Ptr->value);
+                    else if ((flags & AccessorFlags.Setter) == AccessorFlags.Setter) translator.Apply(ref transform, valuePtrArray[componentIndex].Ptr->value);
                 }
             }
         }

@@ -112,7 +112,7 @@ namespace MagicTween.Core.Systems
                             Debugger.LogExceptionInsideTween(ex);
                         }
                     }
-                    if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                    else if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                     {
                         try
                         {
@@ -160,7 +160,7 @@ namespace MagicTween.Core.Systems
                             Debugger.LogExceptionInsideTween(ex);
                         }
                     }
-                    if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
+                    else if ((accessorFlagsPtr->flags & AccessorFlags.Setter) == AccessorFlags.Setter)
                     {
                         try
                         {

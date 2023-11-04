@@ -145,7 +145,6 @@ namespace MagicTween.Core
                 case TweenStatusType.WaitingForStart:
                     if (!aspect.autoPlay || currentPosition <= 0f)
                     {
-                        aspect.accessorFlags |= AccessorFlags.Getter;
                         break;
                     }
 
