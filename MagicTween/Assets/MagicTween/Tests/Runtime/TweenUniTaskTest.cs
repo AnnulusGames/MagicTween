@@ -91,7 +91,7 @@ namespace MagicTween.Tests
 
             var foo = 0f;
             var tween = Tween.FromTo(x => foo = x, 0f, 10f, 999f);
-            cancellationTokenSource.CancelAfter(1000);
+            InvokeAfter(() => cancellationTokenSource.Cancel(), 1f).Forget();
 
             try
             {
