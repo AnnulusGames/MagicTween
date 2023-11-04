@@ -1,22 +1,5 @@
 using Unity.Burst;
 using Unity.Mathematics;
-using MagicTween;
-using MagicTween.Plugins;
-
-[assembly: RegisterTweenType(typeof(double), typeof(NoOptions), typeof(DoubleTweenPlugin))]
-[assembly: RegisterTweenType(typeof(double2), typeof(NoOptions), typeof(Double2TweenPlugin))]
-[assembly: RegisterTweenType(typeof(double3), typeof(NoOptions), typeof(Double3TweenPlugin))]
-[assembly: RegisterTweenType(typeof(double4), typeof(NoOptions), typeof(Double4TweenPlugin))]
-[assembly: RegisterTweenType(typeof(float), typeof(NoOptions), typeof(FloatTweenPlugin))]
-[assembly: RegisterTweenType(typeof(float2), typeof(NoOptions), typeof(Float2TweenPlugin))]
-[assembly: RegisterTweenType(typeof(float3), typeof(NoOptions), typeof(Float3TweenPlugin))]
-[assembly: RegisterTweenType(typeof(float4), typeof(NoOptions), typeof(Float4TweenPlugin))]
-[assembly: RegisterTweenType(typeof(int), typeof(IntegerTweenOptions), typeof(IntTweenPlugin))]
-[assembly: RegisterTweenType(typeof(int2), typeof(IntegerTweenOptions), typeof(Int2TweenPlugin))]
-[assembly: RegisterTweenType(typeof(int3), typeof(IntegerTweenOptions), typeof(Int3TweenPlugin))]
-[assembly: RegisterTweenType(typeof(int4), typeof(IntegerTweenOptions), typeof(Int4TweenPlugin))]
-[assembly: RegisterTweenType(typeof(long), typeof(IntegerTweenOptions), typeof(LongTweenPlugin))]
-[assembly: RegisterTweenType(typeof(quaternion), typeof(NoOptions), typeof(QuaternionTweenPlugin))]
 
 namespace MagicTween.Plugins
 {
@@ -26,6 +9,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct DoubleTweenPlugin : ICustomTweenPlugin<double, NoOptions>
     {
         [BurstCompile]
@@ -38,6 +22,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Double2TweenPlugin : ICustomTweenPlugin<double2, NoOptions>
     {
         [BurstCompile]
@@ -50,6 +35,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Double3TweenPlugin : ICustomTweenPlugin<double3, NoOptions>
     {
         [BurstCompile]
@@ -62,6 +48,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Double4TweenPlugin : ICustomTweenPlugin<double4, NoOptions>
     {
         [BurstCompile]
@@ -74,6 +61,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct FloatTweenPlugin : ICustomTweenPlugin<float, NoOptions>
     {
         [BurstCompile]
@@ -86,6 +74,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Float2TweenPlugin : ICustomTweenPlugin<float2, NoOptions>
     {
         [BurstCompile]
@@ -98,6 +87,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Float3TweenPlugin : ICustomTweenPlugin<float3, NoOptions>
     {
         [BurstCompile]
@@ -110,6 +100,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Float4TweenPlugin : ICustomTweenPlugin<float4, NoOptions>
     {
         [BurstCompile]
@@ -122,6 +113,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct IntTweenPlugin : ICustomTweenPlugin<int, IntegerTweenOptions>
     {
         [BurstCompile]
@@ -145,6 +137,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Int2TweenPlugin : ICustomTweenPlugin<int2, IntegerTweenOptions>
     {
         [BurstCompile]
@@ -176,6 +169,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Int3TweenPlugin : ICustomTweenPlugin<int3, IntegerTweenOptions>
     {
         [BurstCompile]
@@ -208,6 +202,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct Int4TweenPlugin : ICustomTweenPlugin<int4, IntegerTweenOptions>
     {
         [BurstCompile]
@@ -241,6 +236,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct LongTweenPlugin : ICustomTweenPlugin<long, IntegerTweenOptions>
     {
         [BurstCompile]
@@ -264,6 +260,7 @@ namespace MagicTween.Plugins
     }
 
     [BurstCompile]
+    [TweenPlugin]
     public readonly struct QuaternionTweenPlugin : ICustomTweenPlugin<quaternion, NoOptions>
     {
         [BurstCompile]
