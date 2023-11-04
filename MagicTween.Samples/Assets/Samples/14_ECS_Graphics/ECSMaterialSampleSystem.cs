@@ -1,12 +1,15 @@
 using Unity.Entities;
 using Unity.Rendering;
+using Unity.Burst;
 using MagicTween;
 using MagicTween.Translators;
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
+[BurstCompile]
 public partial struct ECSMaterialSampleSystem : ISystem
 {
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         foreach (var (baseColor, targetInfo, entity) in SystemAPI.Query<RefRW<URPMaterialPropertyBaseColor>, RefRO<TweenMaterialTarget>>().WithEntityAccess())

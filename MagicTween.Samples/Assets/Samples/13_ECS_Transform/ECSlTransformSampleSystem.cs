@@ -1,15 +1,18 @@
 using Unity.Entities;
 using Unity.Transforms;
+using Unity.Burst;
 using MagicTween;
 using MagicTween.Translators;
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
+[BurstCompile]
 public partial struct ECSTransformSampleSystem : ISystem
 {
     // Note: MagicTween's API is currently only available on the main thread.
     //       You cannot create tweens or control tweens with Play(), Complete(), etc. within a job.
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         // Enumerate Entities with 'TweenTarget' and 'LocalTransform' attached and create tweens.

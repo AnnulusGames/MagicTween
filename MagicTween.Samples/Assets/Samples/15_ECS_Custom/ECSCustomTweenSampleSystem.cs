@@ -1,10 +1,13 @@
 using Unity.Entities;
+using Unity.Burst;
 using MagicTween;
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
+[BurstCompile]
 public partial struct ECSCustomTweenSampleSystem : ISystem
 {
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         foreach (var (component, entity) in SystemAPI.Query<RefRO<SampleComponentData>>().WithEntityAccess())
