@@ -65,11 +65,11 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_64000_floats.png" width="800">
 
-通常のクラスのfloatの値を`Tween.To()`でトゥイーンさせる場合、他のライブラリの2〜5倍以上高速に動作します。
-
-ECSのコンポーネント内のfloatの値を`Tween.Entity.To()`でトゥイーンさせる場合、さらに高速な動作を実現することが可能になります。
+通常のクラスのfloatの値を`Tween.To()`でトゥイーンさせる場合、他のライブラリの2〜5倍以上高速に動作します。ECSのコンポーネント内のfloatの値を`Tween.Entity.To()`でトゥイーンさせる場合、さらに高速な動作を実現することが可能になります。
 
 また、トゥイーンの作成ごとに余計なGCアロケーションは一切発生しません。(stringなどのトゥイーンを除きます)
+
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_50000_transform_position.png" width="800">
 
 さらに`MAGICTWEEN_ENABLE_TRANSFORM_JOBS`を有効化することでTransformに特化したトゥイーンを作成できます。これにより、大量のTransformをトゥイーンさせる際のパフォーマンスが劇的に向上します。
 
@@ -682,7 +682,9 @@ v0.2より、IJobParallelForTransformを用いてTransformのトゥイーンを�
 
 追加後は通常通り拡張メソッドでTransformを操作するだけで、IJobParallelForTransformによる高速化が適用されるようになります。
 
-パフォーマンスの比較はグラフの通りです。50,000個のTransformをトゥイーンさせた場合、およそ2倍近くの高速化が適用されます。
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween/Assets/MagicTween/Documentation~/benchmark_transform_tween_job.png" width="800">
+
+パフォーマンスの比較はグラフの通りです。50,000個のTransformをトゥイーンさせた場合、およそ1.7倍近くの高速化が適用されます。
 
 ## TextMesh Pro
 

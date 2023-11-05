@@ -21,7 +21,7 @@ Also, details regarding machines and versions are below.
 
 ## Libraries
 
-* MagicTween (0.1.0)
+* MagicTween (0.2.0)
 * [DOTween Pro](https://assetstore.unity.com/packages/tools/visual-scripting/dotween-pro-32416) (1.0.375)
 * [LeanTween](https://assetstore.unity.com/packages/tools/animation/leantween-3595) (2.5.1)
 * [PrimeTween](https://assetstore.unity.com/packages/tools/animation/primetween-high-performance-animations-and-sequences-252960) (1.0.15)

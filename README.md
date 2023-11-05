@@ -65,11 +65,11 @@ In addition to powerful tweening functionality compatible with traditional compo
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_64000_floats.png" width="800">
 
-When tweening the float values of a regular class with `Tween.To()`, it operates 2 to 5 times faster than other libraries.
-
-When tweening the float values within ECS components using `Tween.Entity.To()`, even faster performance can be achieved.
+When tweening the float values of a regular class with `Tween.To()`, it operates 2 to 5 times faster than other libraries. When tweening the float values within ECS components using `Tween.Entity.To()`, even faster performance can be achieved.
 
 Furthermore, there are no additional GC allocations generated for each tween creation (excluding tweens involving strings).
+
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_50000_transform_position.png" width="800">
 
 Enabling `MAGICTWEEN_ENABLE_TRANSFORM_JOBS` allows you to create tweens specialized for Transforms. This dramatically improves performance when tweening a large number of Transforms.
 
@@ -660,7 +660,9 @@ Starting from v0.2, an option to accelerate Transform tweens using `IJobParallel
 
 Once added, the acceleration by `IJobParallelForTransform` will be applied by simply manipulating Transforms using the usual extension methods.
 
-The performance comparison is shown in the graph. When tweening 50,000 Transforms, there is an acceleration of nearly 2x.
+<img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween/Assets/MagicTween/Documentation~/benchmark_transform_tween_job.png" width="800">
+
+The performance comparison is shown in the graph. When tweening 50,000 Transforms, there is an acceleration of nearly 1.7x.
 
 ## TextMesh Pro
 
