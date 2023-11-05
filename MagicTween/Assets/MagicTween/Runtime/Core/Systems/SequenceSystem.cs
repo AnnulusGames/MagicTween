@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using MagicTween.Core.Components;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenCoreSystemGroup))]
     [UpdateAfter(typeof(TweenSystem))]
@@ -77,7 +77,7 @@ namespace MagicTween.Core
                             childAspect.Kill(ref parallelWriter);
                             break;
                         default:
-                            childAspect.Update(aspect.delay + aspect.duration * aspect.progress - childSequencePosition, ref parallelWriter);
+                            childAspect.Update(aspect.delay + aspect.duration * aspect.progress - childSequencePosition + (aspect.IsRewinding() ? -float.Epsilon : float.Epsilon), ref parallelWriter);
                             break;
                     }
                     

@@ -2,6 +2,8 @@ using Unity.Entities;
 
 namespace MagicTween.Core.Components
 {
+    public struct TweenPluginTag<TPlugin> : IComponentData where TPlugin : unmanaged { }
+
     public struct TweenValue<T> : IComponentData
         where T : unmanaged
     {

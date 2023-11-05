@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1706.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicTween.SourceGenerator", "MagicTween.SourceGenerator.csproj", "{4FBA395A-2CFA-440F-B27C-70EE3DDE4147}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FBA395A-2CFA-440F-B27C-70EE3DDE4147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FBA395A-2CFA-440F-B27C-70EE3DDE4147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FBA395A-2CFA-440F-B27C-70EE3DDE4147}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FBA395A-2CFA-440F-B27C-70EE3DDE4147}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {92108E04-CD67-4CD9-BC0A-0C2D52831681}
+	EndGlobalSection
+EndGlobal

@@ -4,16 +4,18 @@ using UnityEngine;
 
 namespace MagicTween.Core.Components
 {
-    public sealed class TweenPropertyAccessor<T> : IComponentData
+    public sealed class TweenDelegates<T> : IComponentData, IDisposable
     {
-        public readonly TweenGetter<T> getter;
-        public readonly TweenSetter<T> setter;
+        public TweenGetter<T> getter;
+        public TweenSetter<T> setter;
 
-        public TweenPropertyAccessor() { }
-        public TweenPropertyAccessor(TweenGetter<T> getter, TweenSetter<T> setter)
+        public TweenDelegates() { }
+
+        // Implement pooling using Dispose of Managed Component.
+        // This is not the expected use of Dispose, but it works.
+        public void Dispose()
         {
-            this.getter = getter;
-            this.setter = setter;
+            TweenDelegatesPool<T>.Return(this);
         }
     }
 
@@ -21,32 +23,50 @@ namespace MagicTween.Core.Components
     // use UnsafeUtility.As to force assignment of delegates when creating components.
     // So the type of the target and the type of the TweenGetter/TweenSetter argument must match absolutely,
     // otherwise undefined behavior will result.
-    public sealed class TweenPropertyAccessorUnsafe<T> : IComponentData
+    public sealed class TweenDelegatesNoAlloc<T> : IComponentData, IDisposable
     {
-        [HideInInspector] public readonly object target;
-        [HideInInspector] public readonly TweenGetter<object, T> getter;
-        [HideInInspector] public readonly TweenSetter<object, T> setter;
+        [HideInInspector] public object target;
+        [HideInInspector] public TweenGetter<object, T> getter;
+        [HideInInspector] public TweenSetter<object, T> setter;
 
-        public TweenPropertyAccessorUnsafe() { }
-        public TweenPropertyAccessorUnsafe(object target, TweenGetter<object, T> getter, TweenSetter<object, T> setter)
+        public TweenDelegatesNoAlloc() { }
+
+        public void Dispose()
         {
-            this.target = target;
-            this.getter = getter;
-            this.setter = setter;
+            TweenDelegatesNoAllocPool<T>.Return(this);
         }
     }
-    
-    public sealed class TweenCallbackActions : IComponentData
+
+    public sealed class TweenCallbackActions : IComponentData, IDisposable
     {
-        public Action onStart;
-        public Action onPlay;
-        public Action onPause;
-        public Action onUpdate;
-        public Action onStepComplete;
-        public Action onComplete;
-        public Action onKill;
+        public FastAction onStart = new();
+
+        public FastAction onPlay = new();
+        public FastAction onPause = new();
+        public FastAction onUpdate = new();
+        public FastAction onStepComplete = new();
+        public FastAction onComplete = new();
+        public FastAction onKill = new();
 
         // internal callback
-        public Action onRewind;
+        public FastAction onRewind = new();
+
+        public void Dispose()
+        {
+            TweenCallbackActionsPool.Return(this);
+        }
+
+        internal bool HasAction()
+        {
+            if (onStart.Count > 0) return true;
+            if (onPlay.Count > 0) return true;
+            if (onPause.Count > 0) return true;
+            if (onUpdate.Count > 0) return true;
+            if (onStepComplete.Count > 0) return true;
+            if (onComplete.Count > 0) return true;
+            if (onKill.Count > 0) return true;
+            if (onRewind.Count > 0) return true;
+            return false;
+        }
     }
 }

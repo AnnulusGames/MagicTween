@@ -1,6 +1,6 @@
 {
     "name": "Tests",
-    "rootNamespace": "",
+    "rootNamespace": "MagicTween.Benchmark",
     "references": [
         "Unity.Entities",
         "Unity.Collections",

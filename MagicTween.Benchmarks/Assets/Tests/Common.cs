@@ -1,18 +1,21 @@
 using Unity.Entities;
 
-public struct TestData : IComponentData
+namespace MagicTween.Benchmark
 {
-    public float value;
-}
-
-public class TestClass
-{
-    public float value;
-    public float valueProperty
+    public struct TestData : IComponentData
     {
-        get => value;
-        set => this.value = value;
+        public float value;
     }
 
-    public const string PropertyName = nameof(valueProperty);
+    public sealed class TestClass
+    {
+        public float value;
+        public float valueProperty
+        {
+            get => value;
+            set => this.value = value;
+        }
+
+        public const string PropertyName = nameof(valueProperty);
+    }
 }

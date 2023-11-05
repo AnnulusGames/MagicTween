@@ -1,6 +1,6 @@
 using UnityEngine;
 using Unity.Mathematics;
-using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {

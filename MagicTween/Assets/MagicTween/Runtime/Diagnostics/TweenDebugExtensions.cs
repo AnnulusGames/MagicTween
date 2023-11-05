@@ -1,6 +1,7 @@
-using MagicTween.Core;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween.Diagnostics
 {
@@ -59,13 +60,13 @@ namespace MagicTween.Diagnostics
 
             var callbacks = self.GetOrAddCallbackActions();
             var header = GetLogHeader(tag);
-            callbacks.onStart = () => Debugger.Log(header + "OnStart", false);
-            callbacks.onPlay = () => Debugger.Log(header + "OnPlay", false);
-            callbacks.onUpdate = () => Debugger.Log(header + "OnUpdate", false);
-            callbacks.onPause = () => Debugger.Log(header + "OnPause", false);
-            callbacks.onStepComplete = () => Debugger.Log(header + "OnStepComplete", false);
-            callbacks.onComplete = () => Debugger.Log(header + "OnComplete", false);
-            callbacks.onKill = () => Debugger.Log(header + "OnKill", false);
+            callbacks.onStart.Add(() => Debugger.Log(header + "OnStart", false));
+            callbacks.onPlay.Add(() => Debugger.Log(header + "OnPlay", false));
+            callbacks.onUpdate.Add(() => Debugger.Log(header + "OnUpdate", false));
+            callbacks.onPause.Add(() => Debugger.Log(header + "OnPause", false));
+            callbacks.onStepComplete.Add(() => Debugger.Log(header + "OnStepComplete", false));
+            callbacks.onComplete.Add(() => Debugger.Log(header + "OnComplete", false));
+            callbacks.onKill.Add(() => Debugger.Log(header + "OnKill", false));
             return self;
         }
 
@@ -74,7 +75,7 @@ namespace MagicTween.Diagnostics
             where TOptions : unmanaged, ITweenOptions
         {
             AssertTween.IsActive(self);
-            self.GetOrAddCallbackActions().onUpdate += () => Debugger.Log(self.GetValue().ToString());
+            self.GetOrAddCallbackActions().onUpdate.Add(() => Debugger.Log(self.GetValue().ToString()));
             return self;
         }
 
@@ -83,7 +84,7 @@ namespace MagicTween.Diagnostics
             AssertTween.IsActive(self);
 
             var text = self.GetValue();
-            self.GetOrAddCallbackActions().onUpdate += () => Debugger.Log(text.ConvertToString());
+            self.GetOrAddCallbackActions().onUpdate.Add(() => Debugger.Log(text.ConvertToString()));
             return self;
         }
 
@@ -91,7 +92,7 @@ namespace MagicTween.Diagnostics
         {
             AssertTween.IsActive(self);
 
-            TweenWorld.EntityManager.SetName(self.GetEntity(), name);
+            ECSCache.EntityManager.SetName(self.GetEntity(), name);
             return self;
         }
     }

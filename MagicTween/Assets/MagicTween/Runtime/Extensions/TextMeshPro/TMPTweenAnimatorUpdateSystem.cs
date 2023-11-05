@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Entities;
 using TMPro;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenTranslationSystemGroup))]
     public sealed partial class TMPTweenAnimatorUpdateSystem : SystemBase

@@ -1,8 +1,8 @@
 {
   "name": "com.annulusgames.magic-tween",
-  "version": "0.1.10",
+  "version": "0.2.0",
   "displayName": "Magic Tween",
-  "description": "Extremely fast tween library implemented with Unity ECS",
+  "description": "Extremely fast, GC-free and customizable tween library implemented with Unity ECS",
   "unity": "2022.1",
   "author": {
     "name": "Annulus Games",

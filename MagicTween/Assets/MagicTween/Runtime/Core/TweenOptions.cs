@@ -1,11 +1,10 @@
-using Unity.Entities;
-using MagicTween.Core;
-using MagicTween.Core.Components;
+using UnityEngine;
 
-[assembly: RegisterGenericComponentType(typeof(TweenOptions<NoOptions>))]
-
-namespace MagicTween.Core
+namespace MagicTween
 {
     public interface ITweenOptions { }
-    public readonly struct NoOptions : ITweenOptions { }
+    public readonly struct NoOptions : ITweenOptions
+    {
+        [HideInInspector] readonly byte dummy;
+    }
 }

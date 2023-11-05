@@ -1,0 +1,38 @@
+{
+    "name": "MagicTween.Tests.Runtime",
+    "rootNamespace": "MagicTween.Tests",
+    "references": [
+        "MagicTween",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.Entities",
+        "Unity.Mathematics",
+        "Unity.Collections",
+        "UniTask",
+        "UniRx"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.cysharp.unitask",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_UNITASK"
+        },
+        {
+            "name": "com.neuecc.unirx",
+            "expression": "",
+            "define": "MAGICTWEEN_SUPPORT_UNIRX"
+        }
+    ],
+    "noEngineReferences": false
+}

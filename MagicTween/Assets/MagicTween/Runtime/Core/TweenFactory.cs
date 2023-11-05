@@ -1,28 +1,29 @@
+using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
-using MagicTween.Core.Components;
 using Unity.Burst;
+using MagicTween.Core.Components;
+using MagicTween.Core.Controllers;
+using MagicTween.Plugins;
 
 namespace MagicTween.Core
 {
-    using static TweenWorld;
-
     [BurstCompile]
-    public static class TweenFactory
+    internal static partial class TweenFactory
     {
         public static Tween<TValue, TOptions> CreateToTween<TValue, TOptions, TPlugin>(
             TweenGetter<TValue> getter, TweenSetter<TValue> setter, in TValue endValue, float duration)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetLambdaTweenArchetype<TValue, TOptions>();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegateTweenArchetype<TValue, TOptions, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, TOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            InitializeLambdaTweenComponents<TValue, TPlugin>(entity, getter(), endValue, getter, setter);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddPropertyAccessor<TValue, TOptions, TPlugin>(entity, getter(), endValue, getter, setter);
 
             return new Tween<TValue, TOptions>(entity);
         }
@@ -31,44 +32,44 @@ namespace MagicTween.Core
             in TValue startValue, in TValue endValue, float duration, TweenSetter<TValue> setter)
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetLambdaTweenArchetype<TValue, TOptions>();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegateTweenArchetype<TValue, TOptions, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, TOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            InitializeLambdaTweenComponents<TValue, TPlugin>(entity, startValue, endValue, null, setter);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddPropertyAccessor<TValue, TOptions, TPlugin>(entity, startValue, endValue, null, setter);
 
             return new Tween<TValue, TOptions>(entity);
         }
 
-        public static Tween<TValue, TOptions> CreateToTweenUnsafe<TObject, TValue, TOptions, TPlugin>(
+        public static Tween<TValue, TOptions> CreateToTweenNoAlloc<TObject, TValue, TOptions, TPlugin>(
             TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, in TValue endValue, float duration)
             where TObject : class
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
-            var controllerId = TweenControllerContainer.GetId<UnsafeLambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegateNoAllocTweenArchetype<TValue, TOptions, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<NoAllocDelegateTweenController<TValue, TOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            InitializeUnsafeLambdaTweenComponents<TObject, TValue, TPlugin>(entity, target, getter(target), endValue, getter, setter);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddPropertyAccessorNoAlloc<TObject, TValue, TOptions, TPlugin>(entity, target, getter(target), endValue, getter, setter);
 
             return new Tween<TValue, TOptions>(entity);
         }
-        public static Tween<TValue, TOptions> CreateFromToTweenUnsafe<TObject, TValue, TOptions, TPlugin>(
+        public static Tween<TValue, TOptions> CreateFromToTweenNoAlloc<TObject, TValue, TOptions, TPlugin>(
             TObject target, in TValue startValue, in TValue endValue, float duration, TweenSetter<TObject, TValue> setter)
             where TObject : class
             where TValue : unmanaged
             where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeLambdaTweenArchetype<TValue, TOptions>();
-            var controllerId = TweenControllerContainer.GetId<UnsafeLambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegateNoAllocTweenArchetype<TValue, TOptions, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<NoAllocDelegateTweenController<TValue, TOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            InitializeUnsafeLambdaTweenComponents<TObject, TValue, TPlugin>(entity, target, startValue, endValue, null, setter);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddPropertyAccessorNoAlloc<TObject, TValue, TOptions, TPlugin>(entity, target, startValue, endValue, null, setter);
 
             return new Tween<TValue, TOptions>(entity);
         }
@@ -76,50 +77,32 @@ namespace MagicTween.Core
         public static Tween<TValue, PunchTweenOptions> CreatePunchTween<TValue, TPlugin>(
             TweenGetter<TValue> getter, TweenSetter<TValue> setter, in TValue strength, float duration)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, PunchTweenOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetPunchLambdaTweenArchetype<TValue>();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegatePunchTweenArchetype<TValue, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, PunchTweenOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddPunchComponents(entity, getter(), strength);
 
-            EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
-            {
-                value = new PunchTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesPool<TValue>.Rent(getter, setter));
 
             return new Tween<TValue, PunchTweenOptions>(entity);
         }
 
-        public static Tween<TValue, PunchTweenOptions> CreateUnsafePunchTween<TObject, TValue, TPlugin>(
+        public static Tween<TValue, PunchTweenOptions> CreatePunchTweenNoAlloc<TObject, TValue, TPlugin>(
             TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, TValue strength, float duration)
             where TObject : class
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, PunchTweenOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafePunchLambdaTweenArchetype<TValue>();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegatePunchNoAllocTweenArchetype<TValue, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, PunchTweenOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddPunchComponents(entity, getter(target), strength);
 
-            EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
-            {
-                value = new PunchTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -131,53 +114,32 @@ namespace MagicTween.Core
         public static Tween<TValue, ShakeTweenOptions> CreateShakeTween<TValue, TPlugin>(
             TweenGetter<TValue> getter, TweenSetter<TValue> setter, in TValue strength, float duration)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, ShakeTweenOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetShakeLambdaTweenArchetype<TValue>();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegateShakeTweenArchetype<TValue, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, ShakeTweenOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddShakeComponents(entity, getter(), strength);
 
-            EntityManager.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
-            {
-                value = new ShakeTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f,
-                    randomSeed = 0
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter() });
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesPool<TValue>.Rent(getter, setter));
 
             return new Tween<TValue, ShakeTweenOptions>(entity);
         }
 
-        public static Tween<TValue, ShakeTweenOptions> CreateUnsafeShakeTween<TObject, TValue, TPlugin>(
+        public static Tween<TValue, ShakeTweenOptions> CreateShakeTweenNoAlloc<TObject, TValue, TPlugin>(
             TObject target, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter, TValue strength, float duration)
             where TObject : class
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TPlugin : unmanaged, ITweenPlugin<TValue, ShakeTweenOptions>
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnsafeShakeLambdaTweenArchetype<TValue>();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<TValue, TPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegateShakeNoAllocTweenArchetype<TValue, TPlugin>(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<TValue, ShakeTweenOptions, TPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+            AddShakeComponents(entity, getter(target), strength);
 
-            EntityManagerRef.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
-            {
-                value = new ShakeTweenOptions()
-                {
-                    frequency = 10,
-                    dampingRatio = 1f,
-                    randomSeed = 0
-                }
-            });
-            EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
-            EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = getter(target) });
-
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -188,10 +150,10 @@ namespace MagicTween.Core
 
         public static Tween<UnsafeText, StringTweenOptions> CreateStringToTween(TweenGetter<string> getter, TweenSetter<string> setter, string endValue, float duration)
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetStringLambdaTweenArchetype();
-            var controllerId = TweenControllerContainer.GetId<StringLambdaTweenController>();
+            var archetype = ECSCache.ArchetypeStorage.GetStringLambdaTweenArchetype(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<StringDelegateTweenController>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
 
             var start = new TweenStartValue<UnsafeText>()
             {
@@ -210,19 +172,19 @@ namespace MagicTween.Core
                 value = new UnsafeText(endValue.Length, Allocator.Persistent)
             };
 
-            EntityManager.SetComponentData(entity, start);
-            EntityManager.SetComponentData(entity, end);
-            EntityManager.SetComponentData(entity, value);
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<string>(getter, setter));
+            ECSCache.EntityManager.SetComponentData(entity, start);
+            ECSCache.EntityManager.SetComponentData(entity, end);
+            ECSCache.EntityManager.SetComponentData(entity, value);
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesPool<string>.Rent(getter, setter));
 
             return new Tween<UnsafeText, StringTweenOptions>(entity);
         }
         public static Tween<UnsafeText, StringTweenOptions> CreateStringFromToTween(TweenSetter<string> setter, string startValue, string endValue, float duration)
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetStringLambdaTweenArchetype();
-            var controllerId = TweenControllerContainer.GetId<StringLambdaTweenController>();
+            var archetype = ECSCache.ArchetypeStorage.GetStringLambdaTweenArchetype(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<StringDelegateTweenController>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
 
             var startValueText = new UnsafeText(System.Text.Encoding.UTF8.GetByteCount(startValue), Allocator.Persistent);
             startValueText.CopyFrom(startValue);
@@ -243,22 +205,22 @@ namespace MagicTween.Core
                 value = new UnsafeText(endValue.Length, Allocator.Persistent)
             };
 
-            EntityManager.SetComponentData(entity, start);
-            EntityManager.SetComponentData(entity, end);
-            EntityManager.SetComponentData(entity, value);
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<string>(null, setter));
+            ECSCache.EntityManager.SetComponentData(entity, start);
+            ECSCache.EntityManager.SetComponentData(entity, end);
+            ECSCache.EntityManager.SetComponentData(entity, value);
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesPool<string>.Rent(null, setter));
 
             return new Tween<UnsafeText, StringTweenOptions>(entity);
         }
 
         public unsafe static Tween<float3, PathTweenOptions> CreatePathTween(TweenGetter<float3> getter, TweenSetter<float3> setter, float3[] points, float duration)
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetPathLambdaTweenArchetype();
-            var controllerId = TweenControllerContainer.GetId<LambdaTweenController<float3, PathTweenPlugin>>();
+            var archetype = ECSCache.ArchetypeStorage.GetDelegatePathTweenArchetype(ref ECSCache.EntityManager);
+            var controllerId = TweenControllerContainer.GetId<DelegateTweenController<float3, PathTweenOptions, PathTweenPlugin>>();
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
+            CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
 
-            var buffer = EntityManager.GetBuffer<PathPoint>(entity);
+            var buffer = ECSCache.EntityManager.GetBuffer<PathPoint>(entity);
             buffer.Resize(points.Length + 1, NativeArrayOptions.UninitializedMemory);
 
             fixed (float3* src = &points[0])
@@ -266,65 +228,89 @@ namespace MagicTween.Core
                 UnsafeUtility.MemCpy((float3*)buffer.AsNativeArray().GetUnsafePtr() + 1, src, points.Length * sizeof(float3));
             }
 
-            EntityManager.SetComponentData(entity, new TweenPropertyAccessor<float3>(getter, setter));
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesPool<float3>.Rent(getter, setter));
 
             return new Tween<float3, PathTweenOptions>(entity);
         }
 
-        public static Tween<TValue, TOptions> CreateEntityFromToTween<TValue, TOptions, TPlugin, TTranslator>(in Entity target, in TValue startValue, in TValue endValue, float duration)
-            where TValue : unmanaged
-            where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
-            where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
+        [BurstCompile]
+        public static class ECS
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetEntityTweenArchetype<TValue, TOptions, TTranslator>();
-            var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TPlugin>>();
+            [BurstCompile]
+            public static Tween<TValue, TOptions> CreateFromTo<TValue, TOptions, TPlugin, TComponent, TTranslator>(in Entity target, in TValue startValue, in TValue endValue, float duration)
+                where TValue : unmanaged
+                where TOptions : unmanaged, ITweenOptions
+                where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+                where TComponent : unmanaged, IComponentData
+                where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
+            {
+                var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TOptions, TPlugin, TComponent, TTranslator>>();
+                var archetype = ECSCache.ArchetypeStorage.GetEntityTweenArchetype<TValue, TOptions, TPlugin, TComponent, TTranslator>(ref ECSCache.EntityManager);
 
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            InitializeEntityTweenComponents<TValue, TTranslator>(ref EntityManagerRef, entity, startValue, endValue, target);
+                CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+                AddEntityTweenComponents(ref ECSCache.EntityManager, entity, startValue, endValue, target);
 
-            EntityManager.SetComponentData(entity, new TweenTranslationOptionsData(TweenTranslationOptions.FromTo));
+                ECSCache.EntityManager.SetComponentData(entity, new TweenTranslationModeData(TweenTranslationMode.FromTo));
 
-            return new Tween<TValue, TOptions>(entity);
+                return new Tween<TValue, TOptions>(entity);
+            }
+
+            [BurstCompile]
+            public static Tween<TValue, TOptions> CreateTo<TValue, TOptions, TPlugin, TComponent, TTranslator>(in Entity target, in TValue endValue, float duration)
+                where TValue : unmanaged
+                where TOptions : unmanaged, ITweenOptions
+                where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
+                where TComponent : unmanaged, IComponentData
+                where TTranslator : unmanaged, ITweenTranslator<TValue, TComponent>
+            {
+                var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TOptions, TPlugin, TComponent, TTranslator>>();
+
+                var archetype = ECSCache.ArchetypeStorage.GetEntityTweenArchetype<TValue, TOptions, TPlugin, TComponent, TTranslator>(ref ECSCache.EntityManager);
+
+                CreateEntity(ref ECSCache.EntityManager, archetype, duration, controllerId, out var entity);
+                AddEntityTweenComponents(ref ECSCache.EntityManager, entity, endValue, target);
+
+                ECSCache.EntityManager.SetComponentData(entity, new TweenTranslationModeData(TweenTranslationMode.To));
+                return new Tween<TValue, TOptions>(entity);
+            }
         }
 
-        public static Tween<TValue, TOptions> CreateEntityToTween<TValue, TOptions, TPlugin, TTranslator>(in Entity target, in TValue endValue, float duration)
-            where TValue : unmanaged
-            where TOptions : unmanaged, ITweenOptions
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
-            where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
-        {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetEntityTweenArchetype<TValue, TOptions, TTranslator>();
-            var controllerId = TweenControllerContainer.GetId<EntityTweenController<TValue, TPlugin>>();
-
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            InitializeEntityTweenComponents<TValue, TTranslator>(ref EntityManagerRef, entity, endValue, target);
-
-            EntityManager.SetComponentData(entity, new TweenTranslationOptionsData(TweenTranslationOptions.To));
-
-            return new Tween<TValue, TOptions>(entity);
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Tween CreateUnitTween(float duration)
         {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetUnitTweenArchetype();
-            var controllerId = TweenControllerContainer.GetId<UnitTweenController>();
-
-            CreateTweenEntity(ref EntityManagerRef, archetype, duration, controllerId, out var entity);
-            return new Tween(entity);
-        }
-
-        public static Sequence CreateSequence()
-        {
-            var archetype = TweenWorld.ArchetypeStorageRef.GetSequenceArchetype();
-            var controllerId = TweenControllerContainer.GetId<SequenceTweenController>();
-
-            CreateTweenEntity(ref EntityManagerRef, archetype, 0f, controllerId, out var entity);
-            return new Sequence(entity);
+            CreateUnitTweenCore(ref ECSCache.EntityManager, ref ECSCache.ArchetypeStorage, duration, out var tween);
+            return tween;
         }
 
         [BurstCompile]
-        static void CreateTweenEntity(ref EntityManager entityManager, in EntityArchetype archetype, float duration, short controllerId, out Entity entity)
+        static void CreateUnitTweenCore(ref EntityManager entityManager, ref ArchetypeStorage archetypeStorage, float duration, out Tween tween)
+        {
+            var archetype = archetypeStorage.GetUnitTweenArchetype(ref entityManager);
+            var controllerId = TweenControllerContainer.GetId<UnitTweenController>();
+
+            CreateEntity(ref entityManager, archetype, duration, controllerId, out var entity);
+            tween = new Tween(entity);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Sequence CreateSequence()
+        {
+            CreateSequenceCore(ref ECSCache.EntityManager, ref ECSCache.ArchetypeStorage, out var sequence);
+            return sequence;
+        }
+
+        [BurstCompile]
+        static void CreateSequenceCore(ref EntityManager entityManager, ref ArchetypeStorage archetypeStorage, out Sequence sequence)
+        {
+            var archetype = archetypeStorage.GetSequenceArchetype(ref entityManager);
+            var controllerId = TweenControllerContainer.GetId<SequenceController>();
+
+            CreateEntity(ref entityManager, archetype, 0f, controllerId, out var entity);
+            sequence = new Sequence(entity);
+        }
+
+        [BurstCompile]
+        static void CreateEntity(ref EntityManager entityManager, in EntityArchetype archetype, float duration, short controllerId, out Entity entity)
         {
             entity = entityManager.CreateEntity(archetype);
 
@@ -340,30 +326,73 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
-        static void SetStartAndEndValue<TValue>(in Entity entity, in TValue startValue, in TValue endValue)
+        static void AddPunchComponents<TValue>(in Entity entity, in TValue startValue, in TValue strength)
             where TValue : unmanaged
         {
-            EntityManagerRef.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
-            EntityManagerRef.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+            ECSCache.EntityManager.SetComponentData(entity, new TweenOptions<PunchTweenOptions>
+            {
+                value = new PunchTweenOptions()
+                {
+                    frequency = 10,
+                    dampingRatio = 1f
+                }
+            });
+            ECSCache.EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
+            ECSCache.EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
         }
 
-        static void InitializeLambdaTweenComponents<TValue, TPlugin>(
+        [BurstCompile]
+        static void AddShakeComponents<TValue>(in Entity entity, in TValue startValue, in TValue strength)
+            where TValue : unmanaged
+        {
+            ECSCache.EntityManager.SetComponentData(entity, new TweenOptions<ShakeTweenOptions>
+            {
+                value = new ShakeTweenOptions()
+                {
+                    frequency = 10,
+                    dampingRatio = 1f,
+                    randomSeed = 0
+                }
+            });
+            ECSCache.EntityManager.SetComponentData(entity, new VibrationStrength<TValue>() { value = strength });
+            ECSCache.EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
+        }
+
+        [BurstCompile]
+        static void AddStartAndEndValue<TValue>(in Entity entity, in TValue startValue, in TValue endValue)
+            where TValue : unmanaged
+        {
+            ECSCache.EntityManager.SetComponentData(entity, new TweenStartValue<TValue>() { value = startValue });
+            ECSCache.EntityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
+        }
+
+        [BurstCompile]
+        static void AddTranslationMode(in Entity entity, TweenTranslationMode mode)
+        {
+            ECSCache.EntityManager.SetComponentData(entity, new TweenTranslationModeData(mode));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static void AddPropertyAccessor<TValue, TOptions, TPlugin>(
             in Entity entity, in TValue startValue, in TValue endValue, TweenGetter<TValue> getter, TweenSetter<TValue> setter)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            SetStartAndEndValue(entity, startValue, endValue);
-            EntityManagerRef.SetComponentData(entity, new TweenPropertyAccessor<TValue>(getter, setter));
+            AddStartAndEndValue(entity, startValue, endValue);
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesPool<TValue>.Rent(getter, setter));
         }
 
-        static void InitializeUnsafeLambdaTweenComponents<TObject, TValue, TPlugin>(
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static void AddPropertyAccessorNoAlloc<TObject, TValue, TOptions, TPlugin>(
             in Entity entity, TObject target, in TValue startValue, in TValue endValue, TweenGetter<TObject, TValue> getter, TweenSetter<TObject, TValue> setter)
             where TObject : class
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            SetStartAndEndValue(entity, startValue, endValue);
-            EntityManagerRef.SetComponentData(entity, new TweenPropertyAccessorUnsafe<TValue>(
+            AddStartAndEndValue(entity, startValue, endValue);
+            ECSCache.EntityManager.SetComponentData(entity, TweenDelegatesNoAllocPool<TValue>.Rent(
                 target,
                 UnsafeUtility.As<TweenGetter<TObject, TValue>, TweenGetter<object, TValue>>(ref getter),
                 UnsafeUtility.As<TweenSetter<TObject, TValue>, TweenSetter<object, TValue>>(ref setter)
@@ -371,29 +400,28 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
-        static void InitializeEntityTweenComponents<TValue, TTranslator>(
+        static void AddEntityTweenComponents<TValue>(
             ref EntityManager entityManager, in Entity entity, in TValue startValue, in TValue endValue, in Entity target)
             where TValue : unmanaged
-            where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
         {
-            var translator = default(TTranslator);
-            translator.TargetEntity = target;
-
-            SetStartAndEndValue(entity, startValue, endValue);
-            entityManager.SetComponentData(entity, translator);
+            AddStartAndEndValue(entity, startValue, endValue);
+            entityManager.SetComponentData(entity, new TweenTargetEntity() { target = target });
         }
-        [BurstCompile]
 
-        static void InitializeEntityTweenComponents<TValue, TTranslator>(
+        [BurstCompile]
+        static void AddEntityTweenComponents<TValue>(
             ref EntityManager entityManager, in Entity entity, in TValue endValue, in Entity target)
             where TValue : unmanaged
-            where TTranslator : unmanaged, ITweenTranslatorBase<TValue>
         {
-            var translator = default(TTranslator);
-            translator.TargetEntity = target;
-
             entityManager.SetComponentData(entity, new TweenEndValue<TValue>() { value = endValue });
-            entityManager.SetComponentData(entity, translator);
+            entityManager.SetComponentData(entity, new TweenTargetEntity() { target = target });
+        }
+
+        static void AddTargetObjectComponent(ref EntityManager entityManager, in Entity entity, object target)
+        {
+            var targetComponent = TweenTargetObjectPool.Rent();
+            targetComponent.target = target;
+            entityManager.SetComponentData(entity, targetComponent);
         }
     }
 }

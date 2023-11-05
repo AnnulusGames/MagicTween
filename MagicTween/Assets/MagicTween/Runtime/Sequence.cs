@@ -42,8 +42,8 @@ namespace MagicTween
         {
             var tween = Tween.Empty(0f);
             var callbackComponent = tween.GetOrAddCallbackActions();
-            callbackComponent.onComplete = callback;
-            callbackComponent.onRewind = callback;
+            callbackComponent.onComplete.Add(callback);
+            callbackComponent.onRewind.Add(callback);
             SequenceHelper.Append(this, tween, false);
             return this;
         }
@@ -70,8 +70,8 @@ namespace MagicTween
         {
             var tween = Tween.Empty(0f);
             var callbackComponent = tween.GetOrAddCallbackActions();
-            callbackComponent.onComplete = callback;
-            callbackComponent.onRewind = callback;
+            callbackComponent.onComplete.Add(callback);
+            callbackComponent.onRewind.Add(callback);
             SequenceHelper.Prepend(this, tween);
             return this;
         }
@@ -86,8 +86,8 @@ namespace MagicTween
         {
             var tween = Tween.Empty(0f);
             var callbackComponent = tween.GetOrAddCallbackActions();
-            callbackComponent.onComplete = callback;
-            callbackComponent.onRewind = callback;
+            callbackComponent.onComplete.Add(callback);
+            callbackComponent.onRewind.Add(callback);
             SequenceHelper.Insert(this, tween, position);
             return this;
         }

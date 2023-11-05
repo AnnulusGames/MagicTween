@@ -3,6 +3,8 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections.LowLevel.Unsafe;
 using MagicTween.Core;
+using MagicTween.Core.Systems;
+using MagicTween.Plugins;
 using TMPro;
 
 namespace MagicTween
@@ -147,7 +149,7 @@ namespace MagicTween
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TMPTweenAnimator GetTMPTweenAnimator(this TMP_Text self)
         {
-            if (system == null) system = TweenWorld.World.GetOrCreateSystemManaged<TMPTweenAnimatorUpdateSystem>();
+            if (system == null) system = ECSCache.World.GetOrCreateSystemManaged<TMPTweenAnimatorUpdateSystem>();
             return system.GetAnimator(self);
         }
 

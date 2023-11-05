@@ -125,6 +125,14 @@ namespace MagicTween.Core
         }
 
         [BurstCompile]
+        public bool IsRewinding()
+        {
+            if (loopType is not LoopType.Yoyo) return false;
+            var clampedCompletedLoops = loops < 0 ? math.max(0, completedLoops) : math.clamp(completedLoops, 0, loops);
+            return clampedCompletedLoops % 2 == 1;
+        }
+
+        [BurstCompile]
         static void UpdateCore(in TweenAspect aspect, float currentPosition, ref NativeQueue<Entity>.ParallelWriter parallelWriter)
         {
             aspect.callbackFlags = CallbackFlags.None;
@@ -135,7 +143,10 @@ namespace MagicTween.Core
                 case TweenStatusType.Killed:
                     return;
                 case TweenStatusType.WaitingForStart:
-                    if (!aspect.autoPlay || currentPosition <= 0f) break;
+                    if (!aspect.autoPlay || currentPosition <= 0f)
+                    {
+                        break;
+                    }
 
                     aspect.callbackFlags |= CallbackFlags.OnPlay;
                     aspect.callbackFlags |= CallbackFlags.OnStartUp;

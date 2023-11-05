@@ -3,16 +3,32 @@ using System.Runtime.CompilerServices;
 using Unity.Entities;
 using MagicTween.Core.Components;
 using MagicTween.Diagnostics;
+using System.Collections.Generic;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenCallbackSystemGroup))]
+    [RequireMatchingQueriesForUpdate]
     public sealed partial class TweenCallbackSystem : SystemBase
     {
-        public bool IsExecuting => _isExecuting;
-
         bool _isExecuting;
         EntityQuery query;
+        readonly Queue<(Entity, TweenCallbackActions)> queue = new();
+        readonly Dictionary<Entity, TweenCallbackActions> queueHashmap = new();
+
+        public bool IsExecuting => _isExecuting;
+
+        public TweenCallbackActions TryEnqueueAndGetActions(in Entity entity)
+        {
+            if (queueHashmap.TryGetValue(entity, out var actions))
+            {
+                return actions;
+            }
+            actions = TweenCallbackActionsPool.Rent();
+            queue.Enqueue((entity, actions));
+            queueHashmap.Add(entity, actions);
+            return actions;
+        }
 
         protected override void OnCreate()
         {
@@ -30,13 +46,19 @@ namespace MagicTween.Core
                 CompleteDependency();
                 var job = new SystemJob();
                 job.Run(query);
+
+                while (queue.TryDequeue(out var result))
+                {
+                    EntityManager.AddComponentData(result.Item1, result.Item2);
+                }
+                queueHashmap.Clear();
             }
             finally
             {
                 _isExecuting = false;
             }
         }
-
+        
         partial struct SystemJob : IJobEntity
         {
             public void Execute(TweenCallbackActions actions, in TweenCallbackFlags callbackFlags)
@@ -52,9 +74,12 @@ namespace MagicTween.Core
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            void TryInvoke(Action action)
+            void TryInvoke(FastAction action)
             {
-                try { action?.Invoke(); }
+                try
+                {
+                    action.Invoke();
+                }
                 catch (Exception ex) { Debugger.LogExceptionInsideTween(ex); }
             }
         }

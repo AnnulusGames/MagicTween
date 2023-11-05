@@ -1,4 +1,5 @@
 using System;
+using Unity.Assertions;
 using Unity.Entities;
 using MagicTween.Core;
 using MagicTween.Core.Components;
@@ -8,80 +9,148 @@ namespace MagicTween
 {
     public static class TweenCallbackExtensions
     {
-        internal static TweenCallbackActions GetOrAddComponent(in Entity entity)
+        static TweenCallbackActions GetOrAddActions(in Entity entity)
         {
-            if (TweenWorld.EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                return TweenWorld.EntityManager.GetComponentData<TweenCallbackActions>(entity);
+                return ECSCache.EntityManager.GetComponentData<TweenCallbackActions>(entity);
             }
             else
             {
-                var actions = new TweenCallbackActions();
-                if (TweenWorld.CallbackSystem.IsExecuting)
+                if (ECSCache.CallbackSystem.IsExecuting)
                 {
-                    // Use EntityCommandBuffer to avoid structural changes
-                    var commandBuffer = TweenWorld.World.GetExistingSystemManaged<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-                    commandBuffer.AddComponent(entity, actions);
+                    return ECSCache.CallbackSystem.TryEnqueueAndGetActions(entity);
                 }
                 else
                 {
-                    TweenWorld.EntityManager.AddComponentData(entity, actions);
+                    var actions = TweenCallbackActionsPool.Rent();
+                    ECSCache.EntityManager.AddComponentData(entity, actions);
+                    return actions;
                 }
-                return actions;
             }
         }
 
         internal static TweenCallbackActions GetOrAddCallbackActions<T>(this T self) where T : struct, ITweenHandle
         {
-            return GetOrAddComponent(self.GetEntity());
+            return GetOrAddActions(self.GetEntity());
         }
 
         public static T OnStart<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onStart += callback;
+            GetOrAddActions(self.GetEntity()).onStart.Add(callback);
             return self;
         }
 
         public static T OnPlay<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onPlay += callback;
+            GetOrAddActions(self.GetEntity()).onPlay.Add(callback);
             return self;
         }
 
         public static T OnUpdate<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onUpdate += callback;
+            GetOrAddActions(self.GetEntity()).onUpdate.Add(callback);
             return self;
         }
 
         public static T OnPause<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onPause += callback;
+            GetOrAddActions(self.GetEntity()).onPause.Add(callback);
             return self;
         }
 
         public static T OnStepComplete<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onStepComplete += callback;
+            GetOrAddActions(self.GetEntity()).onStepComplete.Add(callback);
             return self;
         }
 
         public static T OnComplete<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onComplete += callback;
+            GetOrAddActions(self.GetEntity()).onComplete.Add(callback);
             return self;
         }
 
         public static T OnKill<T>(this T self, Action callback) where T : struct, ITweenHandle
         {
             AssertTween.IsActive(self);
-            GetOrAddComponent(self.GetEntity()).onKill += callback;
+            GetOrAddActions(self.GetEntity()).onKill.Add(callback);
+            return self;
+        }
+
+        public static T OnPlay<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onPlay.Add(target, callback);
+            return self;
+        }
+
+        public static T OnStart<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onStart.Add(target, callback);
+            return self;
+        }
+
+        public static T OnUpdate<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onUpdate.Add(target, callback);
+            return self;
+        }
+
+        public static T OnPause<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onPause.Add(target, callback);
+            return self;
+        }
+
+        public static T OnStepComplete<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onStepComplete.Add(target, callback);
+            return self;
+        }
+
+        public static T OnComplete<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onComplete.Add(target, callback);
+            return self;
+        }
+
+        public static T OnKill<T, TObject>(this T self, TObject target, Action<TObject> callback)
+            where T : struct, ITweenHandle
+            where TObject : class
+        {
+            Assert.IsNotNull(target);
+            AssertTween.IsActive(self);
+            GetOrAddActions(self.GetEntity()).onKill.Add(target, callback);
             return self;
         }
     }

@@ -5,8 +5,6 @@ using MagicTween.Core.Components;
 
 namespace MagicTween.Core
 {
-    using static TweenWorld;
-
     [BurstCompile]
     internal static class TweenHelper
     {
@@ -30,7 +28,7 @@ namespace MagicTween.Core
 
         public static bool TryPlay(in Entity entity, out bool started)
         {
-            return TryPlayCore(ref EntityManagerRef, entity, out started);
+            return TryPlayCore(ref ECSCache.EntityManager, entity, out started);
         }
 
         [BurstCompile]
@@ -65,7 +63,7 @@ namespace MagicTween.Core
 
         public static bool TryPause(in Entity entity)
         {
-            return TryPauseCore(ref EntityManagerRef, entity);
+            return TryPauseCore(ref ECSCache.EntityManager, entity);
         }
 
         [BurstCompile]
@@ -81,8 +79,8 @@ namespace MagicTween.Core
 
         public static bool TryKill(in Entity entity)
         {
-            var result = TryKillCore(ref EntityManagerRef, entity);
-            if (result) CleanupSystem.Enqueue(entity);
+            var result = TryKillCore(ref ECSCache.EntityManager, entity);
+            if (result) ECSCache.CleanupSystem.Enqueue(entity);
             return result;
         }
 
@@ -99,14 +97,15 @@ namespace MagicTween.Core
 
         public static bool TryComplete(in Entity entity)
         {
-            return TryCompleteCore(ref EntityManagerRef, entity, out var delay, out var loops);
+            return TryCompleteCore(ref ECSCache.EntityManager, entity, out var delay, out var loops);
         }
 
-        public static bool TryComplete<TValue, TPlugin>(in Entity entity, out TValue currentValue)
+        public static bool TryComplete<TValue, TOptions, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var result = TryCompleteCore(ref EntityManagerRef, entity, out var delay, out var loops);
+            var result = TryCompleteCore(ref ECSCache.EntityManager, entity, out var delay, out var loops);
 
             if (!result)
             {
@@ -114,31 +113,37 @@ namespace MagicTween.Core
                 return false;
             }
 
-            var duration = EntityManager.GetComponentData<TweenParameterDuration>(entity).value;
-
             var plugin = default(TPlugin);
-            var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
-            var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
-            var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
-            var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
+            var loopType = ECSCache.EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
+            var invertMode = ECSCache.EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
+            var isRelative = ECSCache.EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
+            var ease = ECSCache.EntityManager.GetComponentData<TweenParameterEase>(entity).value;
 
             if (ease == Ease.Custom)
             {
-                var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
-                currentValue = plugin.Evaluate(
-                    entity,
+                var customCurve = ECSCache.EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ref customCurve, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref ECSCache.EntityManager,
+                    context
+                );
             }
             else
             {
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ease, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
+                );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref ECSCache.EntityManager,
+                    context
                 );
             }
 
@@ -178,49 +183,58 @@ namespace MagicTween.Core
 
         public static bool TryCompleteAndKill(in Entity entity)
         {
-            var result = TryCompleteAndKillCore(ref EntityManagerRef, entity, out var delay, out var loops);
-            if (result) CleanupSystem.Enqueue(entity);
+            var result = TryCompleteAndKillCore(ref ECSCache.EntityManager, entity, out var delay, out var loops);
+            if (result) ECSCache.CleanupSystem.Enqueue(entity);
             return result;
         }
 
-        public static bool TryCompleteAndKill<TValue, TPlugin>(in Entity entity, out TValue currentValue)
+        public static bool TryCompleteAndKill<TValue, TOptions, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var result = TryCompleteAndKillCore(ref EntityManagerRef, entity, out var delay, out var loops);
+            var result = TryCompleteAndKillCore(ref ECSCache.EntityManager, entity, out var delay, out var loops);
             if (!result)
             {
                 currentValue = default;
                 return false;
             }
-            
+
             var plugin = default(TPlugin);
-            var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
-            var invertMode = EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
-            var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
-            var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
+            var loopType = ECSCache.EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
+            var invertMode = ECSCache.EntityManager.GetComponentData<TweenParameterInvertMode>(entity).value;
+            var isRelative = ECSCache.EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
+            var ease = ECSCache.EntityManager.GetComponentData<TweenParameterEase>(entity).value;
 
             if (ease == Ease.Custom)
             {
-                var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
-                currentValue = plugin.Evaluate(
-                    entity,
+                var customCurve = ECSCache.EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ref customCurve, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref ECSCache.EntityManager,
+                    context
+                );
             }
             else
             {
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ease, loops, loopType),
                     isRelative,
                     invertMode != InvertMode.None
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref ECSCache.EntityManager,
+                    context
+                );
             }
 
-            CleanupSystem.Enqueue(entity);
+            ECSCache.CleanupSystem.Enqueue(entity);
 
             return true;
         }
@@ -258,14 +272,15 @@ namespace MagicTween.Core
 
         public static bool TryRestart(in Entity entity)
         {
-            return TryRestartCore(ref EntityManagerRef, entity, out var delay, out var loops);
+            return TryRestartCore(ref ECSCache.EntityManager, entity, out var delay, out var loops);
         }
 
-        public static bool TryRestart<TValue, TPlugin>(in Entity entity, out TValue currentValue)
+        public static bool TryRestart<TValue, TOptions, TPlugin>(in Entity entity, out TValue currentValue)
             where TValue : unmanaged
-            where TPlugin : unmanaged, ITweenPlugin<TValue>
+            where TOptions : unmanaged, ITweenOptions
+            where TPlugin : unmanaged, ITweenPlugin<TValue, TOptions>
         {
-            var result = TryRestartCore(ref EntityManagerRef, entity, out var delay, out var loops);
+            var result = TryRestartCore(ref ECSCache.EntityManager, entity, out var delay, out var loops);
             if (!result)
             {
                 currentValue = default;
@@ -273,28 +288,36 @@ namespace MagicTween.Core
             }
 
             var plugin = default(TPlugin);
-            var loopType = EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
-            var inverted = EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
-            var isRelative = EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
-            var ease = EntityManager.GetComponentData<TweenParameterEase>(entity).value;
+            var loopType = ECSCache.EntityManager.GetComponentData<TweenParameterLoopType>(entity).value;
+            var inverted = ECSCache.EntityManager.GetComponentData<TweenInvertFlag>(entity).value;
+            var isRelative = ECSCache.EntityManager.GetComponentData<TweenParameterIsRelative>(entity).value;
+            var ease = ECSCache.EntityManager.GetComponentData<TweenParameterEase>(entity).value;
 
             if (ease == Ease.Custom)
             {
-                var customCurve = EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
-                currentValue = plugin.Evaluate(
-                    entity,
+                var customCurve = ECSCache.EntityManager.GetComponentData<TweenParameterCustomEasingCurve>(entity).value;
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ref customCurve, loops, loopType),
                     isRelative,
                     inverted
                 );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref ECSCache.EntityManager,
+                    context
+                );
             }
             else
             {
-                currentValue = plugin.Evaluate(
-                    entity,
+                var context = new TweenEvaluationContext(
                     GetProgressOnCompleted(ease, loops, loopType),
                     isRelative,
                     inverted
+                );
+                currentValue = plugin.Evaluate(
+                    entity,
+                    ref ECSCache.EntityManager,
+                    context
                 );
             }
 
@@ -365,9 +388,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnComplete(in Entity entity)
         {
-            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = ECSCache.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onStepComplete?.Invoke();
                 callbacks.onComplete?.Invoke();
             }
@@ -376,9 +399,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnKill(in Entity entity)
         {
-            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = ECSCache.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onKill?.Invoke();
             }
         }
@@ -386,9 +409,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnCompleteAndOnKill(in Entity entity)
         {
-            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = ECSCache.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onStepComplete?.Invoke();
                 callbacks.onComplete?.Invoke();
                 callbacks.onKill?.Invoke();
@@ -398,9 +421,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnStartAndOnPlay(in Entity entity, bool started)
         {
-            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = ECSCache.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 if (started) callbacks.onStart?.Invoke();
                 callbacks.onPlay?.Invoke();
             }
@@ -409,9 +432,9 @@ namespace MagicTween.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TryCallOnPause(in Entity entity)
         {
-            if (EntityManager.HasComponent<TweenCallbackActions>(entity))
+            if (ECSCache.EntityManager.HasComponent<TweenCallbackActions>(entity))
             {
-                var callbacks = EntityManager.GetComponentObject<TweenCallbackActions>(entity);
+                var callbacks = ECSCache.EntityManager.GetComponentObject<TweenCallbackActions>(entity);
                 callbacks.onPause?.Invoke();
             }
         }

@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Burst;
 
-namespace MagicTween.Core
+namespace MagicTween.Core.Systems
 {
     [UpdateInGroup(typeof(MagicTweenCleanupSystemGroup))]
     [BurstCompile]

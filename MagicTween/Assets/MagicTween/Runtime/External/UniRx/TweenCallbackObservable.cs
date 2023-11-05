@@ -40,35 +40,35 @@ namespace MagicTween
             switch (callbackType)
             {
                 case CallbackType.OnStart:
-                    callbacks.onStart += () => OnNext(observers);
+                    callbacks.onStart.Add(() => OnNext(observers));
                     break;
                 case CallbackType.OnPlay:
-                    callbacks.onPlay += () => OnNext(observers);
+                    callbacks.onPlay.Add(() => OnNext(observers));
                     break;
                 case CallbackType.OnUpdate:
-                    callbacks.onUpdate += () => OnNext(observers);
+                    callbacks.onUpdate.Add(() => OnNext(observers));
                     break;
                 case CallbackType.OnPause:
-                    callbacks.onPause += () => OnNext(observers);
+                    callbacks.onPause.Add(() => OnNext(observers));
                     break;
                 case CallbackType.OnStepComplete:
-                    callbacks.onStepComplete += () => OnNext(observers);
+                    callbacks.onStepComplete.Add(() => OnNext(observers));
                     break;
                 case CallbackType.OnComplete:
-                    callbacks.onComplete += () => OnNext(observers);
+                    callbacks.onComplete.Add(() => OnNext(observers));
                     break;
                 case CallbackType.OnKill:
-                    callbacks.onKill += () =>
+                    callbacks.onKill.Add(() =>
                     {
                         OnNext(observers);
                         OnCompleted(observers);
-                    };
+                    });
                     break;
             }
 
             if (callbackType != CallbackType.OnKill)
             {
-                callbacks.onKill += () => OnCompleted(observers);
+                callbacks.onKill.Add(() => OnCompleted(observers));
             }
         }
 

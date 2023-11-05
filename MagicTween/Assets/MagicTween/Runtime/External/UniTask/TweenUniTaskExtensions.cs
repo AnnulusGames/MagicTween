@@ -9,7 +9,7 @@ using MagicTween.Diagnostics;
 
 namespace MagicTween
 {
-    public enum CancelBehaviour
+    public enum CancelBehaviour : byte
     {
         Kill,
         Complete,
@@ -31,10 +31,10 @@ namespace MagicTween
             StepComplete
         }
 
-        public static TweenAwaiter GetAwaiter<T>(this T tween)
+        public static UniTask.Awaiter GetAwaiter<T>(this T tween)
             where T : struct, ITweenHandle
         {
-            return new TweenAwaiter(tween.AsUnitTween());
+            return AwaitForKill(tween).GetAwaiter();
         }
 
         public static UniTask WithCancellation<T>(this T tween, CancellationToken cancellationToken)
@@ -45,75 +45,44 @@ namespace MagicTween
             return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour.KillAndCancelAwait, cancellationToken, CallbackType.Kill, out var token), token);
         }
 
-        public static UniTask AwaitForKill<T>(this T tween, CancelBehaviour tweenCancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForKill<T>(this T tween, CancelBehaviour CancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
             where T : struct, ITweenHandle
         {
             AssertTween.IsValid(tween);
             if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), tweenCancelBehaviour, cancellationToken, CallbackType.Kill, out var token), token);
+            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour, cancellationToken, CallbackType.Kill, out var token), token);
         }
 
-        public static UniTask AwaitForComplete<T>(this T tween, CancelBehaviour tweenCancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForComplete<T>(this T tween, CancelBehaviour CancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
             where T : struct, ITweenHandle
         {
             AssertTween.IsValid(tween);
             if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), tweenCancelBehaviour, cancellationToken, CallbackType.Complete, out var token), token);
+            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour, cancellationToken, CallbackType.Complete, out var token), token);
         }
 
-        public static UniTask AwaitForPause<T>(this T tween, CancelBehaviour tweenCancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForPause<T>(this T tween, CancelBehaviour CancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
             where T : struct, ITweenHandle
         {
             AssertTween.IsValid(tween);
             if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), tweenCancelBehaviour, cancellationToken, CallbackType.Pause, out var token), token);
+            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour, cancellationToken, CallbackType.Pause, out var token), token);
         }
 
-        public static UniTask AwaitForPlay<T>(this T tween, CancelBehaviour tweenCancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForPlay<T>(this T tween, CancelBehaviour CancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
             where T : struct, ITweenHandle
         {
             AssertTween.IsValid(tween);
             if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), tweenCancelBehaviour, cancellationToken, CallbackType.Play, out var token), token);
+            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour, cancellationToken, CallbackType.Play, out var token), token);
         }
 
-        public static UniTask AwaitForStepComplete<T>(this T tween, CancelBehaviour tweenCancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
+        public static UniTask AwaitForStepComplete<T>(this T tween, CancelBehaviour CancelBehaviour = CancelBehaviour.KillAndCancelAwait, CancellationToken cancellationToken = default)
             where T : struct, ITweenHandle
         {
             AssertTween.IsValid(tween);
             if (!tween.IsActive()) return UniTask.CompletedTask;
-            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), tweenCancelBehaviour, cancellationToken, CallbackType.StepComplete, out var token), token);
-        }
-
-        public struct TweenAwaiter : ICriticalNotifyCompletion
-        {
-            readonly Tween tween;
-
-            public bool IsCompleted => !tween.IsActive();
-
-            public TweenAwaiter(Tween tween)
-            {
-                this.tween = tween;
-            }
-
-            public TweenAwaiter GetAwaiter()
-            {
-                return this;
-            }
-
-            public void GetResult()
-            {
-            }
-
-            public void OnCompleted(Action continuation)
-            {
-                UnsafeOnCompleted(continuation);
-            }
-
-            public void UnsafeOnCompleted(Action continuation)
-            {
-                tween.GetOrAddCallbackActions().onKill = PooledTweenCallback.Create(continuation);
-            }
+            return new UniTask(TweenConfiguredSource.Create(tween.AsUnitTween(), CancelBehaviour, cancellationToken, CallbackType.StepComplete, out var token), token);
         }
 
         sealed class TweenConfiguredSource : IUniTaskSource, ITaskPoolNode<TweenConfiguredSource>
@@ -127,23 +96,21 @@ namespace MagicTween
                 TaskPool.RegisterSizeGetter(typeof(TweenConfiguredSource), () => pool.Size);
             }
 
-            readonly Action onCompleteCallbackDelegate;
-            readonly Action onUpdateDelegate;
+            readonly FastAction onCompleteCallbackDelegate;
 
             Tween tween;
             CancelBehaviour cancelBehaviour;
             CancellationToken cancellationToken;
+            CancellationTokenRegistration cancellationRegistration;
             CallbackType callbackType;
             bool canceled;
 
-            Action originalUpdateAction;
-            Action originalCompleteAction;
+            FastAction originalCompleteAction;
             UniTaskCompletionSourceCore<AsyncUnit> core;
 
             TweenConfiguredSource()
             {
-                onCompleteCallbackDelegate = OnCompleteCallbackDelegate;
-                onUpdateDelegate = OnUpdate;
+                onCompleteCallbackDelegate = new(OnCompleteCallbackDelegate);
             }
 
             public static IUniTaskSource Create(Tween tween, CancelBehaviour cancelBehaviour, CancellationToken cancellationToken, CallbackType callbackType, out short token)
@@ -163,18 +130,9 @@ namespace MagicTween
                 result.cancelBehaviour = cancelBehaviour;
                 result.cancellationToken = cancellationToken;
                 result.callbackType = callbackType;
-
-                var callbacks = tween.GetOrAddCallbackActions();
-
-                result.originalUpdateAction = callbacks.onUpdate;
                 result.canceled = false;
 
-                if (result.originalUpdateAction == result.onUpdateDelegate)
-                {
-                    result.originalUpdateAction = null;
-                }
-
-                callbacks.onUpdate = result.onUpdateDelegate;
+                var callbacks = tween.GetOrAddCallbackActions();
 
                 switch (callbackType)
                 {
@@ -207,6 +165,43 @@ namespace MagicTween
                     result.originalCompleteAction = null;
                 }
 
+                if (cancellationToken.CanBeCanceled)
+                {
+                    result.cancellationRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(x =>
+                    {
+                        var source = (TweenConfiguredSource)x;
+                        switch (source.cancelBehaviour)
+                        {
+                            case CancelBehaviour.Kill:
+                            default:
+                                source.tween.Kill();
+                                break;
+                            case CancelBehaviour.KillAndCancelAwait:
+                                source.canceled = true;
+                                source.tween.Kill();
+                                break;
+                            case CancelBehaviour.Complete:
+                                source.tween.Complete();
+                                break;
+                            case CancelBehaviour.CompleteAndCancelAwait:
+                                source.canceled = true;
+                                source.tween.Complete();
+                                break;
+                            case CancelBehaviour.CompleteAndKill:
+                                source.tween.CompleteAndKill();
+                                break;
+                            case CancelBehaviour.CompleteAndKillAndCancelAwait:
+                                source.canceled = true;
+                                source.tween.CompleteAndKill();
+                                break;
+                            case CancelBehaviour.CancelAwait:
+                                source.RestoreOriginalCallback();
+                                source.core.TrySetCanceled(source.cancellationToken);
+                                break;
+                        }
+                    }, result);
+                }
+
                 TaskTracker.TrackActiveTask(result, 3);
 
                 token = result.core.Version;
@@ -217,10 +212,10 @@ namespace MagicTween
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    if (cancelBehaviour == CancelBehaviour.KillAndCancelAwait
-                        || cancelBehaviour == CancelBehaviour.CompleteAndCancelAwait
-                        || cancelBehaviour == CancelBehaviour.CompleteAndKillAndCancelAwait
-                        || cancelBehaviour == CancelBehaviour.CancelAwait)
+                    if (this.cancelBehaviour == CancelBehaviour.KillAndCancelAwait
+                        || this.cancelBehaviour == CancelBehaviour.CompleteAndKillAndCancelAwait
+                        || this.cancelBehaviour == CancelBehaviour.CompleteAndCancelAwait
+                        || this.cancelBehaviour == CancelBehaviour.CancelAwait)
                     {
                         canceled = true;
                     }
@@ -236,84 +231,22 @@ namespace MagicTween
                 }
             }
 
-            void OnUpdate()
+            static void DoCancelBeforeCreate(Tween tween, CancelBehaviour cancelBehaviour)
             {
-                originalUpdateAction?.Invoke();
-
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                var callbacks = tween.GetOrAddCallbackActions();
-
                 switch (cancelBehaviour)
                 {
                     case CancelBehaviour.Kill:
+                    case CancelBehaviour.KillAndCancelAwait:
                     default:
                         tween.Kill();
-                        break;
-                    case CancelBehaviour.KillAndCancelAwait:
-                        canceled = true;
-                        tween.Kill();
-                        break;
-                    case CancelBehaviour.Complete:
-                        tween.Complete();
-                        break;
-                    case CancelBehaviour.CompleteAndCancelAwait:
-                        canceled = true;
-                        tween.Complete();
                         break;
                     case CancelBehaviour.CompleteAndKill:
-                        tween.CompleteAndKill();
-                        break;
                     case CancelBehaviour.CompleteAndKillAndCancelAwait:
-                        canceled = true;
                         tween.CompleteAndKill();
-                        break;
-                    case CancelBehaviour.CancelAwait:
-                        switch (callbackType)
-                        {
-                            case CallbackType.Kill:
-                                callbacks.onKill = originalCompleteAction;
-                                break;
-                            case CallbackType.Complete:
-                                callbacks.onComplete = originalCompleteAction;
-                                break;
-                            case CallbackType.Pause:
-                                callbacks.onPause = originalCompleteAction;
-                                break;
-                            case CallbackType.Play:
-                                callbacks.onPlay = originalCompleteAction;
-                                break;
-                            case CallbackType.StepComplete:
-                                callbacks.onStepComplete = originalCompleteAction;
-                                break;
-                            default:
-                                break;
-                        }
-
-                        core.TrySetCanceled(cancellationToken);
-                        break;
-                }
-            }
-
-            static void DoCancelBeforeCreate(Tween tween, CancelBehaviour tweenCancelBehaviour)
-            {
-
-                switch (tweenCancelBehaviour)
-                {
-                    case CancelBehaviour.Kill:
-                    case CancelBehaviour.KillAndCancelAwait:
-                    default:
-                        tween.Kill();
                         break;
                     case CancelBehaviour.Complete:
                     case CancelBehaviour.CompleteAndCancelAwait:
                         tween.Complete();
-                        break;
-                    case CancelBehaviour.CompleteAndKillAndCancelAwait:
-                        tween.CompleteAndKill();
                         break;
                     case CancelBehaviour.CancelAwait:
                         break;
@@ -351,9 +284,19 @@ namespace MagicTween
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
-                var callbacks = tween.GetOrAddCallbackActions();
-                callbacks.onUpdate = originalUpdateAction;
+                cancellationRegistration.Dispose();
 
+                RestoreOriginalCallback();
+
+                tween = default;
+                cancellationToken = default;
+                originalCompleteAction = default;
+                return pool.TryPush(this);
+            }
+
+            void RestoreOriginalCallback()
+            {
+                var callbacks = tween.GetOrAddCallbackActions();
                 switch (callbackType)
                 {
                     case CallbackType.Kill:
@@ -374,12 +317,6 @@ namespace MagicTween
                     default:
                         break;
                 }
-
-                tween = default;
-                cancellationToken = default;
-                originalUpdateAction = default;
-                originalCompleteAction = default;
-                return pool.TryPush(this);
             }
         }
     }
@@ -388,17 +325,17 @@ namespace MagicTween
     {
         static readonly ConcurrentQueue<PooledTweenCallback> pool = new ConcurrentQueue<PooledTweenCallback>();
 
-        readonly Action runDelegate;
+        readonly FastAction runDelegate;
 
         Action continuation;
 
         PooledTweenCallback()
         {
-            runDelegate = Run;
+            runDelegate = new(Run);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Action Create(Action continuation)
+        public static FastAction Create(Action continuation)
         {
             if (!pool.TryDequeue(out var item))
             {

@@ -1,6 +1,6 @@
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine.UIElements;
-using MagicTween.Core;
+using MagicTween.Plugins;
 
 namespace MagicTween
 {

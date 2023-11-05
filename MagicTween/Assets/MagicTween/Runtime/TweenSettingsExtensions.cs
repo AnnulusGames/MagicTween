@@ -5,11 +5,12 @@ using Unity.Mathematics;
 using Unity.Assertions;
 using MagicTween.Core;
 using MagicTween.Core.Components;
+using MagicTween.Plugins;
 using MagicTween.Diagnostics;
 
 namespace MagicTween
 {
-    using static TweenWorld;
+    using static ECSCache;
 
     public static class TweenSettingsExtensions
     {
@@ -145,6 +146,20 @@ namespace MagicTween
         public static T SetLink<T>(this T self, Component component, LinkBehaviour linkBehaviour = LinkBehaviour.KillOnDestroy) where T : struct, ITweenHandle
         {
             return SetLink(self, component.gameObject, linkBehaviour);
+        }
+
+        public static Tween<TValue, TOptions> SetOptions<TValue, TOptions>(this Tween<TValue, TOptions> self, TOptions options)
+            where TValue : unmanaged
+            where TOptions : unmanaged, ITweenOptions
+        {
+            AssertTween.IsActive(self);
+
+            EntityManager.SetComponentData(self.GetEntity(), new TweenOptions<TOptions>()
+            {
+                value = options
+            });
+
+            return self;
         }
 
         public static Tween<TValue, IntegerTweenOptions> SetRoundingMode<TValue>(this Tween<TValue, IntegerTweenOptions> self, RoundingMode roundingMode)

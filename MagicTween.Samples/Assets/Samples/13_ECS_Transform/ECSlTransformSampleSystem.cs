@@ -1,15 +1,18 @@
 using Unity.Entities;
 using Unity.Transforms;
+using Unity.Burst;
 using MagicTween;
 using MagicTween.Translators;
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(InitializationSystemGroup))]
+[BurstCompile]
 public partial struct ECSTransformSampleSystem : ISystem
 {
     // Note: MagicTween's API is currently only available on the main thread.
     //       You cannot create tweens or control tweens with Play(), Complete(), etc. within a job.
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         // Enumerate Entities with 'TweenTarget' and 'LocalTransform' attached and create tweens.
@@ -19,10 +22,10 @@ public partial struct ECSTransformSampleSystem : ISystem
 
             // For the type argument, specify a Translator to reflect the tween value in the component.
             // Below, a translator corresponding to the position of the LocalTransform component is passed.
-            Tween.Entity.To<LocalTransformPositionTranslator>(entity, targetInfo.ValueRO.toPosition, targetInfo.ValueRO.duration)
+            Tween.Entity.To<LocalTransform, PositionTranslator>(entity, targetInfo.ValueRO.toPosition, targetInfo.ValueRO.duration)
                 .SetEase(Ease.OutQuad);
 
-            Tween.Entity.To<LocalTransformEulerAnglesTranslator>(entity, targetInfo.ValueRO.toRotation, targetInfo.ValueRO.duration)
+            Tween.Entity.To<LocalTransform, EulerAnglesTranslator>(entity, targetInfo.ValueRO.toRotation, targetInfo.ValueRO.duration)
                 .SetEase(Ease.OutQuad);
         }
 
