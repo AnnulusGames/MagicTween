@@ -10,10 +10,7 @@ namespace MagicTween.Core.Transforms
     {
         static TransformAccessArray transformAccessArray;
         static readonly SharedStatic<NativeHashMap<int, int>> instanceIdToArrayIndex = SharedStatic<NativeHashMap<int, int>>.GetOrCreate<SharedIdToIndexKey>();
-        static readonly SharedStatic<NativeHashMap<int, int>> arrayIndexToInstanceId = SharedStatic<NativeHashMap<int, int>>.GetOrCreate<SharedIndexToIdKey>();
-
         readonly struct SharedIdToIndexKey { }
-        readonly struct SharedIndexToIdKey { }
 
         public static bool IsCreated { get; private set; }
 
@@ -31,7 +28,6 @@ namespace MagicTween.Core.Transforms
         {
             transformAccessArray = new TransformAccessArray(32);
             instanceIdToArrayIndex.Data = new NativeHashMap<int, int>(32, Allocator.Persistent);
-            arrayIndexToInstanceId.Data = new NativeHashMap<int, int>(32, Allocator.Persistent);
             IsCreated = true;
         }
 
@@ -40,7 +36,6 @@ namespace MagicTween.Core.Transforms
             if (!IsCreated) return;
             if (transformAccessArray.isCreated) transformAccessArray.Dispose();
             if (instanceIdToArrayIndex.Data.IsCreated) instanceIdToArrayIndex.Data.Dispose();
-            if (arrayIndexToInstanceId.Data.IsCreated) arrayIndexToInstanceId.Data.Dispose();
 
             IsCreated = false;
         }
@@ -56,7 +51,6 @@ namespace MagicTween.Core.Transforms
                 var index = transformAccessArray.length;
                 transformAccessArray.Add(target.target);
                 instanceIdToArrayIndex.Data.Add(instanceId, index);
-                arrayIndexToInstanceId.Data.Add(index, instanceId);
             }
         }
 
@@ -70,20 +64,17 @@ namespace MagicTween.Core.Transforms
                 if (transformAccessArray.length == 1)
                 {
                     instanceIdToArrayIndex.Data.Remove(target.instanceId);
-                    arrayIndexToInstanceId.Data.Remove(index);
                     transformAccessArray.RemoveAtSwapBack(index);
                 }
                 else
                 {
                     var lastIndex = transformAccessArray.length - 1;
-                    var lastInstanceId = arrayIndexToInstanceId.Data[lastIndex];
+                    var lastInstanceId = transformAccessArray[lastIndex].GetInstanceID();
 
                     instanceIdToArrayIndex.Data.Remove(target.instanceId);
-                    arrayIndexToInstanceId.Data.Remove(lastIndex);
                     transformAccessArray.RemoveAtSwapBack(index);
 
                     instanceIdToArrayIndex.Data[lastInstanceId] = index;
-                    arrayIndexToInstanceId.Data[index] = lastInstanceId;
                 }
             }
         }
