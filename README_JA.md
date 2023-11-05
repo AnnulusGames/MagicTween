@@ -900,7 +900,7 @@ var options = tween.GetOptions();
 
 Magic Tweenではデフォルトで多くのTweenPlugin/TweenOptionsを用意しています。
 
-以下に利用可能なTweenPlugin/TweenOptionsの一覧を表示します。(これ以外にもいくつかのTweenPlugin/TweenOptionsが用意されていますが、特殊なTween用のものであるため外部での使用しないでください。)
+以下に利用可能なTweenPlugin/TweenOptionsの一覧を表示します。(これ以外にもいくつかのTweenPlugin/TweenOptionsが用意されていますが、特殊なTween用のものであるため使用しないでください。)
 
 |  | TweenPlugin | 対応するTweenOptions |
 | - | - | - |
