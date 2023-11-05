@@ -1,5 +1,5 @@
 # Magic Tween
- Extremely fast tween library implemented with Unity ECS
+ Extremely fast, GC-free and customizable tween library implemented with Unity ECS
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween/Assets/MagicTween/Documentation~/Header.png" width="800">
 
@@ -9,7 +9,7 @@
 
 ## Overview
 
-Magic Tween is a high-performance tweening library implemented in Unity Entity Component System (ECS).
+Magic Tween is a high-performance tweening library implemented with Unity Entity Component System (ECS).
 
 In addition to powerful tweening functionality compatible with traditional components, it also offers even higher-performance APIs for ECS.
 
@@ -30,9 +30,12 @@ In addition to powerful tweening functionality compatible with traditional compo
 - [Sequence](#sequence)
 - [Logging](#logging)
 - [Project Settings](#project-settings)
+- [Waiting for Tweens Using Coroutines](#waiting-for-tweens-using-coroutines)
+- [Accelerating Transform Tweens with Jobs](#accelerating-transform-tweens-with-jobs)
 - [TextMesh Pro](#textmesh-pro)
 - [UniRx](#unirx)
 - [UniTask](#unitask)
+- [Creating Custom Tween Plugins](#creating-custom-tween-plugins)
 - [Implementation for ECS](#implementation-for-ecs)
 - [Other Features](#other-features)
 - [Optimization](#optimization)
@@ -42,24 +45,33 @@ In addition to powerful tweening functionality compatible with traditional compo
 - [License](#license)
 
 ## Features
+
 * High-performance tweening library implemented in ECS.
+* No GC allocation when creating Tween. (Excluding some special tweens)
 * Add extension methods compatible with many components.
+* Transform-optimized fast tween support
 * Tween anything with Tween.To.
 * Apply various settings using method chaining.
 * Create complex animations with Sequences.
 * Add processing via callbacks.
+* Supports Tween waits with coroutines
 * Support for tweening TextMesh Pro.
 * Support for conversion to Observable with UniRx.
 * Support for async/await with UniTask.
+* Create your own type of tween using a custom TweenPlugin.
 * Even higher-performance implementation for ECS.
 
 ## Performance
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/Assets/Documentation~/benchmark_64000_floats.png" width="800">
 
-When tweening float values of regular classes using `Tween.To()`, Magic Tween operates more than 2 to 5 times faster than other libraries.
+When tweening the float values of a regular class with `Tween.To()`, it operates 2 to 5 times faster than other libraries.
 
-When tweening float values within ECS components using `Tween.Entity.To()`, it is possible to achieve even higher performance.
+When tweening the float values within ECS components using `Tween.Entity.To()`, even faster performance can be achieved.
+
+Furthermore, there are no additional GC allocations generated for each tween creation (excluding tweens involving strings).
+
+Enabling `MAGICTWEEN_ENABLE_TRANSFORM_JOBS` allows you to create tweens specialized for Transforms. This dramatically improves performance when tweening a large number of Transforms.
 
 For more details on performance, please refer to the [README](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/README.md) in the `MagicTween.Benchmarks` project.
 
@@ -130,13 +142,16 @@ You can find a list of available extension methods [here](https://github.com/Ann
 
 The extension methods added for tweening are classified into several categories:
 
-| Method Name | Behavior |
-| - | - |
-| Tween... | Creates a tween for a specific field/property. |
-| Punch... | Creates a tween that vibrates the value of a specific field/property. |
-| Shake... | Creates a tween that randomly shakes the value of a specific field/property. |
-| Set... | Adds settings to customize the tween's behavior. |
-| On... | Adds callbacks at specific points during the tween. |
+| Method Name | Description |
+| ----------- | ----------- |
+| Tween...    | Creates a tween for a specific field/property. |
+| Punch...    | Creates a tween to vibrate the value of a specific field/property. |
+| Shake...    | Creates a tween to randomly vibrate the value of a specific field/property. |
+| Set...      | Adds settings to customize the behavior of the tween. |
+| On...       | Adds callbacks at specific timings of the tween. |
+| Log...      | Outputs information about the tween and its callbacks to the console. |
+| WaitFor...  | Waits for the tween in a coroutine. |
+| AwaitFor... | Awaits the tween using async/await. Requires UniTask to use this extension method. |
 
 ## Tweening Custom Value
 
@@ -390,7 +405,7 @@ transform.TweenPosition(new Vector3(1f, 2f, 3f), 5f)
 ```
 
 > **Note**
-> When you set up any callback, the first callback creates an allocation for generating the component. Additionally, enabling one or more callbacks can reduce performance during playback. In most cases, the impact on performance is minimal, but it's recommended to avoid using callbacks when creating a large number of tweens.
+> Enabling one or more callbacks can reduce performance during playback. In most cases, the impact on performance is minimal, but it's recommended to avoid using callbacks when creating a large number of tweens.
 
 ### OnPlay
 
@@ -415,6 +430,22 @@ Called when the tween is completed.
 ### OnKill
 
 Called when the tween is killed.
+
+### Avoiding Allocations
+
+Similar to `Tween.To()` and `Tween.FromTo()`, you can avoid lambda expression allocations by passing the target instance as the first argument.
+
+```cs
+// A class with a field named "foo"
+ExampleClass target;
+
+float endValue = 10f;
+float duration = 2f;
+
+// Avoiding lambda expression allocation by passing "target" to "OnUpdate"
+Tween.To(target, obj => obj.foo, (obj, x) => obj.foo = x, endValue, duration)
+    .OnUpdate(target, obj => Debug.Log(obj.foo));
+```
 
 ## DelayedCall / Empty
 
@@ -579,6 +610,23 @@ Create a `MagicTweenSettings` asset to store your configuration by navigating to
 > **Note**
 > The created `MagicTweenSettings` will be automatically added to the project's Preload Assets. If the settings are not being loaded, ensure that `MagicTweenSettings` is included in the Preload Assets.
 
+## Waiting for Tweens Using Coroutines
+
+You can easily wait for tweens by using coroutines. To wait for a tween, you can use the `WaitFor...` methods. This allows you to wait until specific events like `Complete` or `Pause` occur.
+
+```cs
+IEnumerator ExampleCoroutine()
+{
+    // Wait for the completion of the tween
+    yield return Tween.Empty(3f).WaitForComplete();
+
+    // Wait until the end of one loop
+    yield return transform.TweenPosition(Vector3.one, 1f)
+        .SetLoops(3)
+        .WaitForStepComplete();
+}
+```
+
 ### Logging Mode
 
 Set whether logging is enabled or not.
@@ -605,6 +653,14 @@ You can access these settings from the `MagicTweenSettings` class in your script
 // Change Logging Mode from script
 MagicTweenSettings.loggingMode = LoggingMode.ErrorsOnly;
 ```
+
+## Accelerating Transform Tweens with Jobs
+
+Starting from v0.2, an option to accelerate Transform tweens using `IJobParallelForTransform` has been added. This option is disabled by default and can be enabled by adding `MAGICTWEEN_ENABLE_TRANSFORM_JOBS` to the `Project Settings > Scripting Define Symbols` section.
+
+Once added, the acceleration by `IJobParallelForTransform` will be applied by simply manipulating Transforms using the usual extension methods.
+
+The performance comparison is shown in the graph. When tweening 50,000 Transforms, there is an acceleration of nearly 2x.
 
 ## TextMesh Pro
 
@@ -729,15 +785,122 @@ await transform.TweenPosition(Vector3.up, 2f)
 | CancelBehaviour.CompleteAndCancelAwait | Calls Complete and throws an OperationCanceledException. |
 | CancelBehaviour.CompleteAndKillAndCancelAwait | Calls both Complete and Kill methods and throws an OperationCanceledException. |
 
+## Creating Custom Tween Plugins
+
+Magic Tween supports most primitive types and Unity.Mathematics types for tweens, and in most cases, you won't need to create extensions. However, there may be situations where you want to extend for finer control.
+
+Magic Tween provides two interfaces, `ICustomTweenPlugin` and `ITweenOptions`, for extending types:
+
+### TweenPlugin
+
+A TweenPlugin is a feature for extending specific types into tweens. Implementing this allows you to pass custom types to tweens.
+
+Here's an example of implementing a TweenPlugin for `double` tweens:
+
+```cs
+// You need to add the TweenPluginAttribute
+// This lets the Source Generator recognize the type and generate the necessary code
+[TweenPlugin]
+// Define a struct implementing ICustomTweenPlugin with type arguments for the tweened value and associated TweenOptions (NoOptions if not needed)
+public readonly struct DoubleTweenPlugin : ICustomTweenPlugin<double, NoOptions>
+{
+    // Write calculation logic inside the Evaluate function
+    public double Evaluate(in double startValue, in double endValue, in NoOptions options, in TweenEvaluationContext context)
+    {
+        // If SetRelative(true) is set, resolve the end value as a relative value
+        var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+        // If SetInvert(true) is set, swap start and end values
+        // Calculate the current value based on context.Progress (0 to 1)
+        if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+        else return math.lerp(startValue, resolvedEndValue, context.Progress);
+    }
+}
+```
+
+TweenPlugins do not retain state. If you want to hold additional settings, create custom TweenOptions.
+
+### TweenOptions
+
+To add custom settings to your tween, define a struct implementing `ITweenOptions`. Here's an example of TweenOptions for integer tweens:
+
+```cs
+// Define a struct implementing ITweenOptions
+public struct IntegerTweenOptions : ITweenOptions
+{
+    public RoundingMode roundingMode;
+}
+
+public enum RoundingMode : byte
+{
+    ToEven,
+    AwayFromZero,
+    ToZero,
+    ToPositiveInfinity,
+    ToNegativeInfinity
+}
+```
+
+You can set your custom TweenOptions when defining the TweenPlugin.
+
+### Using Custom TweenPlugins
+
+To use your custom TweenPlugin in a tween, you can use `Tween.To()` or `Tween.FromTo()`:
+
+```cs
+double currentValue = 0.0;
+
+// Create a tween with custom TweenOptions and TweenPlugins
+Tween.FromTo<double, NoOptions, DoubleTweenPlugin>(x => currentValue = x, startValue, endValue, duration);
+```
+
+If you've specified custom TweenOptions, you can modify them using `SetOptions()`. You can also retrieve the currently set TweenOptions values using `GetOptions()`.
+
+```cs
+public struct CustomOptions : ITweenOptions
+{
+    ...
+}
+
+// Modify custom options for the tween using SetOptions
+tween.SetOptions(new CustomOptions() { ... });
+
+// Retrieve options values using GetOptions
+var options = tween.GetOptions();
+```
+
+### Built-in TweenPlugins/TweenOptions
+
+Magic Tween includes several built-in TweenPlugins and TweenOptions.
+
+Here's a list of available TweenPlugins and their corresponding TweenOptions (there are additional specialized TweenPlugins/TweenOptions for specific tweens, but they are not meant for external use):
+
+| Type | TweenPlugin | Corresponding TweenOptions |
+| ---- | ----------- | -------------------------- |
+| float | FloatTweenPlugin | NoOptions |
+| float2 | Float2TweenPlugin | NoOptions |
+| float3 | Float3TweenPlugin | NoOptions |
+| float4 | Float4TweenPlugin | NoOptions |
+| double | DoubleTweenPlugin | NoOptions |
+| double2 | Double2TweenPlugin | NoOptions |
+| double3 | Double3TweenPlugin | NoOptions |
+| double4 | Double4TweenPlugin | NoOptions |
+| int | IntTweenPlugin | IntegerTweenOptions |
+| int2 | Int2TweenPlugin | IntegerTweenOptions |
+| int3 | Int3TweenPlugin | IntegerTweenOptions |
+| int4 | Int4TweenPlugin | IntegerTweenOptions |
+| long | LongTweenPlugin | IntegerTweenOptions |
+| quaternion | QuaternionTweenPlugin | NoOptions |
+
 ## Implementation for ECS
 
-Magic Tween provides APIs for implementing Tween for ECS (Entity Component System), allowing you to create high-performance Tweens compared to regular ones.
+Magic Tween provides APIs for implementing tweens for ECS, allowing you to create high-performance tweens compared to conventional methods.
 
 ### Creating a Translator
 
-To Tween the values of specific Components, you need to create a `Translator` for the target Component, along with a System to make it work. 
+When tweening values of specific components, you need to create a `Translator` component to apply the current tween value to the target component and a system to execute it.
 
-As an example, let's create a Translator for the following Component:
+As an example, let's create a Translator for tweening the following component:
 
 ```cs
 public struct ExampleComponent : IComponentData
@@ -746,21 +909,18 @@ public struct ExampleComponent : IComponentData
 }
 ```
 
-First, define a structure that implements `ITweenTranslator`, like this:
+First, define a structure implementing `ITweenTranslator`:
 
 ```cs
 public struct ExampleTranslator : ITweenTranslator<float, ExampleComponent>
 {
-    // A property to track the target Entity, used in the System
-    public Entity TargetEntity { get; set; }
-
-    // Apply the value to the Component
+    // Apply the value to the component
     public void Apply(ref ExampleComponent component, in float value)
     {
         component.value = value;
     }
 
-    // Return the current value of the Component
+    // Return the current value of the component
     public float GetValue(ref ExampleComponent component)
     {
         return component.value;
@@ -768,36 +928,38 @@ public struct ExampleTranslator : ITweenTranslator<float, ExampleComponent>
 }
 ```
 
-Next, create a System class that inherits from `TweenTranslationSystemBase`, providing the Translator you created as a type argument. Keep the internal of the derived class empty, as the base class already implements the necessary logic.
+Next, create a system class that inherits from `TweenTranslationSystemBase`. Specify type arguments for the Translator and the TweenPlugin to be used. You can refer to the "Built-in TweenPlugins/TweenOptions" table for available TweenPlugins. It's also possible to specify custom TweenPlugins.
+
+The system class itself doesn't need additional implementation as the core logic is provided in the base class:
 
 ```cs
-public partial class ExampleTweenTranslationSystem : TweenTranslationSystemBase<float, ExampleComponent, ExampleTranslator> { }
+public partial class ExampleTweenTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugins, ExampleComponent, ExampleTranslator> { }
 ```
 
-Now, you're prepared to Tween values.
+With this setup, you're ready to tween values.
 
 ### Tweening Component Values
 
-To Tween values using the Translator you created, you can use `Tween.Entity.To()` or `Tween.Entity.FromTo()`. Provide the type of your Translator as type arguments.
+To tween values using the created Translator, use `Tween.Entity.To()` or `Tween.Entity.FromTo()`. Provide the component type and the Translator type as type arguments.
 
 ```cs
 var entity = EntityManager.CreateEntity();
 EntityManager.AddComponent<ExampleComponent>(entity);
 
-// Tween the value of ExampleComponent's 'value' field to 5 over 10 seconds
-Tween.Entity.To<ExampleTranslator>(entity, 5f, 10f);
+// Tween the value of ExampleComponent's 'value' to 5 over 10 seconds
+Tween.Entity.To<ExampleComponent, ExampleTranslator>(entity, 5f, 10f);
 ```
 
-Just like regular Tweens, you can chain methods to add settings:
+Just like regular tweens, you can chain methods to add settings:
 
 ```cs
-Tween.Entity.FromTo<ExampleTranslator>(entity, 0f, 5f, 10f)
+Tween.Entity.FromTo<ExampleComponent, ExampleTranslator>(entity, 0f, 5f, 10f)
     .SetEase(Ease.OutSine)
     .SetLoops(3, LoopType.Restart)
     .SetDelay(1f);
 ```
 
-You can also add these Tweens to a Sequence:
+You can also add these tweens to a sequence:
 
 ```cs
 var entity1 = EntityManager.CreateEntity();
@@ -805,8 +967,8 @@ var entity2 = EntityManager.CreateEntity();
 EntityManager.AddComponent<ExampleComponent>(entity1);
 EntityManager.AddComponent<ExampleComponent>(entity2);
 
-var tween1 = Tween.Entity.To<ExampleTranslator>(entity1, 5f, 10f);
-var tween2 = Tween.Entity.To<ExampleTranslator>(entity2, 5f, 10f);
+var tween1 = Tween.Entity.To<ExampleComponent, ExampleTranslator>(entity1, 5f, 10f);
+var tween2 = Tween.Entity.To<ExampleComponent, ExampleTranslator>(entity2, 5f, 10f);
 
 var sequence = Sequence.Create()
     .Append(tween1)

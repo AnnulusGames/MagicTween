@@ -1,5 +1,5 @@
 # Magic Tween
- Extremely fast tween library implemented with Unity ECS
+ Extremely fast, GC-free and customizable tween library implemented with Unity ECS
 
 <img src="https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween/Assets/MagicTween/Documentation~/Header.png" width="800">
 
@@ -28,11 +28,14 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 - [コールバック](#コールバック)
 - [DelayedCall / Empty](#delayedcall--empty)
 - [Sequence](#sequence)
+- [コルーチンを用いたTweenの待機](#コルーチンを用いたtweenの待機)
 - [ログ出力](#ログ出力)
 - [プロジェクト設定](#プロジェクト設定)
+- [JobによるTransformのTweenの高速化](#jobによるtransformのtweenの高速化)
 - [TextMesh Pro](#textmesh-pro)
 - [UniRx](#unirx)
 - [UniTask](#unitask)
+- [独自のTweenPluginを作成する](#独自のtweenpluginを作成する)
 - [ECS向けの実装](#ecs向けの実装)
 - [その他の機能](#その他の機能)
 - [最適化](#最適化)
@@ -44,14 +47,18 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 ## 特徴
 
 * ECSで実装された高性能なトゥイーンライブラリ
+* 一部の特殊なTweenを除き、全てGCアロケーションなし
 * 多くのコンポーネントに対応した拡張メソッドを追加
+* Transformに特化した圧倒的速度のトゥイーンのサポート
 * Tween.Toによって任意の値をトゥイーン可能
 * メソッドチェーンを用いて様々な設定を適用可能
 * Sequenceによる複雑なアニメーションの作成
 * コールバックによる処理の追加
+* コルーチンによるTweenの待機をサポート
 * TextMesh Proの文字のトゥイーンをサポート
 * UniRxによるObservableへの変換をサポート
 * UniTaskによるasync/awaitをサポート
+* カスタムTweenPluginを用いて独自の型をトゥイーン可能
 * ECS向けのよりハイパフォーマンスな実装
 
 ## パフォーマンス
@@ -61,6 +68,10 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 通常のクラスのfloatの値を`Tween.To()`でトゥイーンさせる場合、他のライブラリの2〜5倍以上高速に動作します。
 
 ECSのコンポーネント内のfloatの値を`Tween.Entity.To()`でトゥイーンさせる場合、さらに高速な動作を実現することが可能になります。
+
+また、トゥイーンの作成ごとに余計なGCアロケーションは一切発生しません。(stringなどのトゥイーンを除きます)
+
+さらに`MAGICTWEEN_ENABLE_TRANSFORM_JOBS`を有効化することでTransformに特化したトゥイーンを作成できます。これにより、大量のTransformをトゥイーンさせる際のパフォーマンスが劇的に向上します。
 
 パフォーマンスの詳細については`MagicTween.Benchmarks`プロジェクトの[README](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Benchmarks/README_JA.md)を参照してください。
 
@@ -96,6 +107,10 @@ https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTwee
     }
 }
 ```
+
+### 移行ガイド
+
+Magic Tweenは現在開発中のライブラリであり、バージョン毎に破壊的変更が行われる可能性があります。過去バージョンからの移行に関しては[]()を参照してください。
 
 ## 基本の使い方
 
@@ -139,7 +154,9 @@ Magic Tweenでは、Unityに含まれるほとんどのコンポーネントに�
 | Shake... | 特定のフィールド/プロパティの値をランダムに振動させるTweenを作成します。 |
 | Set... | Tweenの挙動をカスタマイズする設定を追加します。 |
 | On... | Tweenの特定のタイミングにコールバックを追加します。 |
-
+| Log... | Tweenの情報やコールバックをConsoleに出力します。 |
+| WaitFor... | Tweenをコルーチンで待機します。 |
+| AwaitFor... | Tweenをasync/awaitで待機します。この拡張メソッドを使用するにはUniTaskが必要です。 |
 
 ## 任意の値をトゥイーンする
 
@@ -410,15 +427,15 @@ transform.TweenPosition(new Vector3(1f, 2f, 3f), 5f)
 ```
 
 > **Note**
-> 何らかのコールバックの設定を呼び出す際、初回のみコンポーネントを生成するアロケーションが発生します。また、1つ以上のコールバックを有効化すると再生時のパフォーマンスが低下します。多くの場合パフォーマンスへの影響はごく僅かですが、大量にTweenを作成する際にはコールバックの利用を避けることを推奨します。
+> 1つ以上のコールバックを有効化すると再生時のパフォーマンスが低下します。多くの場合パフォーマンスへの影響はごく僅かですが、大量にTweenを作成する際にはコールバックの利用を避けることを推奨します。
 
 ### OnPlay
 
-Tweenが再生された時に呼ばれます。OnStartとは違い`SetDelay`による遅延は無視され、一時停止後にPlayを呼び出した際にも呼ばれます。
+Tweenが再生された時に呼ばれます。OnStartとは違い`SetDelay()`による遅延は無視され、一時停止後にPlayを呼び出した際にも呼ばれます。
 
 ### OnStart
 
-Tweenが動作を開始した時に呼ばれます。`SetDelay`で遅延が設定されている場合には、遅延が終了した際に呼ばれます。
+Tweenが動作を開始した時に呼ばれます。`SetDelay()`で遅延が設定されている場合には、遅延が終了した際に呼ばれます。
 
 ### OnUpdate
 
@@ -426,7 +443,7 @@ Tweenの再生時に毎フレーム呼ばれます。
 
 ### OnStepComplete
 
-`SetLoops`が設定されている際、各ループの完了時に呼ばれます。
+`SetLoops()`が設定されている際、各ループの完了時に呼ばれます。
 
 ### OnComplete
 
@@ -435,6 +452,22 @@ Tweenの完了時に呼ばれます。
 ### OnKill
 
 Tweenが破棄される際に呼ばれます。
+
+### アロケーションの回避
+
+`Tween.To()`や`Tween.FromTo()`等と同様、第一引数に対象のインスタンスを渡すことでラムダ式によるアロケーションを回避することが可能となっています。
+
+```cs
+// fooというフィールドを持つクラス
+ExampleClass target;
+
+float endValue = 10f;
+float duration = 2f;
+
+// OnUpdateにtargetを渡してラムダ式のアロケーションを回避
+Tween.To(target, obj => obj.foo, (obj, x) => obj.foo = x, endValue, duration)
+    .OnUpdate(target, obj => Debug.Log(obj.foo));
+```
 
 ## DelayedCall / Empty
 
@@ -560,6 +593,25 @@ Tween tween = sequence;
 * 一度追加したTweenはロックされ、アクセスできなくなります。Sequence内のTweenを個別に操作することは出来ないので注意してください。
 * 同じTweenを複数のSequenceに含めることはできません。
 
+## コルーチンを用いたTweenの待機
+
+コルーチンを用いることでTweenの待機を簡単に行うことができます。
+
+Tweenを待機するにはWaitFor...メソッドを使用します。CompleteやPauseなど、指定されたタイミングまで待機させることが可能です。
+
+```cs
+IEnumerator ExampleCoroutine()
+{
+    // Tweenの完了まで待機する
+    yield return Tween.Empty(3f).WaitForComplete();
+
+    // 1回のループが終了するタイミングまで待機する
+    yield return transform.TweenPosition(Vector3.one, 1f)
+        .SetLoops(3)
+        .WaitForStepComplete();
+}
+```
+
 ## ログ出力
 
 Tweenのコールバックや値のデバッグを行いたい場合、専用の拡張メソッドを利用することで簡単にログ出力が可能です。(これらのログはMagicTweenSettingsのLoggingModeがFullの場合のみ表示されます。)
@@ -623,6 +675,14 @@ Tweenのデフォルトの設定値を変更できます。
 // Logging ModeをScriptから変更する
 MagicTweenSettings.loggingMode = LoggingMode.ErrorsOnly;
 ```
+
+## JobによるTransformのTweenの高速化
+
+v0.2より、IJobParallelForTransformを用いてTransformのトゥイーンを高速化するオプションが追加されました。このオプションはデフォルトでは無効化されており、`Project Settings > Scripting Define Symbols`の項目に`MAGICTWEEN_ENABLE_TRANSFORM_JOBS`を追加することで有効化されます。
+
+追加後は通常通り拡張メソッドでTransformを操作するだけで、IJobParallelForTransformによる高速化が適用されるようになります。
+
+パフォーマンスの比較はグラフの通りです。50,000個のTransformをトゥイーンさせた場合、およそ2倍近くの高速化が適用されます。
 
 ## TextMesh Pro
 
@@ -747,6 +807,116 @@ await transform.TweenPosition(Vector3.up. 2f)
 | CancelBehaviour.CompleteAndCancelAwait | Completeを呼び出し、OperationCanceledExceptionをスローする。 |
 | CancelBehaviour.CompleteAndKillAndCancelAwait | CompleteAndKillを呼び出し、OperationCanceledExceptionをスローする。 |
 
+## 独自のTweenPluginを作成する
+
+Magic Tweenはほとんどのプリミティブ型やUnity.Mathematicsの型のトゥイーンをサポートしており、基本的には拡張を作成する必要はありません。とはいえ、細かい動作を実現するために拡張を行いたい場面は存在するでしょう。
+
+Magic Tweenでは型の拡張を行うためのAPIとして`ICustomTweenPlugin`と`ITweenOptions`の2つのインターフェースが用意されています。
+
+### TweenPlugin
+
+TweenPluginは特定の型の拡張をTweenに差し込むための機能です。これを実装することで独自の型をTweenに渡せるようになります。
+
+以下は`double`のトゥイーンをサポートするTweenPluginの実装例です。
+
+```cs
+// TweenPluginAttributeを追加する必要がある
+// これによってSourceGeneratorが型を認識し、必要なコードを生成する
+[TweenPlugin]
+// ICustomTweenPluginを実装した構造体を定義
+// 型引数にはトゥイーンさせる値の型と、対応するTweenOptionsの型(必要ない場合はNoOptions)を指定
+public readonly struct DoubleTweenPlugin : ICustomTweenPlugin<double, NoOptions>
+{
+    // Evaluate関数内に計算処理を記述
+    public double Evaluate(in double startValue, in double endValue, in NoOptions options, in TweenEvaluationContext context)
+    {
+        // SetRelative(true)が設定されている場合、終了値を相対値に設定する
+        var resolvedEndValue = context.IsRelative ? startValue + endValue : endValue;
+
+        // SetInvert(true)が設定されている場合、開始値と終了値を入れ替える
+        // そして、context.Progress(0〜1)から現在値を計算して返す
+        if (context.IsInverted) return math.lerp(resolvedEndValue, startValue, context.Progress);
+        else return math.lerp(startValue, resolvedEndValue, context.Progress);
+    }
+}
+```
+
+TweenPluginは状態を持つことができません。追加の設定を保持したい場合には独自のTweenOptionsを実装します。
+
+### TweenOptions
+
+Tweenに独自の設定を追加したい場合には`ITweenOptions`を実装した構造体を定義します。
+
+以下は整数型のTween用に作成されたTweenOptionsの実装例です。
+
+```cs
+// ITweenOptionsを実装した構造体を定義
+public struct IntegerTweenOptions : ITweenOptions
+{
+    public RoundingMode roundingMode;
+}
+
+public enum RoundingMode : byte
+{
+    ToEven,
+    AwayFromZero,
+    ToZero,
+    ToPositiveInfinity,
+    ToNegativeInfinity
+}
+```
+
+作成したTweenOptionsはTweenPluginの型引数に設定することが可能です。
+
+### 作成したTweenPluginを使用する
+
+独自のTweenPluginをTweenに使用するには、`Tween.To()`または`Tween.FromTo()`を使用します。
+
+```cs
+double currentValue = 0.0;
+
+// TweenOptionsとTweenPluginsを指定してTweenを作成する
+Tween.FromTo<double, NoOptions, DoubleTweenPlugin>(x => currentValue = x, startValue, endValue, duration);
+```
+
+独自のTweenOptionsを指定した場合、`SetOptions()`を使用することでTweenOptionsの値を変更できるようになります。また、`GetOptions()`で設定されているTweenOptionsの値を取得できます。
+
+```cs
+public struct CustomOptions : ITweenOptions
+{
+    ...
+}
+
+// SetOptionsを用いてTween独自のオプションを変更する
+tween.SetOptions(new CustomOptions() { ... });
+
+// GetOptionsを用いてオプションの値を取得する
+var options = tween.GetOptions();
+```
+
+### 組み込みのTweenPlugin/TweenOptions
+
+Magic Tweenではデフォルトで多くのTweenPlugin/TweenOptionsを用意しています。
+
+以下に利用可能なTweenPlugin/TweenOptionsの一覧を表示します。(これ以外にもいくつかのTweenPlugin/TweenOptionsが用意されていますが、特殊なTween用のものであるため外部での使用しないでください。)
+
+|  | TweenPlugin | 対応するTweenOptions |
+| - | - | - |
+| float | FloatTweenPlugin | NoOptions |
+| float2 | Float2TweenPlugin | NoOptions |
+| float3 | Float3TweenPlugin | NoOptions |
+| float4 | Float4TweenPlugin | NoOptions |
+| double | DoubleTweenPlugin | NoOptions |
+| double2 | Double2TweenPlugin | NoOptions |
+| double3 | Double3TweenPlugin | NoOptions |
+| double4 | Double4TweenPlugin | NoOptions |
+| int | IntTweenPlugin | IntegerTweenOptions |
+| int2 | Int2TweenPlugin | IntegerTweenOptions |
+| int3 | Int3TweenPlugin | IntegerTweenOptions |
+| int4 | Int4TweenPlugin | IntegerTweenOptions |
+| long | LongTweenPlugin | IntegerTweenOptions |
+| quaternion | QuaternionTweenPlugin | NoOptions |
+
 ## ECS向けの実装
 
 Magic Tweenでは、ECS向けにTweenを実装するためのAPIが用意されています。これらのAPIを利用することで、通常よりもさらにハイパフォーマンスなTweenを作成することが可能です。
@@ -770,9 +940,6 @@ Translatorは状態を持たないようにし、必要な処理だけを記述�
 ```cs
 public struct ExampleTranslator : ITweenTranslator<float, ExampleComponent>
 {
-    // 対象のEntityを追跡するためのプロパティ、System側で利用される
-    public Entity TargetEntity { get; set; }
-
     // Componentに値を適用する
     public void Apply(ref ExampleComponent component, in float value)
     {
@@ -787,11 +954,12 @@ public struct ExampleTranslator : ITweenTranslator<float, ExampleComponent>
 }
 ```
 
-次に、`TweenTranslationSystemBase`を継承したSystemクラスを作成します。型引数には先ほど作成したTranslatorを渡します。
-処理自体は基底クラス側で実装されているため、派生クラスの内部には何も記述しないようにしてください。
+次に、`TweenTranslationSystemBase`を継承したSystemクラスを作成します。型引数には先ほど作成したTranslatorや使用するTweenPluginなどを指定します。指定するTweenPluginについては「組み込みのTweenPlugin/TweenOptions」の表を参照してください。独自のTweenPluginを指定することも可能です。
+
+また、処理自体は基底クラス側で実装されているため、派生クラスの内部には何も記述しないようにしてください。
 
 ```cs
-public partial class ExampleTweenTranslationSystem : TweenTranslationSystemBase<float, ExampleComponent, ExampleTranslator> { }
+public partial class ExampleTweenTranslationSystem : TweenTranslationSystemBase<float, NoOptions, FloatTweenPlugins, ExampleComponent, ExampleTranslator> { }
 ```
 
 これで値をトゥイーンする準備は完了です。
@@ -799,20 +967,21 @@ public partial class ExampleTweenTranslationSystem : TweenTranslationSystemBase<
 ### Componentの値をトゥイーンする
 
 作成したTranslatorを用いて値をトゥイーンする場合には、`Tween.Entity.To()`や`Tween.Entity.FromTo()`を使用します。
-型引数には利用するTranslatorの型を渡します。
+
+型引数には対象のComponentの型と、利用するTranslatorの型を渡します。
 
 ```cs
 var entity = EntityManager.CreateEntity();
 EntityManager.AddComponent<ExampleComponent>(entity);
 
 // ExampleComponentのvalueを5まで10秒かけてトゥイーンする
-Tween.Entity.To<ExampleTranslator>(entity, 5f, 10f);
+Tween.Entity.To<ExampleComponent, ExampleTranslator>(entity, 5f, 10f);
 ```
 
 これらの値には通常のTween同様、メソッドチェーンを用いて設定を追加できます。
 
 ```cs
-Tween.Entity.FromTo<ExampleTranslator>(entity, 0f, 5f, 10f)
+Tween.Entity.FromTo<ExampleComponent, ExampleTranslator>(entity, 0f, 5f, 10f)
     .SetEase(Ease.OutSine)
     .SetLoops(3, LoopType.Restart)
     .SetDelay(1f);
@@ -826,8 +995,8 @@ var entity2 = EntityManager.CreateEntity();
 EntityManager.AddComponent<ExampleComponent>(entity1);
 EntityManager.AddComponent<ExampleComponent>(entity2);
 
-var tween1 = Tween.Entity.To<ExampleTranslator>(entity1, 5f, 10f);
-var tween2 = Tween.Entity.To<ExampleTranslator>(entity2, 5f, 10f);
+var tween1 = Tween.Entity.To<ExampleComponent, ExampleTranslator>(entity1, 5f, 10f);
+var tween2 = Tween.Entity.To<ExampleComponent, ExampleTranslator>(entity2, 5f, 10f);
 
 var sequence = Sequence.Create()
     .Append(tween1)
@@ -904,7 +1073,7 @@ ECSは安全性を高めるために多くのチェックを行うため、エ�
 
 ECSをWebGL上で動作させること自体は可能ですが、WebGLの仕様上マルチスレッドやSIMD演算が使えないため、JobやBurstなどの最適化はすべて無効化されます。ECSの高いパフォーマンスはJob SystemとBurstによって実現されているためパフォーマンスの低下は免れません。(そのため、現状WebGL上でECSを扱う利点はあまりありません。)
 
-Magic TweenではTweenの計算部分をJob SystemとBurstで最適化しているため、上記の理由によりWebGL上ではパフォーマンスが低下します。
+上記の理由により、Magic TweenはWebGL上でパフォーマンスが低下します。
 通常これらの影響が表面化することはありませんが、大量にTweenを作成する際にはこの点に留意してください。
 
 ## サポート

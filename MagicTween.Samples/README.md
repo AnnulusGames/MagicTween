@@ -2,7 +2,7 @@
 
 [日本語版READMEはこちら](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Samples/README_JA.md)
 
-This project contains 15 samples made with MagicTween.
+This project contains samples made with MagicTween.
 
 ## Samples
 

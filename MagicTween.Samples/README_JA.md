@@ -2,7 +2,7 @@
 
 [English README is here](https://github.com/AnnulusGames/MagicTween/blob/main/MagicTween.Samples/README.md)
 
-このプロジェクトには、MagicTweenで作成された15個のサンプルが含まれています。
+このプロジェクトには、MagicTweenで作成されたサンプルが含まれています。
 
 ## サンプル
 
