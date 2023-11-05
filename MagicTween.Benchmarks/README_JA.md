@@ -174,4 +174,4 @@ StartUpについては、トゥイーンを作成するのにかかる時間の�
 | PrimeTween | 7.53ms |
 
 > **Note**
-> Magic TweenはTweenをキャッシュすることでアニメーションの開始を高速化できます。詳細はREADMEの[最適化の項目](https://github.com/AnnulusGames/MagicTween/blob/main/README_JP.md#最適化)を参照してください。
+> Magic TweenはTweenをキャッシュすることでアニメーションの開始を高速化できます。詳細はREADMEの[最適化の項目](https://github.com/AnnulusGames/MagicTween/blob/main/README_JA.md#最適化)を参照してください。
