@@ -110,7 +110,7 @@ https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTwee
 
 ### 移行ガイド
 
-Magic Tweenは現在開発中のライブラリであり、バージョン毎に破壊的変更が行われる可能性があります。過去バージョンからの移行に関しては[]()を参照してください。
+Magic Tweenは現在開発中のライブラリであり、バージョン毎に破壊的変更が行われる可能性があります。過去バージョンからの移行に関しては[移行ガイド](migration_ja.md)を参照してください。
 
 ## 基本の使い方
 

@@ -107,6 +107,10 @@ or open Packages/manifest.json and add the following to the dependencies block.
 }
 ```
 
+### Migration Guides
+
+Magic Tween is an actively developed library, and there is a possibility of breaking changes with each version. For information on migrating from previous versions, please refer to the [Migration Guides](migration.md).
+
 ## Basic Usage
 
 By introducing Magic Tween, numerous extension methods for creating tweens on traditional Unity components are added. Below is an example of animating the position of a Transform using these extension methods:
