@@ -15,7 +15,7 @@ namespace MagicTween.Benchmark
 
         const int WarmupCount = 3;
         const int MeasurementCount = 600;
-        const int TweenCount = 64000;
+        const int TweenCount = 32000;
 
         [SetUp]
         public void Init()

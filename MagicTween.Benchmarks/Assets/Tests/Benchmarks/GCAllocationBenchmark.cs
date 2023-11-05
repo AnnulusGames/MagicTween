@@ -10,18 +10,20 @@ namespace MagicTween.Benchmark
     {
         TestClass instance;
 
-        const int WarmupCount = 5;
-        const int MeasurementCount = 1000;
+        const int WarmupCount = 10;
+        const int MeasurementCount = 2000;
 
         void MeasureGCAlloc(Action action)
         {
             if (instance == null) instance = new();
 
-            Measure.Method(action)
-                .WarmupCount(WarmupCount)
-                .MeasurementCount(MeasurementCount)
-                .GC()
-                .Run();
+            for (int i = 0; i < WarmupCount; i++) action();
+            GC.Collect();
+            var prev = GC.GetTotalMemory(true);
+            for (int i = 0; i < MeasurementCount; i++) action();
+            var current = GC.GetTotalMemory(true);
+
+            Measure.Custom(new SampleGroup("GC.Alloc", SampleUnit.Byte), (current - prev) / MeasurementCount);
         }
 
         [Test, Performance]

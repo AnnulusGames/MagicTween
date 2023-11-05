@@ -10,7 +10,7 @@ namespace MagicTween.Benchmark
         Transform[] transforms;
         const int WarmupCount = 0;
         const int MeasurementCount = 1;
-        const int TweenCount = 25000;
+        const int TweenCount = 50000;
 
         [SetUp]
         public void Setup()

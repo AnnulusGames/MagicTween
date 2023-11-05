@@ -34,7 +34,7 @@ namespace MagicTween.Benchmark
         {
             for (int i = 0; i < transforms.Length; i++)
             {
-                transforms[i].TweenPosition(Vector3.one * i, duration);
+                transforms[i].TweenPosition(Vector3.zero, Vector3.one * i, duration);
             }
         }
 
