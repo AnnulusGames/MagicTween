@@ -28,9 +28,9 @@ In addition to powerful tweening functionality compatible with traditional compo
 - [Callbacks](#callbacks)
 - [DelayedCall / Empty](#delayedcall--empty)
 - [Sequence](#sequence)
+- [Waiting for Tweens Using Coroutines](#waiting-for-tweens-using-coroutines)
 - [Logging](#logging)
 - [Project Settings](#project-settings)
-- [Waiting for Tweens Using Coroutines](#waiting-for-tweens-using-coroutines)
 - [Accelerating Transform Tweens with Jobs](#accelerating-transform-tweens-with-jobs)
 - [TextMesh Pro](#textmesh-pro)
 - [UniRx](#unirx)
@@ -577,6 +577,23 @@ Here are some important points to keep in mind when using Sequences:
 * Once a tween is added to a Sequence, it becomes locked, and you cannot access it individually. Be cautious, as you cannot manipulate the individual tweens within a Sequence.
 * You cannot include the same tween in multiple Sequences.
 
+## Waiting for Tweens Using Coroutines
+
+You can easily wait for tweens by using coroutines. To wait for a tween, you can use the `WaitFor...` methods. This allows you to wait until specific events like `Complete` or `Pause` occur.
+
+```cs
+IEnumerator ExampleCoroutine()
+{
+    // Wait for the completion of the tween
+    yield return Tween.Empty(3f).WaitForComplete();
+
+    // Wait until the end of one loop
+    yield return transform.TweenPosition(Vector3.one, 1f)
+        .SetLoops(3)
+        .WaitForStepComplete();
+}
+```
+
 ## Logging
 
 If you want to perform logging of Tween callbacks and values for debugging purposes, you can easily achieve this using dedicated extension methods. Note that these logs will only be displayed if `MagicTweenSettings`' `LoggingMode` is set to `Full`.
@@ -613,23 +630,6 @@ Create a `MagicTweenSettings` asset to store your configuration by navigating to
 
 > **Note**
 > The created `MagicTweenSettings` will be automatically added to the project's Preload Assets. If the settings are not being loaded, ensure that `MagicTweenSettings` is included in the Preload Assets.
-
-## Waiting for Tweens Using Coroutines
-
-You can easily wait for tweens by using coroutines. To wait for a tween, you can use the `WaitFor...` methods. This allows you to wait until specific events like `Complete` or `Pause` occur.
-
-```cs
-IEnumerator ExampleCoroutine()
-{
-    // Wait for the completion of the tween
-    yield return Tween.Empty(3f).WaitForComplete();
-
-    // Wait until the end of one loop
-    yield return transform.TweenPosition(Vector3.one, 1f)
-        .SetLoops(3)
-        .WaitForStepComplete();
-}
-```
 
 ### Logging Mode
 
