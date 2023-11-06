@@ -69,19 +69,30 @@ namespace MagicTween.Tests
         }
 
         [UnityTest]
-        public IEnumerator Test_Append_Callbacks()
+        public IEnumerator Test_Append_Callbacks_1()
         {
             var sequence = Sequence.Create();
             var (flag1, flag2) = (false, false);
 
-            sequence.AppendCallback(() => flag1 = true);
+            sequence.AppendCallback(() => flag1 = !flag1);
             sequence.AppendInterval(1f);
-            sequence.AppendCallback(() => flag2 = true);
+            sequence.AppendCallback(() => flag2 = !flag2);
 
             yield return sequence.WaitForComplete();
 
             Assert.IsTrue(flag1, "flag1 is false");
             Assert.IsTrue(flag2, "flag2 is false");
+        }
+
+        [UnityTest]
+        public IEnumerator Test_Append_Callbacks_2()
+        {
+            var sequence = Sequence.Create();
+            sequence.AppendCallback(() => Debug.Log("CALLBACK 0"));
+            sequence.Append(Tween.Empty(2f));
+            sequence.AppendCallback(() => Debug.Log("CALLBACK 1"));
+            sequence.AppendCallback(() => Debug.Log("CALLBACK 2"));
+            yield return sequence.WaitForComplete();
         }
 
         static void AssertAreEqual(Vector3 a, Vector3 b)
