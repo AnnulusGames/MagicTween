@@ -13,6 +13,9 @@ Magic TweenはUnityのECS(Entity Component System)で実装されたハイパフ
 
 従来のコンポーネントに対応した高性能なトゥイーンの機能に加え、ECS向けのよりハイパフォーマンスなAPIも合わせて提供します。
 
+> [!NOTE]
+> MagicTweenは現在実験的なライブラリとして提供されており、より高性能かつ安定したトゥイーンライブラリが必要な場合には[LitMotion](https://github.com/AnnulusGames/LitMotion)の使用を推奨します。LitMotionは最小限の依存と最新の設計で構築されており、極めて高いパフォーマンスと十分な機能を持っています。
+
 ## 目次
 - [概要](#概要)
 - [目次](#目次)

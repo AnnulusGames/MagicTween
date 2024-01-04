@@ -13,6 +13,9 @@ Magic Tween is a high-performance tweening library implemented with Unity Entity
 
 In addition to powerful tweening functionality compatible with traditional components, it also offers even higher-performance APIs for ECS.
 
+> [!NOTE]
+> MagicTween is currently provided as an experimental library. If you need a higher performance and stable tween library, I recommend using [LitMotion](https://github.com/AnnulusGames/LitMotion). LitMotion is built with minimal dependencies and a modern design, offering extremely high performance and full functionality.
+
 ## Table of Contents
 - [Overview](#overview)
 - [Table of Contents](#table-of-contents)
